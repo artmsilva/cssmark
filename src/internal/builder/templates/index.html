@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Design Tokens</title>
+  <title>Design Tokens — cssmark</title>
+  <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="layout">
     <nav class="sidebar">
-      <h1>Design Tokens</h1>
+      <h1>cssmark</h1>
+      <p class="subtitle">Design Tokens</p>
       <p class="count">{{.TotalCount}} tokens</p>
       <ul class="nav-list">
         {{range .Groups}}
@@ -24,17 +26,62 @@
         <h2>{{.Name}}</h2>
         <div class="token-grid">
           {{range .Tokens}}
-          <article class="token-card{{if .Deprecated}} deprecated{{end}}">
+          <article class="token-card{{if .Deprecated}} deprecated{{end}}" data-type="{{.Type}}">
             <header class="token-header">
-              {{if isColor .}}
-              <span class="color-swatch" style="background: {{.InitialValue}};"></span>
-              {{end}}
               <code class="token-name">{{.Name}}</code>
               {{if .Type}}<span class="type-badge">{{.Type}}</span>{{end}}
               {{if .Deprecated}}<span class="deprecated-badge">deprecated</span>{{end}}
             </header>
             
-            <div class="token-value">{{.InitialValue}}</div>
+            <!-- Visual Preview based on token type -->
+            <div class="token-preview">
+              {{if isColor .}}
+              <div class="preview-color">
+                <div class="color-swatch-large" style="background: {{.InitialValue}};"></div>
+                <div class="color-info">
+                  <span class="color-value">{{.InitialValue}}</span>
+                  <div class="color-demo">
+                    <span class="demo-text" style="color: {{.InitialValue}};">Aa</span>
+                    <span class="demo-bg" style="background: {{.InitialValue}};"></span>
+                    <span class="demo-border" style="border-color: {{.InitialValue}};"></span>
+                  </div>
+                </div>
+              </div>
+              {{else if isSpacing .}}
+              <div class="preview-spacing">
+                <div class="spacing-visual" style="width: {{.InitialValue}}; height: {{.InitialValue}};"></div>
+                <div class="spacing-ruler">
+                  <div class="ruler-bar" style="width: {{.InitialValue}};"></div>
+                  <span class="ruler-label">{{.InitialValue}}</span>
+                </div>
+              </div>
+              {{else if isRadius .}}
+              <div class="preview-radius">
+                <div class="radius-box" style="border-radius: {{.InitialValue}};"></div>
+                <span class="radius-value">{{.InitialValue}}</span>
+              </div>
+              {{else if isFont .}}
+              <div class="preview-font">
+                <div class="font-sample" style="font-family: {{safeCSS .InitialValue}};">
+                  <span class="font-large">Aa Bb Cc</span>
+                  <span class="font-small">The quick brown fox jumps over the lazy dog</span>
+                </div>
+              </div>
+              {{else if isFontSize .}}
+              <div class="preview-font-size">
+                <span class="font-size-sample" style="font-size: {{.InitialValue}};">Aa</span>
+                <span class="font-size-value">{{.InitialValue}}</span>
+              </div>
+              {{else if isShadow .}}
+              <div class="preview-shadow">
+                <div class="shadow-box" style="box-shadow: {{safeCSS .InitialValue}};"></div>
+              </div>
+              {{else}}
+              <div class="preview-generic">
+                <code class="token-value">{{.InitialValue}}</code>
+              </div>
+              {{end}}
+            </div>
             
             {{if .Description}}
             <p class="token-description">{{.Description}}</p>
@@ -42,18 +89,23 @@
             
             {{if .Examples}}
             <div class="token-examples">
-              <strong>Examples:</strong>
-              <ul>
-                {{range .Examples}}
-                <li><code>{{.}}</code></li>
-                {{end}}
-              </ul>
+              <details>
+                <summary>Usage Examples</summary>
+                <ul>
+                  {{range .Examples}}
+                  <li><code>{{.}}</code></li>
+                  {{end}}
+                </ul>
+              </details>
             </div>
             {{end}}
             
             {{if .Aliases}}
             <div class="token-aliases">
-              <strong>Aliases:</strong> {{join .Aliases ", "}}
+              <span class="aliases-label">Aliases:</span>
+              {{range .Aliases}}
+              <code class="alias">{{.}}</code>
+              {{end}}
             </div>
             {{end}}
             

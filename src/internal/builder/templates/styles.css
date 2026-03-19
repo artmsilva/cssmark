@@ -1,17 +1,9 @@
-:root {
-  --color-bg: #ffffff;
-  --color-bg-secondary: #f8f9fa;
-  --color-text: #1a1a2e;
-  --color-text-muted: #6c757d;
-  --color-border: #e9ecef;
-  --color-primary: #0055ff;
-  --color-danger: #dc3545;
-  --color-warning: #ffc107;
-  --font-mono: ui-monospace, 'SF Mono', Monaco, monospace;
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --radius: 8px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
+/*
+ * cssmark Documentation Site Styles
+ * 
+ * This stylesheet dogfoods cssmark's own design tokens.
+ * All custom properties used here are defined in the tokens being documented.
+ */
 
 * {
   box-sizing: border-box;
@@ -23,19 +15,20 @@ body {
   font-family: var(--font-sans);
   background: var(--color-bg);
   color: var(--color-text);
-  line-height: 1.6;
+  line-height: var(--line-height-base);
 }
 
 .layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: var(--sidebar-width) 1fr;
   min-height: 100vh;
 }
 
+/* Sidebar Navigation */
 .sidebar {
   background: var(--color-bg-secondary);
   border-right: 1px solid var(--color-border);
-  padding: 2rem;
+  padding: var(--space-8);
   position: sticky;
   top: 0;
   height: 100vh;
@@ -43,14 +36,26 @@ body {
 }
 
 .sidebar h1 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-1);
+}
+
+.sidebar .subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
 }
 
 .sidebar .count {
   color: var(--color-text-muted);
-  font-size: 0.875rem;
-  margin-bottom: 1.5rem;
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--space-7);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  display: inline-block;
 }
 
 .nav-list {
@@ -61,12 +66,18 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.nav-list li:last-child {
+  border-bottom: none;
 }
 
 .nav-list a {
   color: var(--color-text);
   text-decoration: none;
+  font-size: var(--font-size-sm);
 }
 
 .nav-list a:hover {
@@ -74,140 +85,411 @@ body {
 }
 
 .nav-list .badge {
-  background: var(--color-border);
-  padding: 0.125rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
+  background: var(--color-bg);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+  font-weight: 500;
 }
 
+/* Main Content */
 .content {
-  padding: 2rem 3rem;
-  max-width: 1200px;
+  padding: var(--space-8) var(--space-9);
+  max-width: var(--content-max-width);
 }
 
 .category {
-  margin-bottom: 3rem;
+  margin-bottom: var(--space-9);
 }
 
 .category h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--color-border);
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-7);
+  padding-bottom: var(--space-3);
+  border-bottom: 2px solid var(--color-primary);
+  display: inline-block;
 }
 
+/* Token Grid */
 .token-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr));
+  gap: var(--space-7);
 }
 
+/* Token Card */
 .token-card {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
 }
 
 .token-card.deprecated {
   opacity: 0.7;
   border-color: var(--color-warning);
+  background: linear-gradient(135deg, var(--color-bg) 0%, rgba(255, 193, 7, 0.05) 100%);
 }
 
 .token-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
   flex-wrap: wrap;
-}
-
-.color-swatch {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  border: 1px solid var(--color-border);
-  flex-shrink: 0;
 }
 
 .token-name {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-primary);
+  word-break: break-all;
 }
 
 .type-badge {
   background: var(--color-bg-secondary);
-  padding: 0.125rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .deprecated-badge {
   background: var(--color-warning);
   color: #000;
-  padding: 0.125rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================================================
+   Token Previews - Visual representations of each token type
+   ============================================================================ */
+
+.token-preview {
+  margin-bottom: var(--space-5);
+  padding: var(--space-5);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+/* Color Preview */
+.preview-color {
+  display: flex;
+  gap: var(--space-5);
+  align-items: center;
+  width: 100%;
+}
+
+.color-swatch-large {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+.color-info {
+  flex: 1;
+}
+
+.color-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  display: block;
+  margin-bottom: var(--space-3);
+  color: var(--color-text);
   font-weight: 500;
 }
 
-.token-value {
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
-  padding: 0.5rem;
-  background: var(--color-bg-secondary);
-  border-radius: 4px;
+.color-demo {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
 }
+
+.demo-text {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.demo-bg {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+}
+
+.demo-border {
+  width: 24px;
+  height: 24px;
+  border: 3px solid;
+  border-radius: var(--radius-sm);
+  background: transparent;
+}
+
+/* Spacing Preview */
+.preview-spacing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.spacing-visual {
+  background: var(--color-primary);
+  opacity: 0.3;
+  border-radius: var(--radius-sm);
+  max-width: 100%;
+  max-height: 48px;
+}
+
+.spacing-ruler {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ruler-bar {
+  height: 8px;
+  background: var(--color-primary);
+  border-radius: var(--radius-sm);
+  max-width: 100%;
+  position: relative;
+}
+
+.ruler-bar::before,
+.ruler-bar::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 16px;
+  background: var(--color-primary);
+  top: -4px;
+}
+
+.ruler-bar::before { left: 0; }
+.ruler-bar::after { right: 0; }
+
+.ruler-label {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* Border Radius Preview */
+.preview-radius {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+}
+
+.radius-box {
+  width: 64px;
+  height: 64px;
+  background: var(--color-primary);
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.radius-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* Font Family Preview */
+.preview-font {
+  width: 100%;
+}
+
+.font-sample {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.font-large {
+  font-size: var(--font-size-xl);
+  font-weight: 400;
+  color: var(--color-text);
+}
+
+.font-small {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Font Size Preview */
+.preview-font-size {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-5);
+  width: 100%;
+}
+
+.font-size-sample {
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.font-size-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Shadow Preview */
+.preview-shadow {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: var(--space-5);
+}
+
+.shadow-box {
+  width: 120px;
+  height: 60px;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+/* Generic Preview */
+.preview-generic {
+  width: 100%;
+}
+
+.preview-generic .token-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  word-break: break-all;
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+
+/* ============================================================================
+   Token Details
+   ============================================================================ */
 
 .token-description {
   color: var(--color-text-muted);
-  font-size: 0.875rem;
-  margin-bottom: 0.75rem;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-4);
+  line-height: 1.5;
 }
 
 .token-examples {
-  font-size: 0.875rem;
-  margin-bottom: 0.75rem;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-4);
+}
+
+.token-examples details {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.token-examples summary {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-secondary);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.token-examples summary:hover {
+  background: var(--color-border);
 }
 
 .token-examples ul {
   list-style: none;
-  margin-top: 0.25rem;
+  padding: var(--space-3) var(--space-4);
+}
+
+.token-examples li {
+  padding: var(--space-2) 0;
+}
+
+.token-examples li:not(:last-child) {
+  border-bottom: 1px solid var(--color-border);
 }
 
 .token-examples code {
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  background: var(--color-bg-secondary);
-  padding: 0.125rem 0.25rem;
-  border-radius: 2px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+  word-break: break-all;
 }
 
 .token-aliases {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.aliases-label {
   color: var(--color-text-muted);
-  margin-bottom: 0.75rem;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.alias {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  background: var(--color-bg-secondary);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
 }
 
 .token-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
-  padding-top: 0.75rem;
+  padding-top: var(--space-4);
   border-top: 1px solid var(--color-border);
+  margin-top: auto;
 }
 
 .token-meta .syntax {
   font-family: var(--font-mono);
+  background: var(--color-bg-secondary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
 }
 
+.token-meta .source {
+  font-family: var(--font-mono);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;
@@ -216,13 +498,24 @@ body {
   .sidebar {
     position: static;
     height: auto;
+    padding: var(--space-6);
   }
   
   .content {
-    padding: 1.5rem;
+    padding: var(--space-6);
   }
   
   .token-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .preview-color {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .color-swatch-large {
+    width: 100%;
+    height: 48px;
   }
 }

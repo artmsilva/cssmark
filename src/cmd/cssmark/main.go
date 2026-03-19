@@ -108,7 +108,7 @@ func runDocs(args []string) {
 
 	fmt.Printf("✓ %d tokens parsed\n", len(tokens))
 
-	if err := builder.WriteDocs(tokens, *out); err != nil {
+	if err := builder.WriteDocs(tokens, *out, files); err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing docs: %v\n", err)
 		os.Exit(1)
 	}

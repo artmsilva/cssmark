@@ -1,63 +1,441 @@
-/* Example Design Tokens */
+/* cssmark Design Tokens
+ * These tokens are used by cssmark's own documentation site (dogfooding).
+ */
 
-@property --color-brand-primary {
+/* ============================================================================
+   Color - Background
+   ============================================================================ */
+
+@property --color-bg {
   syntax: "<color>";
   inherits: false;
-  initial-value: #0055ff;
-  description: "Primary brand color for interactive elements.";
-  category: "color.brand";
+  initial-value: #ffffff;
+  description: "Primary background color for the main content area.";
+  category: "color.background";
   type: "color";
-  aliases: "--color-primary, --color-action";
-  deprecated: false;
-  examples: "background: var(--color-brand-primary); border-color: var(--color-brand-primary);";
+  examples: "background: var(--color-bg);";
 }
 
-@property --color-brand-secondary {
+@property --color-bg-secondary {
   syntax: "<color>";
   inherits: false;
-  initial-value: #6366f1;
-  description: "Secondary brand color for accents.";
-  category: "color.brand";
+  initial-value: #f8f9fa;
+  description: "Secondary background for sidebar, code blocks, and cards.";
+  category: "color.background";
   type: "color";
+  examples: "background: var(--color-bg-secondary);";
 }
 
-@property --color-text-primary {
+/* ============================================================================
+   Color - Text
+   ============================================================================ */
+
+@property --color-text {
   syntax: "<color>";
   inherits: false;
   initial-value: #1a1a2e;
   description: "Primary text color for body content.";
   category: "color.text";
   type: "color";
+  examples: "color: var(--color-text);";
 }
 
 @property --color-text-muted {
   syntax: "<color>";
   inherits: false;
   initial-value: #6c757d;
-  description: "Muted text color for secondary content.";
+  description: "Muted text color for secondary content, captions, and metadata.";
   category: "color.text";
   type: "color";
+  examples: "color: var(--color-text-muted);";
+}
+
+/* ============================================================================
+   Color - Brand
+   ============================================================================ */
+
+@property --color-primary {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #0055ff;
+  description: "Primary brand color for interactive elements, links, and accents.";
+  category: "color.brand";
+  type: "color";
+  aliases: "--color-action, --color-link";
+  examples: "color: var(--color-primary); border-color: var(--color-primary);";
+}
+
+/* ============================================================================
+   Color - Semantic
+   ============================================================================ */
+
+@property --color-border {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #e9ecef;
+  description: "Default border color for cards, dividers, and inputs.";
+  category: "color.semantic";
+  type: "color";
+  examples: "border: 1px solid var(--color-border);";
+}
+
+@property --color-danger {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #dc3545;
+  description: "Danger/error color for destructive actions and error states.";
+  category: "color.semantic";
+  type: "color";
+  examples: "color: var(--color-danger);";
+}
+
+@property --color-warning {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #ffc107;
+  description: "Warning color for deprecation notices and caution states.";
+  category: "color.semantic";
+  type: "color";
+  examples: "background: var(--color-warning);";
+}
+
+/* ============================================================================
+   Typography - Font Families
+   ============================================================================ */
+
+@property --font-sans {
+  syntax: "*";
+  inherits: true;
+  initial-value: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  description: "Primary sans-serif font stack for body text and UI.";
+  category: "typography.family";
+  type: "font";
+  examples: "font-family: var(--font-sans);";
+}
+
+@property --font-mono {
+  syntax: "*";
+  inherits: true;
+  initial-value: ui-monospace, 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  description: "Monospace font stack for code, token names, and technical content.";
+  category: "typography.family";
+  type: "font";
+  examples: "font-family: var(--font-mono);";
+}
+
+/* ============================================================================
+   Typography - Font Sizes
+   ============================================================================ */
+
+@property --font-size-xs {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0.75rem;
+  description: "Extra small text for metadata and fine print.";
+  category: "typography.size";
+  type: "size";
+  examples: "font-size: var(--font-size-xs);";
+}
+
+@property --font-size-sm {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0.875rem;
+  description: "Small text for descriptions and secondary content.";
+  category: "typography.size";
+  type: "size";
+  examples: "font-size: var(--font-size-sm);";
+}
+
+@property --font-size-base {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 1rem;
+  description: "Base text size for body content.";
+  category: "typography.size";
+  type: "size";
+  examples: "font-size: var(--font-size-base);";
+}
+
+@property --font-size-lg {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 1.25rem;
+  description: "Large text for sidebar headings.";
+  category: "typography.size";
+  type: "size";
+  examples: "font-size: var(--font-size-lg);";
+}
+
+@property --font-size-xl {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 1.5rem;
+  description: "Extra large text for section headings.";
+  category: "typography.size";
+  type: "size";
+  examples: "font-size: var(--font-size-xl);";
+}
+
+/* ============================================================================
+   Spacing
+   ============================================================================ */
+
+@property --space-1 {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0.125rem;
+  description: "Minimal spacing for tight padding.";
+  category: "spacing";
+  type: "size";
+  examples: "padding: var(--space-1);";
+}
+
+@property --space-2 {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0.25rem;
+  description: "Extra small spacing for inline elements.";
+  category: "spacing";
+  type: "size";
+  examples: "padding: var(--space-2); margin-top: var(--space-2);";
+}
+
+@property --space-3 {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0.5rem;
+  description: "Small spacing for compact layouts.";
+  category: "spacing";
+  type: "size";
+  examples: "padding: var(--space-3); gap: var(--space-3);";
 }
 
 @property --space-4 {
   syntax: "<length>";
   inherits: false;
-  initial-value: 1rem;
-  description: "Base spacing unit (16px).";
+  initial-value: 0.75rem;
+  description: "Medium-small spacing for card content.";
   category: "spacing";
   type: "size";
+  examples: "padding: var(--space-4); margin-bottom: var(--space-4);";
+}
+
+@property --space-5 {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 1rem;
+  description: "Base spacing unit.";
+  category: "spacing";
+  type: "size";
+  examples: "padding: var(--space-5); gap: var(--space-5);";
+}
+
+@property --space-6 {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 1.25rem;
+  description: "Medium spacing for card padding.";
+  category: "spacing";
+  type: "size";
+  examples: "padding: var(--space-6);";
+}
+
+@property --space-7 {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 1.5rem;
+  description: "Medium-large spacing for section gaps.";
+  category: "spacing";
+  type: "size";
+  examples: "gap: var(--space-7); margin-bottom: var(--space-7);";
 }
 
 @property --space-8 {
   syntax: "<length>";
   inherits: false;
   initial-value: 2rem;
-  description: "Double spacing unit (32px).";
+  description: "Large spacing for major sections.";
   category: "spacing";
   type: "size";
+  examples: "padding: var(--space-8); margin-bottom: var(--space-8);";
 }
 
+@property --space-9 {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 3rem;
+  description: "Extra large spacing for category separations.";
+  category: "spacing";
+  type: "size";
+  examples: "margin-bottom: var(--space-9); padding: var(--space-9);";
+}
+
+/* ============================================================================
+   Border Radius
+   ============================================================================ */
+
+@property --radius-sm {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 2px;
+  description: "Small border radius for inline code and subtle rounding.";
+  category: "radius";
+  type: "size";
+  examples: "border-radius: var(--radius-sm);";
+}
+
+@property --radius-md {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 4px;
+  description: "Medium border radius for badges and buttons.";
+  category: "radius";
+  type: "size";
+  examples: "border-radius: var(--radius-md);";
+}
+
+@property --radius-lg {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 8px;
+  description: "Large border radius for cards and containers.";
+  category: "radius";
+  type: "size";
+  examples: "border-radius: var(--radius-lg);";
+}
+
+@property --radius-full {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 999px;
+  description: "Full border radius for pills and circular elements.";
+  category: "radius";
+  type: "size";
+  examples: "border-radius: var(--radius-full);";
+}
+
+/* ============================================================================
+   Effects
+   ============================================================================ */
+
+@property --shadow-sm {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 1px 3px rgba(0,0,0,0.1);
+  description: "Subtle shadow for cards and elevated elements.";
+  category: "effects";
+  type: "shadow";
+  examples: "box-shadow: var(--shadow-sm);";
+}
+
+/* ============================================================================
+   Layout
+   ============================================================================ */
+
+@property --sidebar-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 280px;
+  description: "Width of the sidebar navigation.";
+  category: "layout";
+  type: "size";
+  examples: "width: var(--sidebar-width);";
+}
+
+@property --content-max-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 1200px;
+  description: "Maximum width of the main content area.";
+  category: "layout";
+  type: "size";
+  examples: "max-width: var(--content-max-width);";
+}
+
+@property --card-min-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 320px;
+  description: "Minimum width for token cards in the grid.";
+  category: "layout";
+  type: "size";
+  examples: "grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr));";
+}
+
+@property --swatch-size {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 24px;
+  description: "Size of color swatch indicators.";
+  category: "layout";
+  type: "size";
+  examples: "width: var(--swatch-size); height: var(--swatch-size);";
+}
+
+/* ============================================================================
+   Line Height
+   ============================================================================ */
+
+@property --line-height-base {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1.6;
+  description: "Base line height for body text.";
+  category: "typography.lineHeight";
+  type: "number";
+  examples: "line-height: var(--line-height-base);";
+}
+
+/* ============================================================================
+   Deprecated Tokens (for demo purposes)
+   ============================================================================ */
+
+@property --color-accent {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #6366f1;
+  description: "Legacy accent color. Use --color-primary instead.";
+  category: "color.brand";
+  type: "color";
+  deprecated: true;
+  aliases: "--color-primary";
+}
+
+/* Runtime values (browser uses these) */
 :root {
-  --space-4: 16px;
-  --space-8: 32px;
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-text: #1a1a2e;
+  --color-text-muted: #6c757d;
+  --color-primary: #0055ff;
+  --color-border: #e9ecef;
+  --color-danger: #dc3545;
+  --color-warning: #ffc107;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --space-1: 0.125rem;
+  --space-2: 0.25rem;
+  --space-3: 0.5rem;
+  --space-4: 0.75rem;
+  --space-5: 1rem;
+  --space-6: 1.25rem;
+  --space-7: 1.5rem;
+  --space-8: 2rem;
+  --space-9: 3rem;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-full: 999px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --sidebar-width: 280px;
+  --content-max-width: 1200px;
+  --card-min-width: 320px;
+  --swatch-size: 24px;
+  --line-height-base: 1.6;
 }
