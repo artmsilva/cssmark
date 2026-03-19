@@ -7,10 +7,11 @@
   <link rel="stylesheet" href="tokens.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-family: var(--font-sans, system-ui, sans-serif); }
+    html { font-family: var(--font-sans, system-ui, sans-serif); scroll-behavior: smooth; }
     body { background: var(--color-bg, #fff); color: var(--color-text, #1a1a2e); line-height: var(--line-height-base, 1.6); }
     a { color: var(--color-primary, #0055ff); }
     code { font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.9em; }
+    pre { font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.85em; line-height: 1.5; }
 
      
     token-docs {
@@ -38,16 +39,26 @@
       color: var(--color-text-muted, #6c757d);
       margin-bottom: var(--space-3, 0.5rem);
     }
-    token-docs > nav > span {
+    token-docs > nav > span.count {
       display: inline-block;
       color: var(--color-text-muted, #6c757d);
       font-size: var(--font-size-xs, 0.75rem);
       padding: var(--space-2, 0.25rem) var(--space-3, 0.5rem);
       background: var(--color-bg, #fff);
       border-radius: var(--radius-md, 4px);
-      margin-bottom: var(--space-7, 1.5rem);
+      margin-bottom: var(--space-5, 1rem);
     }
-    token-docs > nav ul { list-style: none; }
+    token-docs > nav > .nav-section {
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted, #6c757d);
+      margin-bottom: var(--space-3, 0.5rem);
+      margin-top: var(--space-5, 1rem);
+    }
+    token-docs > nav > .nav-section:first-of-type { margin-top: 0; }
+    token-docs > nav ul { list-style: none; margin-bottom: var(--space-5, 1rem); }
     token-docs > nav li {
       display: flex;
       justify-content: space-between;
@@ -300,6 +311,128 @@
       border-radius: var(--radius-sm, 2px);
       color: var(--color-text-muted, #6c757d);
     }
+
+     
+    token-tutorial {
+      display: block;
+      margin-bottom: var(--space-9, 3rem);
+      padding: var(--space-8, 2rem);
+      background: linear-gradient(135deg, var(--color-bg-secondary, #f8f9fa) 0%, var(--color-bg, #fff) 100%);
+      border-radius: var(--radius-lg, 8px);
+      border: 1px solid var(--color-border, #e9ecef);
+    }
+    token-tutorial > h2 {
+      font-size: var(--font-size-xl, 1.5rem);
+      margin-bottom: var(--space-5, 1rem);
+      color: var(--color-primary, #0055ff);
+    }
+    token-tutorial > p {
+      margin-bottom: var(--space-5, 1rem);
+      color: var(--color-text-muted, #6c757d);
+    }
+    token-tutorial > h3 {
+      font-size: var(--font-size-base, 1rem);
+      margin: var(--space-6, 1.25rem) 0 var(--space-3, 0.5rem);
+      color: var(--color-text, #1a1a2e);
+    }
+    token-tutorial pre {
+      background: var(--color-text, #1a1a2e);
+      color: var(--color-bg, #fff);
+      padding: var(--space-5, 1rem);
+      border-radius: var(--radius-md, 4px);
+      overflow-x: auto;
+      margin-bottom: var(--space-5, 1rem);
+    }
+    token-tutorial pre code {
+      color: inherit;
+      font-size: var(--font-size-sm, 0.875rem);
+    }
+    token-tutorial .example-box {
+      background: var(--color-bg, #fff);
+      border: 1px solid var(--color-border, #e9ecef);
+      border-radius: var(--radius-md, 4px);
+      padding: var(--space-5, 1rem);
+      margin: var(--space-4, 0.75rem) 0;
+    }
+    token-tutorial .example-box-label {
+      font-size: var(--font-size-xs, 0.75rem);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-muted, #6c757d);
+      margin-bottom: var(--space-3, 0.5rem);
+    }
+    token-tutorial .color-demo {
+      display: flex;
+      gap: var(--space-4, 0.75rem);
+      flex-wrap: wrap;
+    }
+    token-tutorial .color-chip {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md, 4px);
+      border: 1px solid var(--color-border, #e9ecef);
+    }
+    token-tutorial .spacing-demo {
+      display: flex;
+      align-items: flex-end;
+      gap: var(--space-3, 0.5rem);
+    }
+    token-tutorial .spacing-bar {
+      background: var(--color-primary, #0055ff);
+      border-radius: var(--radius-sm, 2px);
+    }
+    token-tutorial .button-demo {
+      display: flex;
+      gap: var(--space-4, 0.75rem);
+      flex-wrap: wrap;
+    }
+    token-tutorial .demo-button {
+      padding: var(--space-3, 0.5rem) var(--space-5, 1rem);
+      border-radius: var(--radius-md, 4px);
+      border: none;
+      font-family: inherit;
+      font-size: var(--font-size-sm, 0.875rem);
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    token-tutorial .demo-button:hover {
+      transform: translateY(-1px);
+    }
+    token-tutorial .demo-button.primary {
+      background: var(--color-primary, #0055ff);
+      color: white;
+    }
+    token-tutorial .demo-button.secondary {
+      background: var(--color-bg-secondary, #f8f9fa);
+      color: var(--color-text, #1a1a2e);
+      border: 1px solid var(--color-border, #e9ecef);
+    }
+
+     
+    token-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-4, 0.75rem);
+      padding: var(--space-6, 1.25rem) 0;
+      margin-top: var(--space-9, 3rem);
+      border-top: 1px solid var(--color-border, #e9ecef);
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-text-muted, #6c757d);
+    }
+    token-footer a {
+      color: var(--color-text-muted, #6c757d);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2, 0.25rem);
+    }
+    token-footer a:hover { color: var(--color-primary, #0055ff); }
+    token-footer svg {
+      width: 16px;
+      height: 16px;
+    }
   </style>
 </head>
 <body>
@@ -308,7 +441,14 @@
   <nav>
     <h1>cssmark</h1>
     <p>Design Tokens</p>
-    <span>35 tokens</span>
+    <span class="count">35 tokens</span>
+    
+    <div class="nav-section">Getting Started</div>
+    <ul>
+      <li><a href="#tutorial">Tutorial</a></li>
+    </ul>
+    
+    <div class="nav-section">Categories</div>
     <ul>
       
       <li><a href="#color.background">color.background</a> <span>2</span></li>
@@ -337,42 +477,74 @@
   </nav>
 
   <main>
+    <token-tutorial id="tutorial">
+      <h2>Getting Started with cssmark</h2>
+      <p>cssmark uses CSS <code>@property</code> rules as the single source of truth for design tokens. Define once, use everywhere.</p>
+
+      <h3>1. Define your tokens</h3>
+      <p>Create a CSS file with your design tokens using the <code>@property</code> syntax:</p>
+      <pre><code>@property --color-primary {
+  syntax: "&lt;color&gt;";
+  inherits: false;
+  initial-value: #0055ff;
+  description: "Primary brand color";
+  category: "color.brand";
+  type: "color";
+}</code></pre>
+
+      <h3>2. See them in action</h3>
+      <div class="example-box">
+        <div class="example-box-label">Colors from your tokens</div>
+        <div class="color-demo">
+          <div class="color-chip" style="background: var(--color-primary, #0055ff);" title="--color-primary"></div>
+          <div class="color-chip" style="background: var(--color-secondary, #6c757d);" title="--color-secondary"></div>
+          <div class="color-chip" style="background: var(--color-success, #28a745);" title="--color-success"></div>
+          <div class="color-chip" style="background: var(--color-warning, #ffc107);" title="--color-warning"></div>
+          <div class="color-chip" style="background: var(--color-error, #dc3545);" title="--color-error"></div>
+        </div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-box-label">Spacing scale</div>
+        <div class="spacing-demo">
+          <div class="spacing-bar" style="width: var(--space-2, 0.25rem); height: 24px;" title="--space-2"></div>
+          <div class="spacing-bar" style="width: var(--space-4, 0.75rem); height: 24px;" title="--space-4"></div>
+          <div class="spacing-bar" style="width: var(--space-6, 1.25rem); height: 24px;" title="--space-6"></div>
+          <div class="spacing-bar" style="width: var(--space-8, 2rem); height: 24px;" title="--space-8"></div>
+        </div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-box-label">Using tokens in components</div>
+        <div class="button-demo">
+          <button class="demo-button primary">Primary Action</button>
+          <button class="demo-button secondary">Secondary</button>
+        </div>
+      </div>
+
+      <h3>3. Generate documentation</h3>
+      <pre><code># Build JSON output
+cssmark build ./tokens/**/*.css --out tokens.json
+
+# Generate this documentation site
+cssmark docs ./tokens/**/*.css --out ./docs
+
+# Validate your tokens
+cssmark validate ./tokens/**/*.css</code></pre>
+
+      <h3>4. Use in your CSS</h3>
+      <pre><code>.button {
+  background: var(--color-primary);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  box-shadow: var(--shadow-sm);
+}</code></pre>
+    </token-tutorial>
+
     
     <token-category id="color.background">
       <h2>color.background</h2>
-      
-      <token-card>
-        <code class="token-name">--color-bg</code>
-        <div class="token-badges">
-          <span class="badge">color</span>
-          
-        </div>
-
-        
-        <token-preview-color>
-          <span class="swatch" style="background:#ffffff" aria-label="Color swatch for #ffffff"></span>
-          <code>#ffffff</code>
-        </token-preview-color>
-        
-
-        <p class="token-description">Primary background color for the main content area.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>background: var(--color-bg)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:9</small>
-        </footer>
-      </token-card>
       
       <token-card>
         <code class="token-name">--color-bg-secondary</code>
@@ -407,41 +579,43 @@
         </footer>
       </token-card>
       
-    </token-category>
-    
-    <token-category id="color.brand">
-      <h2>color.brand</h2>
-      
-      <token-card deprecated>
-        <code class="token-name">--color-accent</code>
+      <token-card>
+        <code class="token-name">--color-bg</code>
         <div class="token-badges">
           <span class="badge">color</span>
-          <span class="badge badge-deprecated">deprecated</span>
+          
         </div>
 
         
         <token-preview-color>
-          <span class="swatch" style="background:#6366f1" aria-label="Color swatch for #6366f1"></span>
-          <code>#6366f1</code>
+          <span class="swatch" style="background:#ffffff" aria-label="Color swatch for #ffffff"></span>
+          <code>#ffffff</code>
         </token-preview-color>
         
 
-        <p class="token-description">Legacy accent color. Use --color-primary instead.</p>
+        <p class="token-description">Primary background color for the main content area.</p>
 
         
-
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>background: var(--color-bg)</code></li></ul>
+          </details>
+        </token-examples>
         
-        <token-aliases>
-          <span>Aliases:</span>
-          <code>--color-primary</code>
-        </token-aliases>
+
         
 
         <footer class="token-meta">
           <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:394</small>
+          <small>./examples/tokens.css:9</small>
         </footer>
       </token-card>
+      
+    </token-category>
+    
+    <token-category id="color.brand">
+      <h2>color.brand</h2>
       
       <token-card>
         <code class="token-name">--color-primary</code>
@@ -478,6 +652,37 @@
         <footer class="token-meta">
           <code>&lt;color&gt;</code>
           <small>./examples/tokens.css:57</small>
+        </footer>
+      </token-card>
+      
+      <token-card deprecated>
+        <code class="token-name">--color-accent</code>
+        <div class="token-badges">
+          <span class="badge">color</span>
+          <span class="badge badge-deprecated">deprecated</span>
+        </div>
+
+        
+        <token-preview-color>
+          <span class="swatch" style="background:#6366f1" aria-label="Color swatch for #6366f1"></span>
+          <code>#6366f1</code>
+        </token-preview-color>
+        
+
+        <p class="token-description">Legacy accent color. Use --color-primary instead.</p>
+
+        
+
+        
+        <token-aliases>
+          <span>Aliases:</span>
+          <code>--color-primary</code>
+        </token-aliases>
+        
+
+        <footer class="token-meta">
+          <code>&lt;color&gt;</code>
+          <small>./examples/tokens.css:394</small>
         </footer>
       </token-card>
       
@@ -591,39 +796,6 @@
       <h2>color.text</h2>
       
       <token-card>
-        <code class="token-name">--color-text-muted</code>
-        <div class="token-badges">
-          <span class="badge">color</span>
-          
-        </div>
-
-        
-        <token-preview-color>
-          <span class="swatch" style="background:#6c757d" aria-label="Color swatch for #6c757d"></span>
-          <code>#6c757d</code>
-        </token-preview-color>
-        
-
-        <p class="token-description">Muted text color for secondary content, captions, and metadata.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>color: var(--color-text-muted)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:43</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
         <code class="token-name">--color-text</code>
         <div class="token-badges">
           <span class="badge">color</span>
@@ -653,6 +825,39 @@
         <footer class="token-meta">
           <code>&lt;color&gt;</code>
           <small>./examples/tokens.css:33</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--color-text-muted</code>
+        <div class="token-badges">
+          <span class="badge">color</span>
+          
+        </div>
+
+        
+        <token-preview-color>
+          <span class="swatch" style="background:#6c757d" aria-label="Color swatch for #6c757d"></span>
+          <code>#6c757d</code>
+        </token-preview-color>
+        
+
+        <p class="token-description">Muted text color for secondary content, captions, and metadata.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>color: var(--color-text-muted)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;color&gt;</code>
+          <small>./examples/tokens.css:43</small>
         </footer>
       </token-card>
       
@@ -699,7 +904,7 @@
       <h2>layout</h2>
       
       <token-card>
-        <code class="token-name">--sidebar-width</code>
+        <code class="token-name">--card-min-width</code>
         <div class="token-badges">
           <span class="badge">size</span>
           
@@ -707,17 +912,17 @@
 
         
         <token-preview-generic>
-          <code>280px</code>
+          <code>320px</code>
         </token-preview-generic>
         
 
-        <p class="token-description">Width of the sidebar navigation.</p>
+        <p class="token-description">Minimum width for token cards in the grid.</p>
 
         
         <token-examples>
           <details>
             <summary>Usage examples</summary>
-            <ul><li><code>width: var(--sidebar-width)</code></li></ul>
+            <ul><li><code>grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr))</code></li></ul>
           </details>
         </token-examples>
         
@@ -726,7 +931,7 @@
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:336</small>
+          <small>./examples/tokens.css:356</small>
         </footer>
       </token-card>
       
@@ -763,38 +968,6 @@
       </token-card>
       
       <token-card>
-        <code class="token-name">--card-min-width</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-generic>
-          <code>320px</code>
-        </token-preview-generic>
-        
-
-        <p class="token-description">Minimum width for token cards in the grid.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr))</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:356</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
         <code class="token-name">--content-max-width</code>
         <div class="token-badges">
           <span class="badge">size</span>
@@ -826,76 +999,42 @@
         </footer>
       </token-card>
       
+      <token-card>
+        <code class="token-name">--sidebar-width</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-generic>
+          <code>280px</code>
+        </token-preview-generic>
+        
+
+        <p class="token-description">Width of the sidebar navigation.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>width: var(--sidebar-width)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:336</small>
+        </footer>
+      </token-card>
+      
     </token-category>
     
     <token-category id="radius">
       <h2>radius</h2>
-      
-      <token-card>
-        <code class="token-name">--radius-lg</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-radius>
-          <span class="shape" style="border-radius:8px" aria-label="Border radius 8px"></span>
-          <code>8px</code>
-        </token-preview-radius>
-        
-
-        <p class="token-description">Large border radius for cards and containers.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>border-radius: var(--radius-lg)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:298</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code class="token-name">--radius-full</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-radius>
-          <span class="shape" style="border-radius:999px" aria-label="Border radius 999px"></span>
-          <code>999px</code>
-        </token-preview-radius>
-        
-
-        <p class="token-description">Full border radius for pills and circular elements.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>border-radius: var(--radius-full)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:308</small>
-        </footer>
-      </token-card>
       
       <token-card>
         <code class="token-name">--radius-sm</code>
@@ -931,6 +1070,39 @@
       </token-card>
       
       <token-card>
+        <code class="token-name">--radius-lg</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-radius>
+          <span class="shape" style="border-radius:8px" aria-label="Border radius 8px"></span>
+          <code>8px</code>
+        </token-preview-radius>
+        
+
+        <p class="token-description">Large border radius for cards and containers.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>border-radius: var(--radius-lg)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:298</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
         <code class="token-name">--radius-md</code>
         <div class="token-badges">
           <span class="badge">size</span>
@@ -960,6 +1132,39 @@
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
           <small>./examples/tokens.css:288</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--radius-full</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-radius>
+          <span class="shape" style="border-radius:999px" aria-label="Border radius 999px"></span>
+          <code>999px</code>
+        </token-preview-radius>
+        
+
+        <p class="token-description">Full border radius for pills and circular elements.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>border-radius: var(--radius-full)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:308</small>
         </footer>
       </token-card>
       
@@ -1002,39 +1207,6 @@
       </token-card>
       
       <token-card>
-        <code class="token-name">--space-6</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-spacing>
-          <span class="bar" style="width:1.25rem;height:1.25rem" aria-label="Spacing 1.25rem"></span>
-          <code>1.25rem</code>
-        </token-preview-spacing>
-        
-
-        <p class="token-description">Medium spacing for card padding.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>padding: var(--space-6)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:234</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
         <code class="token-name">--space-4</code>
         <div class="token-badges">
           <span class="badge">size</span>
@@ -1064,39 +1236,6 @@
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
           <small>./examples/tokens.css:214</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code class="token-name">--space-8</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-spacing>
-          <span class="bar" style="width:2rem;height:2rem" aria-label="Spacing 2rem"></span>
-          <code>2rem</code>
-        </token-preview-spacing>
-        
-
-        <p class="token-description">Large spacing for major sections.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>padding: var(--space-8)</code></li><li><code>margin-bottom: var(--space-8)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:254</small>
         </footer>
       </token-card>
       
@@ -1167,7 +1306,7 @@
       </token-card>
       
       <token-card>
-        <code class="token-name">--space-7</code>
+        <code class="token-name">--space-6</code>
         <div class="token-badges">
           <span class="badge">size</span>
           
@@ -1175,18 +1314,18 @@
 
         
         <token-preview-spacing>
-          <span class="bar" style="width:1.5rem;height:1.5rem" aria-label="Spacing 1.5rem"></span>
-          <code>1.5rem</code>
+          <span class="bar" style="width:1.25rem;height:1.25rem" aria-label="Spacing 1.25rem"></span>
+          <code>1.25rem</code>
         </token-preview-spacing>
         
 
-        <p class="token-description">Medium-large spacing for section gaps.</p>
+        <p class="token-description">Medium spacing for card padding.</p>
 
         
         <token-examples>
           <details>
             <summary>Usage examples</summary>
-            <ul><li><code>gap: var(--space-7)</code></li><li><code>margin-bottom: var(--space-7)</code></li></ul>
+            <ul><li><code>padding: var(--space-6)</code></li></ul>
           </details>
         </token-examples>
         
@@ -1195,7 +1334,40 @@
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:244</small>
+          <small>./examples/tokens.css:234</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--space-2</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-spacing>
+          <span class="bar" style="width:0.25rem;height:0.25rem" aria-label="Spacing 0.25rem"></span>
+          <code>0.25rem</code>
+        </token-preview-spacing>
+        
+
+        <p class="token-description">Extra small spacing for inline elements.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>padding: var(--space-2)</code></li><li><code>margin-top: var(--space-2)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:194</small>
         </footer>
       </token-card>
       
@@ -1233,7 +1405,7 @@
       </token-card>
       
       <token-card>
-        <code class="token-name">--space-2</code>
+        <code class="token-name">--space-7</code>
         <div class="token-badges">
           <span class="badge">size</span>
           
@@ -1241,18 +1413,18 @@
 
         
         <token-preview-spacing>
-          <span class="bar" style="width:0.25rem;height:0.25rem" aria-label="Spacing 0.25rem"></span>
-          <code>0.25rem</code>
+          <span class="bar" style="width:1.5rem;height:1.5rem" aria-label="Spacing 1.5rem"></span>
+          <code>1.5rem</code>
         </token-preview-spacing>
         
 
-        <p class="token-description">Extra small spacing for inline elements.</p>
+        <p class="token-description">Medium-large spacing for section gaps.</p>
 
         
         <token-examples>
           <details>
             <summary>Usage examples</summary>
-            <ul><li><code>padding: var(--space-2)</code></li><li><code>margin-top: var(--space-2)</code></li></ul>
+            <ul><li><code>gap: var(--space-7)</code></li><li><code>margin-bottom: var(--space-7)</code></li></ul>
           </details>
         </token-examples>
         
@@ -1261,7 +1433,40 @@
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:194</small>
+          <small>./examples/tokens.css:244</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--space-8</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-spacing>
+          <span class="bar" style="width:2rem;height:2rem" aria-label="Spacing 2rem"></span>
+          <code>2rem</code>
+        </token-preview-spacing>
+        
+
+        <p class="token-description">Large spacing for major sections.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>padding: var(--space-8)</code></li><li><code>margin-bottom: var(--space-8)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:254</small>
         </footer>
       </token-card>
       
@@ -1379,7 +1584,7 @@
       <h2>typography.size</h2>
       
       <token-card>
-        <code class="token-name">--font-size-lg</code>
+        <code class="token-name">--font-size-sm</code>
         <div class="token-badges">
           <span class="badge">size</span>
           
@@ -1387,18 +1592,18 @@
 
         
         <token-preview-fontsize>
-          <span class="sample" style="font-size:1.25rem">Aa</span>
-          <code>1.25rem</code>
+          <span class="sample" style="font-size:0.875rem">Aa</span>
+          <code>0.875rem</code>
         </token-preview-fontsize>
         
 
-        <p class="token-description">Large text for sidebar headings.</p>
+        <p class="token-description">Small text for descriptions and secondary content.</p>
 
         
         <token-examples>
           <details>
             <summary>Usage examples</summary>
-            <ul><li><code>font-size: var(--font-size-lg)</code></li></ul>
+            <ul><li><code>font-size: var(--font-size-sm)</code></li></ul>
           </details>
         </token-examples>
         
@@ -1407,7 +1612,7 @@
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:160</small>
+          <small>./examples/tokens.css:140</small>
         </footer>
       </token-card>
       
@@ -1478,39 +1683,6 @@
       </token-card>
       
       <token-card>
-        <code class="token-name">--font-size-sm</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-fontsize>
-          <span class="sample" style="font-size:0.875rem">Aa</span>
-          <code>0.875rem</code>
-        </token-preview-fontsize>
-        
-
-        <p class="token-description">Small text for descriptions and secondary content.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>font-size: var(--font-size-sm)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:140</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
         <code class="token-name">--font-size-base</code>
         <div class="token-badges">
           <span class="badge">size</span>
@@ -1543,8 +1715,51 @@
         </footer>
       </token-card>
       
+      <token-card>
+        <code class="token-name">--font-size-lg</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-fontsize>
+          <span class="sample" style="font-size:1.25rem">Aa</span>
+          <code>1.25rem</code>
+        </token-preview-fontsize>
+        
+
+        <p class="token-description">Large text for sidebar headings.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>font-size: var(--font-size-lg)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:160</small>
+        </footer>
+      </token-card>
+      
     </token-category>
     
+
+    <token-footer>
+      <span>Generated by <a href="https://github.com/artmsilva/cssmark">cssmark</a></span>
+      <a href="https://github.com/artmsilva/cssmark" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        View on GitHub
+      </a>
+    </token-footer>
   </main>
 </token-docs>
 
