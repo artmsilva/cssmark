@@ -28,8 +28,6 @@ Add to your package.json scripts:
 }
 ```
 
-See [docs/NPM_USAGE.md](./docs/NPM_USAGE.md) for integration examples with Vite, Webpack, Next.js, and more.
-
 ### Download Binary
 
 Download from [releases](https://github.com/artmsilva/cssmark/releases).
@@ -69,6 +67,79 @@ Tokens are authored as standard `@property` rules with additional descriptors fo
 }
 ```
 
+### var() References
+
+Tokens can reference other tokens using `var()`. References are resolved to literal values in JSON output, while CSS output preserves the original `var()` references.
+
+```css
+@property --color-blue-500 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #0055ff;
+}
+
+@property --color-primary {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: var(--color-blue-500);
+}
+```
+
+JSON output resolves the chain:
+
+```json
+{ "name": "--color-primary", "initialValue": "#0055ff" }
+```
+
+CSS output preserves the reference:
+
+```css
+:root {
+  --color-blue-500: #0055ff;
+  --color-primary: var(--color-blue-500);
+}
+```
+
+Chained references (`var(--a)` → `var(--b)` → `#fff`) are fully resolved. Circular and unknown references are kept as-is.
+
+### Mode Descriptors
+
+Define alternative values for different modes using `mode-*` descriptors. These generate `:root[data-color-mode='...']` override blocks in CSS output.
+
+```css
+@property --color-bg {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #ffffff;
+  mode-dark: #1a1a2e;
+  mode-high-contrast: #000000;
+}
+```
+
+CSS output:
+
+```css
+:root {
+  --color-bg: #ffffff;
+}
+
+:root[data-color-mode='dark'] {
+  --color-bg: #1a1a2e;
+}
+
+:root[data-color-mode='high-contrast'] {
+  --color-bg: #000000;
+}
+```
+
+JSON output includes modes as a map:
+
+```json
+{ "name": "--color-bg", "initialValue": "#ffffff", "modes": { "dark": "#1a1a2e", "high-contrast": "#000000" } }
+```
+
+Mode values also support `var()` references, which are resolved the same way.
+
 ## Commands
 
 ### Build (JSON Export)
@@ -105,6 +176,7 @@ cssmark diff tokens.old.json tokens.new.json
 | aliases      | string  | no       | Comma-separated list of related props    |
 | deprecated   | boolean | no       | Marks token deprecated                   |
 | examples     | string  | no       | Semicolon-separated CSS usage examples   |
+| mode-*       | string  | no       | Override value for a named mode           |
 
 ## Output Formats
 
@@ -117,6 +189,9 @@ cssmark diff tokens.old.json tokens.new.json
     "syntax": "<color>",
     "inherits": false,
     "initialValue": "#0055ff",
+    "modes": {
+      "dark": "#66aaff"
+    },
     "description": "Primary brand color for interactive elements.",
     "category": "color.brand",
     "type": "color",
@@ -126,6 +201,8 @@ cssmark diff tokens.old.json tokens.new.json
   }
 ]
 ```
+
+When a token uses `var()` references, `initialValue` contains the resolved literal value. The `modes` field is omitted when no `mode-*` descriptors are defined.
 
 ### Static Documentation Site
 

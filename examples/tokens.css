@@ -3,47 +3,145 @@
  */
 
 /* ============================================================================
-   Color - Background
+   Color - Primitives
+   Primitive color values that semantic tokens reference via var().
+   ============================================================================ */
+
+@property --color-white {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #ffffff;
+  description: "Pure white primitive.";
+  category: "color.primitives";
+  type: "color";
+}
+
+@property --color-gray-50 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #f8f9fa;
+  description: "Lightest gray for subtle backgrounds.";
+  category: "color.primitives";
+  type: "color";
+}
+
+@property --color-gray-500 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #6c757d;
+  description: "Mid gray for secondary text.";
+  category: "color.primitives";
+  type: "color";
+}
+
+@property --color-gray-200 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #e9ecef;
+  description: "Light gray for borders and dividers.";
+  category: "color.primitives";
+  type: "color";
+}
+
+@property --color-navy-900 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #1a1a2e;
+  description: "Deep navy for primary text.";
+  category: "color.primitives";
+  type: "color";
+}
+
+@property --color-navy-800 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #2d2d44;
+  description: "Dark navy for dark-mode secondary backgrounds.";
+  category: "color.primitives";
+  type: "color";
+}
+
+@property --color-blue-500 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #0055ff;
+  description: "Core blue for interactive elements.";
+  category: "color.primitives";
+  type: "color";
+}
+
+@property --color-blue-400 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #66aaff;
+  description: "Lighter blue for dark-mode interactive elements.";
+  category: "color.primitives";
+  type: "color";
+}
+
+@property --color-red-500 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #dc3545;
+  description: "Red for error and danger states.";
+  category: "color.primitives";
+  type: "color";
+}
+
+@property --color-yellow-500 {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #ffc107;
+  description: "Yellow for warnings and caution states.";
+  category: "color.primitives";
+  type: "color";
+}
+
+/* ============================================================================
+   Color - Background (semantic, references primitives)
    ============================================================================ */
 
 @property --color-bg {
   syntax: "<color>";
   inherits: false;
-  initial-value: #ffffff;
+  initial-value: var(--color-white);
   description: "Primary background color for the main content area.";
   category: "color.background";
   type: "color";
+  mode-dark: var(--color-navy-900);
   examples: "background: var(--color-bg);";
 }
 
 @property --color-bg-secondary {
   syntax: "<color>";
   inherits: false;
-  initial-value: #f8f9fa;
+  initial-value: var(--color-gray-50);
   description: "Secondary background for sidebar, code blocks, and cards.";
   category: "color.background";
   type: "color";
+  mode-dark: var(--color-navy-800);
   examples: "background: var(--color-bg-secondary);";
 }
 
 /* ============================================================================
-   Color - Text
+   Color - Text (semantic, references primitives)
    ============================================================================ */
 
 @property --color-text {
   syntax: "<color>";
   inherits: false;
-  initial-value: #1a1a2e;
+  initial-value: var(--color-navy-900);
   description: "Primary text color for body content.";
   category: "color.text";
   type: "color";
+  mode-dark: var(--color-gray-50);
   examples: "color: var(--color-text);";
 }
 
 @property --color-text-muted {
   syntax: "<color>";
   inherits: false;
-  initial-value: #6c757d;
+  initial-value: var(--color-gray-500);
   description: "Muted text color for secondary content, captions, and metadata.";
   category: "color.text";
   type: "color";
@@ -51,17 +149,18 @@
 }
 
 /* ============================================================================
-   Color - Brand
+   Color - Brand (semantic, references primitives)
    ============================================================================ */
 
 @property --color-primary {
   syntax: "<color>";
   inherits: false;
-  initial-value: #0055ff;
+  initial-value: var(--color-blue-500);
   description: "Primary brand color for interactive elements, links, and accents.";
   category: "color.brand";
   type: "color";
   aliases: "--color-action, --color-link";
+  mode-dark: var(--color-blue-400);
   examples: "color: var(--color-primary); border-color: var(--color-primary);";
 }
 
@@ -72,17 +171,18 @@
 @property --color-border {
   syntax: "<color>";
   inherits: false;
-  initial-value: #e9ecef;
+  initial-value: var(--color-gray-200);
   description: "Default border color for cards, dividers, and inputs.";
   category: "color.semantic";
   type: "color";
+  mode-dark: var(--color-gray-500);
   examples: "border: 1px solid var(--color-border);";
 }
 
 @property --color-danger {
   syntax: "<color>";
   inherits: false;
-  initial-value: #dc3545;
+  initial-value: var(--color-red-500);
   description: "Danger/error color for destructive actions and error states.";
   category: "color.semantic";
   type: "color";
@@ -92,7 +192,7 @@
 @property --color-warning {
   syntax: "<color>";
   inherits: false;
-  initial-value: #ffc107;
+  initial-value: var(--color-yellow-500);
   description: "Warning color for deprecation notices and caution states.";
   category: "color.semantic";
   type: "color";
@@ -401,5 +501,3 @@
   deprecated: true;
   aliases: "--color-primary";
 }
-
-
