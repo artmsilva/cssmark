@@ -12,6 +12,7 @@ var (
 	descriptorRe    = regexp.MustCompile(`([\w-]+)\s*:\s*("[^"]*"|[^;]+);?`)
 	rootBlockRe     = regexp.MustCompile(`:root\s*\{([^}]+)\}`)
 	customPropRe    = regexp.MustCompile(`(--[\w-]+)\s*:\s*([^;]+);`)
+	varRefRe        = regexp.MustCompile(`var\((--[\w-]+)\)`)
 )
 
 // ParseFiles parses multiple CSS files and returns all tokens
@@ -84,7 +85,66 @@ func Parse(css string, filename string) ([]Token, error) {
 		result = append(result, *token)
 	}
 
+	// Resolve var() references in initial values
+	resolveVarReferences(result)
+
 	return result, nil
+}
+
+// resolveVarReferences resolves var(--X) references in InitialValue fields.
+// When a token's initial-value contains var(--other-token), the reference is
+// chased through the token graph until a literal value is found.
+// The original unresolved value is preserved in RawInitialValue for CSS output.
+func resolveVarReferences(tokens []Token) {
+	byName := make(map[string]*Token)
+	for i := range tokens {
+		byName[tokens[i].Name] = &tokens[i]
+	}
+
+	for i := range tokens {
+		if varRefRe.MatchString(tokens[i].InitialValue) {
+			tokens[i].RawInitialValue = tokens[i].InitialValue
+			tokens[i].InitialValue = resolveVarValue(tokens[i].InitialValue, byName, nil)
+		}
+
+		for modeName, modeValue := range tokens[i].Modes {
+			if varRefRe.MatchString(modeValue) {
+				if tokens[i].RawModes == nil {
+					tokens[i].RawModes = make(map[string]string)
+				}
+				tokens[i].RawModes[modeName] = modeValue
+				tokens[i].Modes[modeName] = resolveVarValue(modeValue, byName, nil)
+			}
+		}
+	}
+}
+
+func resolveVarValue(value string, byName map[string]*Token, seen map[string]bool) string {
+	if seen == nil {
+		seen = make(map[string]bool)
+	}
+
+	return varRefRe.ReplaceAllStringFunc(value, func(match string) string {
+		sub := varRefRe.FindStringSubmatch(match)
+		name := sub[1]
+
+		if seen[name] {
+			return match // circular reference — keep as-is
+		}
+		seen[name] = true
+
+		target, exists := byName[name]
+		if !exists {
+			return match // unknown var — keep as-is
+		}
+
+		resolved := target.InitialValue
+		if varRefRe.MatchString(resolved) {
+			resolved = resolveVarValue(resolved, byName, seen)
+		}
+
+		return resolved
+	})
 }
 
 func parseDescriptors(body string, token *Token) {
@@ -126,6 +186,17 @@ func parseDescriptors(body string, token *Token) {
 				}
 			}
 			token.Examples = cleaned
+		default:
+			// mode-<name> descriptors (e.g., mode-dark, mode-high-contrast)
+			if strings.HasPrefix(key, "mode-") {
+				modeName := strings.TrimPrefix(key, "mode-")
+				if modeName != "" {
+					if token.Modes == nil {
+						token.Modes = make(map[string]string)
+					}
+					token.Modes[modeName] = value
+				}
+			}
 		}
 	}
 }

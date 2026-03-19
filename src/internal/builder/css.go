@@ -56,15 +56,56 @@ func ToCSS(tokens []parser.Token) string {
 		})
 
 		for _, t := range catTokens {
+			// Use the original var() reference if available, resolved literal otherwise
+			value := t.InitialValue
+			if t.RawInitialValue != "" {
+				value = t.RawInitialValue
+			}
+
 			if t.Deprecated {
-				sb.WriteString(fmt.Sprintf("  /* @deprecated */ %s: %s;\n", t.Name, t.InitialValue))
+				sb.WriteString(fmt.Sprintf("  /* @deprecated */ %s: %s;\n", t.Name, value))
 			} else {
-				sb.WriteString(fmt.Sprintf("  %s: %s;\n", t.Name, t.InitialValue))
+				sb.WriteString(fmt.Sprintf("  %s: %s;\n", t.Name, value))
 			}
 		}
 	}
 
 	sb.WriteString("}\n")
+
+	// Collect mode overrides across all tokens
+	modeTokens := make(map[string][]parser.Token) // modeName → tokens with that mode
+	var modeOrder []string
+
+	for _, t := range tokens {
+		for modeName := range t.Modes {
+			if _, exists := modeTokens[modeName]; !exists {
+				modeOrder = append(modeOrder, modeName)
+			}
+			modeTokens[modeName] = append(modeTokens[modeName], t)
+		}
+	}
+
+	sort.Strings(modeOrder)
+
+	for _, modeName := range modeOrder {
+		sb.WriteString(fmt.Sprintf("\n:root[data-color-mode='%s'] {\n", modeName))
+
+		mTokens := modeTokens[modeName]
+		sort.Slice(mTokens, func(i, j int) bool {
+			return mTokens[i].Name < mTokens[j].Name
+		})
+
+		for _, t := range mTokens {
+			// Use the original var() reference if available
+			value := t.Modes[modeName]
+			if raw, exists := t.RawModes[modeName]; exists {
+				value = raw
+			}
+			sb.WriteString(fmt.Sprintf("  %s: %s;\n", t.Name, value))
+		}
+
+		sb.WriteString("}\n")
+	}
 
 	return sb.String()
 }
