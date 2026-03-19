@@ -5,14 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Design Tokens — cssmark</title>
   <link rel="stylesheet" href="tokens.css">
-  <style>
-    /* Base reset - minimal, works without JS */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-family: var(--font-sans, system-ui, sans-serif); }
-    body { background: var(--color-bg, #fff); color: var(--color-text, #1a1a2e); line-height: var(--line-height-base, 1.6); }
-    a { color: var(--color-primary, #0055ff); }
-    code { font-family: var(--font-mono, ui-monospace, monospace); }
-  </style>
 </head>
 <body>
 
@@ -102,423 +94,504 @@
   </main>
 </token-docs>
 
-<script>
-// HTML Web Components - Progressive Enhancement
-// These enhance existing HTML, they don't replace it
+<script type="module">
+// Adopted Stylesheets - shared CSSStyleSheet instances
+// More efficient than duplicating <style> elements per component
 
+// Base reset sheet - shared across document
+const baseSheet = new CSSStyleSheet();
+baseSheet.replaceSync(`
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-family: var(--font-sans, system-ui, sans-serif); }
+  body { background: var(--color-bg, #fff); color: var(--color-text, #1a1a2e); line-height: var(--line-height-base, 1.6); }
+  a { color: var(--color-primary, #0055ff); }
+  code { font-family: var(--font-mono, ui-monospace, monospace); }
+`);
+document.adoptedStyleSheets = [baseSheet];
+
+// Shared component sheets - created once, adopted by all instances
+const sheets = {
+  docs: new CSSStyleSheet(),
+  category: new CSSStyleSheet(),
+  card: new CSSStyleSheet(),
+  previewColor: new CSSStyleSheet(),
+  previewSpacing: new CSSStyleSheet(),
+  previewRadius: new CSSStyleSheet(),
+  previewFont: new CSSStyleSheet(),
+  previewFontsize: new CSSStyleSheet(),
+  previewShadow: new CSSStyleSheet(),
+  previewGeneric: new CSSStyleSheet(),
+  examples: new CSSStyleSheet(),
+  aliases: new CSSStyleSheet(),
+};
+
+sheets.docs.replaceSync(`
+  :host {
+    display: grid;
+    grid-template-columns: var(--sidebar-width, 280px) 1fr;
+    min-height: 100vh;
+  }
+  nav {
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-right: 1px solid var(--color-border, #e9ecef);
+    padding: var(--space-8, 2rem);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  nav h1 {
+    font-size: var(--font-size-xl, 1.5rem);
+    font-weight: 700;
+    color: var(--color-primary, #0055ff);
+    margin-bottom: var(--space-1, 0.125rem);
+  }
+  nav > p {
+    font-size: var(--font-size-sm, 0.875rem);
+    color: var(--color-text-muted, #6c757d);
+    margin-bottom: var(--space-3, 0.5rem);
+  }
+  nav > span {
+    display: inline-block;
+    color: var(--color-text-muted, #6c757d);
+    font-size: var(--font-size-xs, 0.75rem);
+    padding: var(--space-2, 0.25rem) var(--space-3, 0.5rem);
+    background: var(--color-bg, #fff);
+    border-radius: var(--radius-md, 4px);
+    margin-bottom: var(--space-7, 1.5rem);
+  }
+  ul { list-style: none; }
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3, 0.5rem) 0;
+    border-bottom: 1px solid var(--color-border, #e9ecef);
+  }
+  li:last-child { border-bottom: none; }
+  a {
+    color: var(--color-text, #1a1a2e);
+    text-decoration: none;
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+  a:hover { color: var(--color-primary, #0055ff); }
+  li > span {
+    background: var(--color-bg, #fff);
+    padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+    border-radius: var(--radius-full, 999px);
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--color-text-muted, #6c757d);
+  }
+  main {
+    padding: var(--space-8, 2rem) var(--space-9, 3rem);
+    max-width: var(--content-max-width, 1200px);
+  }
+  @media (max-width: 768px) {
+    :host { grid-template-columns: 1fr; }
+    nav { position: static; height: auto; padding: var(--space-6, 1.25rem); }
+    main { padding: var(--space-6, 1.25rem); }
+  }
+`);
+
+sheets.category.replaceSync(`
+  :host {
+    display: block;
+    margin-bottom: var(--space-9, 3rem);
+  }
+  h2 {
+    font-size: var(--font-size-xl, 1.5rem);
+    margin-bottom: var(--space-7, 1.5rem);
+    padding-bottom: var(--space-3, 0.5rem);
+    border-bottom: 2px solid var(--color-primary, #0055ff);
+    display: inline-block;
+  }
+`);
+
+sheets.card.replaceSync(`
+  :host {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg, #fff);
+    border: 1px solid var(--color-border, #e9ecef);
+    border-radius: var(--radius-lg, 8px);
+    padding: var(--space-6, 1.25rem);
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1));
+    margin-bottom: var(--space-5, 1rem);
+  }
+  :host([deprecated]) {
+    opacity: 0.7;
+    border-color: var(--color-warning, #ffc107);
+    background: linear-gradient(135deg, var(--color-bg, #fff) 0%, rgba(255,193,7,0.05) 100%);
+  }
+  ::slotted(code[slot="name"]) {
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+    color: var(--color-primary, #0055ff);
+    word-break: break-all;
+  }
+  ::slotted(span[slot="type"]) {
+    display: inline-block;
+    background: var(--color-bg-secondary, #f8f9fa);
+    padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+    border-radius: var(--radius-md, 4px);
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--color-text-muted, #6c757d);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: var(--space-2, 0.25rem) var(--space-2, 0.25rem) var(--space-2, 0.25rem) 0;
+  }
+  ::slotted(span[slot="deprecated"]) {
+    display: inline-block;
+    background: var(--color-warning, #ffc107);
+    color: #000;
+    padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+    border-radius: var(--radius-md, 4px);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  ::slotted(p[slot="description"]) {
+    color: var(--color-text-muted, #6c757d);
+    font-size: var(--font-size-sm, 0.875rem);
+    margin: var(--space-4, 0.75rem) 0;
+    line-height: 1.5;
+  }
+  ::slotted(footer[slot="meta"]) {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--color-text-muted, #6c757d);
+    padding-top: var(--space-4, 0.75rem);
+    border-top: 1px solid var(--color-border, #e9ecef);
+    margin-top: auto;
+  }
+`);
+
+sheets.previewColor.replaceSync(`
+  :host {
+    display: flex;
+    gap: var(--space-5, 1rem);
+    align-items: center;
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-md, 4px);
+    border: 1px solid var(--color-border, #e9ecef);
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+  }
+  code {
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 500;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.previewSpacing.replaceSync(`
+  :host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3, 0.5rem);
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span {
+    background: var(--color-primary, #0055ff);
+    border-radius: var(--radius-sm, 2px);
+    max-width: 100%;
+    min-width: 4px;
+    min-height: 4px;
+  }
+  code {
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 500;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.previewRadius.replaceSync(`
+  :host {
+    display: flex;
+    gap: var(--space-5, 1rem);
+    align-items: center;
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span {
+    width: 64px;
+    height: 64px;
+    background: var(--color-primary, #0055ff);
+    opacity: 0.8;
+    flex-shrink: 0;
+  }
+  code {
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 500;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.previewFont.replaceSync(`
+  :host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 0.25rem);
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span { font-size: var(--font-size-xl, 1.5rem); }
+  small {
+    font-size: var(--font-size-sm, 0.875rem);
+    color: var(--color-text-muted, #6c757d);
+  }
+`);
+
+sheets.previewFontsize.replaceSync(`
+  :host {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-5, 1rem);
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span { font-weight: 600; line-height: 1; }
+  code {
+    font-size: var(--font-size-sm, 0.875rem);
+    color: var(--color-text-muted, #6c757d);
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.previewShadow.replaceSync(`
+  :host {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-8, 2rem) var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span {
+    width: 120px;
+    height: 60px;
+    background: var(--color-bg, #fff);
+    border-radius: var(--radius-md, 4px);
+  }
+`);
+
+sheets.previewGeneric.replaceSync(`
+  :host {
+    display: block;
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  code {
+    font-size: var(--font-size-sm, 0.875rem);
+    word-break: break-all;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.examples.replaceSync(`
+  :host {
+    display: block;
+    font-size: var(--font-size-sm, 0.875rem);
+    margin-bottom: var(--space-4, 0.75rem);
+  }
+  details {
+    border: 1px solid var(--color-border, #e9ecef);
+    border-radius: var(--radius-md, 4px);
+    overflow: hidden;
+  }
+  summary {
+    padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: var(--font-size-xs, 0.75rem);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted, #6c757d);
+  }
+  summary:hover { background: var(--color-border, #e9ecef); }
+  ul { list-style: none; padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem); }
+  li { padding: var(--space-2, 0.25rem) 0; }
+  li:not(:last-child) { border-bottom: 1px solid var(--color-border, #e9ecef); }
+  code {
+    font-size: var(--font-size-xs, 0.75rem);
+    word-break: break-all;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.aliases.replaceSync(`
+  :host {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2, 0.25rem);
+    font-size: var(--font-size-sm, 0.875rem);
+    margin-bottom: var(--space-4, 0.75rem);
+  }
+  span {
+    color: var(--color-text-muted, #6c757d);
+    font-size: var(--font-size-xs, 0.75rem);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  code {
+    font-size: var(--font-size-xs, 0.75rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+    border-radius: var(--radius-sm, 2px);
+    color: var(--color-text-muted, #6c757d);
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+// Web Components with Shadow DOM + Adopted Stylesheets
 class TokenDocs extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.docs];
+    this.shadowRoot.innerHTML = `<nav><slot name="sidebar"></slot></nav><main><slot name="content"></slot></main>`;
+  }
   connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-docs {
-        display: grid;
-        grid-template-columns: var(--sidebar-width, 280px) 1fr;
-        min-height: 100vh;
-      }
-      token-docs > nav {
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-right: 1px solid var(--color-border, #e9ecef);
-        padding: var(--space-8, 2rem);
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        overflow-y: auto;
-      }
-      token-docs > nav h1 {
-        font-size: var(--font-size-xl, 1.5rem);
-        font-weight: 700;
-        color: var(--color-primary, #0055ff);
-        margin-bottom: var(--space-1, 0.125rem);
-      }
-      token-docs > nav > p {
-        font-size: var(--font-size-sm, 0.875rem);
-        color: var(--color-text-muted, #6c757d);
-        margin-bottom: var(--space-3, 0.5rem);
-      }
-      token-docs > nav > span {
-        display: inline-block;
-        color: var(--color-text-muted, #6c757d);
-        font-size: var(--font-size-xs, 0.75rem);
-        padding: var(--space-2, 0.25rem) var(--space-3, 0.5rem);
-        background: var(--color-bg, #fff);
-        border-radius: var(--radius-md, 4px);
-        margin-bottom: var(--space-7, 1.5rem);
-      }
-      token-docs > nav ul { list-style: none; }
-      token-docs > nav li {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--space-3, 0.5rem) 0;
-        border-bottom: 1px solid var(--color-border, #e9ecef);
-      }
-      token-docs > nav li:last-child { border-bottom: none; }
-      token-docs > nav a {
-        color: var(--color-text, #1a1a2e);
-        text-decoration: none;
-        font-size: var(--font-size-sm, 0.875rem);
-      }
-      token-docs > nav a:hover { color: var(--color-primary, #0055ff); }
-      token-docs > nav li > span {
-        background: var(--color-bg, #fff);
-        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
-        border-radius: var(--radius-full, 999px);
-        font-size: var(--font-size-xs, 0.75rem);
-        color: var(--color-text-muted, #6c757d);
-      }
-      token-docs > main {
-        padding: var(--space-8, 2rem) var(--space-9, 3rem);
-        max-width: var(--content-max-width, 1200px);
-      }
-      @media (max-width: 768px) {
-        token-docs { grid-template-columns: 1fr; }
-        token-docs > nav { position: static; height: auto; padding: var(--space-6, 1.25rem); }
-        token-docs > main { padding: var(--space-6, 1.25rem); }
-      }
-    `;
-    this.prepend(style);
+    // Move slotted content properly
+    const nav = this.querySelector('[slot="sidebar"]');
+    const main = this.querySelector('[slot="content"]');
+    if (nav) nav.removeAttribute('slot');
+    if (main) main.removeAttribute('slot');
+    this.shadowRoot.querySelector('nav').replaceWith(nav || this.shadowRoot.querySelector('nav'));
+    this.shadowRoot.querySelector('main').replaceWith(main || this.shadowRoot.querySelector('main'));
   }
 }
 
 class TokenCategory extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-category {
-        display: block;
-        margin-bottom: var(--space-9, 3rem);
-      }
-      token-category h2 {
-        font-size: var(--font-size-xl, 1.5rem);
-        margin-bottom: var(--space-7, 1.5rem);
-        padding-bottom: var(--space-3, 0.5rem);
-        border-bottom: 2px solid var(--color-primary, #0055ff);
-        display: inline-block;
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.category];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenCard extends HTMLElement {
-  connectedCallback() {
-    const deprecated = this.hasAttribute('deprecated');
-    const style = document.createElement('style');
-    style.textContent = `
-      token-card {
-        display: flex;
-        flex-direction: column;
-        background: var(--color-bg, #fff);
-        border: 1px solid var(--color-border, #e9ecef);
-        border-radius: var(--radius-lg, 8px);
-        padding: var(--space-6, 1.25rem);
-        box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1));
-        margin-bottom: var(--space-5, 1rem);
-      }
-      token-card[deprecated] {
-        opacity: 0.7;
-        border-color: var(--color-warning, #ffc107);
-        background: linear-gradient(135deg, var(--color-bg, #fff) 0%, rgba(255,193,7,0.05) 100%);
-      }
-      token-card > code[slot="name"] {
-        font-size: var(--font-size-sm, 0.875rem);
-        font-weight: 600;
-        color: var(--color-primary, #0055ff);
-        word-break: break-all;
-      }
-      token-card > span[slot="type"] {
-        display: inline-block;
-        background: var(--color-bg-secondary, #f8f9fa);
-        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
-        border-radius: var(--radius-md, 4px);
-        font-size: var(--font-size-xs, 0.75rem);
-        color: var(--color-text-muted, #6c757d);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin: var(--space-2, 0.25rem) var(--space-2, 0.25rem) var(--space-2, 0.25rem) 0;
-      }
-      token-card > span[slot="deprecated"] {
-        display: inline-block;
-        background: var(--color-warning, #ffc107);
-        color: #000;
-        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
-        border-radius: var(--radius-md, 4px);
-        font-size: var(--font-size-xs, 0.75rem);
-        font-weight: 600;
-        text-transform: uppercase;
-      }
-      token-card > p[slot="description"] {
-        color: var(--color-text-muted, #6c757d);
-        font-size: var(--font-size-sm, 0.875rem);
-        margin: var(--space-4, 0.75rem) 0;
-        line-height: 1.5;
-      }
-      token-card > footer[slot="meta"] {
-        display: flex;
-        justify-content: space-between;
-        font-size: var(--font-size-xs, 0.75rem);
-        color: var(--color-text-muted, #6c757d);
-        padding-top: var(--space-4, 0.75rem);
-        border-top: 1px solid var(--color-border, #e9ecef);
-        margin-top: auto;
-      }
-      token-card > footer[slot="meta"] code {
-        background: var(--color-bg-secondary, #f8f9fa);
-        padding: var(--space-1, 0.125rem) var(--space-2, 0.25rem);
-        border-radius: var(--radius-sm, 2px);
-      }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.card];
+    this.shadowRoot.innerHTML = `
+      <slot name="name"></slot>
+      <slot name="type"></slot>
+      <slot name="deprecated"></slot>
+      <slot name="preview"></slot>
+      <slot name="description"></slot>
+      <slot name="examples"></slot>
+      <slot name="aliases"></slot>
+      <slot name="meta"></slot>
     `;
-    this.prepend(style);
   }
 }
 
 class TokenPreviewColor extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-color {
-        display: flex;
-        gap: var(--space-5, 1rem);
-        align-items: center;
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-color > span {
-        width: 64px;
-        height: 64px;
-        border-radius: var(--radius-md, 4px);
-        border: 1px solid var(--color-border, #e9ecef);
-        flex-shrink: 0;
-        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
-      }
-      token-preview-color > code {
-        font-size: var(--font-size-sm, 0.875rem);
-        font-weight: 500;
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewColor];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewSpacing extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-spacing {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-3, 0.5rem);
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-spacing > span {
-        background: var(--color-primary, #0055ff);
-        border-radius: var(--radius-sm, 2px);
-        max-width: 100%;
-        min-width: 4px;
-        min-height: 4px;
-      }
-      token-preview-spacing > code {
-        font-size: var(--font-size-sm, 0.875rem);
-        font-weight: 500;
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewSpacing];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewRadius extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-radius {
-        display: flex;
-        gap: var(--space-5, 1rem);
-        align-items: center;
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-radius > span {
-        width: 64px;
-        height: 64px;
-        background: var(--color-primary, #0055ff);
-        opacity: 0.8;
-        flex-shrink: 0;
-      }
-      token-preview-radius > code {
-        font-size: var(--font-size-sm, 0.875rem);
-        font-weight: 500;
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewRadius];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewFont extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-font {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2, 0.25rem);
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-font > span {
-        font-size: var(--font-size-xl, 1.5rem);
-      }
-      token-preview-font > small {
-        font-size: var(--font-size-sm, 0.875rem);
-        color: var(--color-text-muted, #6c757d);
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewFont];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewFontsize extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-fontsize {
-        display: flex;
-        align-items: baseline;
-        gap: var(--space-5, 1rem);
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-fontsize > span {
-        font-weight: 600;
-        line-height: 1;
-      }
-      token-preview-fontsize > code {
-        font-size: var(--font-size-sm, 0.875rem);
-        color: var(--color-text-muted, #6c757d);
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewFontsize];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewShadow extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-shadow {
-        display: flex;
-        justify-content: center;
-        padding: var(--space-8, 2rem) var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-shadow > span {
-        width: 120px;
-        height: 60px;
-        background: var(--color-bg, #fff);
-        border-radius: var(--radius-md, 4px);
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewShadow];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewGeneric extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-generic {
-        display: block;
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-generic > code {
-        font-size: var(--font-size-sm, 0.875rem);
-        word-break: break-all;
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewGeneric];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenExamples extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-examples {
-        display: block;
-        font-size: var(--font-size-sm, 0.875rem);
-        margin-bottom: var(--space-4, 0.75rem);
-      }
-      token-examples details {
-        border: 1px solid var(--color-border, #e9ecef);
-        border-radius: var(--radius-md, 4px);
-        overflow: hidden;
-      }
-      token-examples summary {
-        padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        cursor: pointer;
-        font-weight: 500;
-        font-size: var(--font-size-xs, 0.75rem);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--color-text-muted, #6c757d);
-      }
-      token-examples summary:hover { background: var(--color-border, #e9ecef); }
-      token-examples ul { list-style: none; padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem); }
-      token-examples li { padding: var(--space-2, 0.25rem) 0; }
-      token-examples li:not(:last-child) { border-bottom: 1px solid var(--color-border, #e9ecef); }
-      token-examples code { font-size: var(--font-size-xs, 0.75rem); word-break: break-all; }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.examples];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenAliases extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-aliases {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: var(--space-2, 0.25rem);
-        font-size: var(--font-size-sm, 0.875rem);
-        margin-bottom: var(--space-4, 0.75rem);
-      }
-      token-aliases > span {
-        color: var(--color-text-muted, #6c757d);
-        font-size: var(--font-size-xs, 0.75rem);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      token-aliases > code {
-        font-size: var(--font-size-xs, 0.75rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
-        border-radius: var(--radius-sm, 2px);
-        color: var(--color-text-muted, #6c757d);
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.aliases];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
-// Register all components
+// Register components
 customElements.define('token-docs', TokenDocs);
 customElements.define('token-category', TokenCategory);
 customElements.define('token-card', TokenCard);

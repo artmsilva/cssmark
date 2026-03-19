@@ -92,14 +92,26 @@ func runBuild(args []string) {
 func runDocs(args []string) {
 	fs := flag.NewFlagSet("docs", flag.ExitOnError)
 	out := fs.String("out", "./docs", "Output directory")
-	fs.Parse(args)
 
-	if fs.NArg() < 1 {
+	// Separate flags from positional args
+	var positional []string
+	for i := 0; i < len(args); i++ {
+		if args[i] == "--out" || args[i] == "-out" {
+			if i+1 < len(args) {
+				*out = args[i+1]
+				i++
+			}
+		} else if !strings.HasPrefix(args[i], "-") {
+			positional = append(positional, args[i])
+		}
+	}
+
+	if len(positional) < 1 {
 		fmt.Fprintln(os.Stderr, "Error: No input files specified")
 		os.Exit(1)
 	}
 
-	files := expandGlobs(fs.Args())
+	files := expandGlobs(positional)
 	tokens, err := parser.ParseFiles(files)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)

@@ -5,14 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Design Tokens — cssmark</title>
   <link rel="stylesheet" href="tokens.css">
-  <style>
-     
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-family: var(--font-sans, system-ui, sans-serif); }
-    body { background: var(--color-bg, #fff); color: var(--color-text, #1a1a2e); line-height: var(--line-height-base, 1.6); }
-    a { color: var(--color-primary, #0055ff); }
-    code { font-family: var(--font-mono, ui-monospace, monospace); }
-  </style>
 </head>
 <body>
 
@@ -54,37 +46,6 @@
       <h2>color.background</h2>
       
       <token-card>
-        <code slot="name">--color-bg-secondary</code>
-        <span slot="type">color</span>
-        
-
-        
-        <token-preview-color slot="preview" value="#f8f9fa">
-          <span style="background:#f8f9fa" aria-label="Color swatch for #f8f9fa"></span>
-          <code>#f8f9fa</code>
-        </token-preview-color>
-        
-
-        <p slot="description">Secondary background for sidebar, code blocks, and cards.</p>
-
-        
-        <token-examples slot="examples">
-          <details>
-            <summary>Usage</summary>
-            <ul><li><code>background: var(--color-bg-secondary)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer slot="meta">
-          <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:19</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
         <code slot="name">--color-bg</code>
         <span slot="type">color</span>
         
@@ -115,10 +76,70 @@
         </footer>
       </token-card>
       
+      <token-card>
+        <code slot="name">--color-bg-secondary</code>
+        <span slot="type">color</span>
+        
+
+        
+        <token-preview-color slot="preview" value="#f8f9fa">
+          <span style="background:#f8f9fa" aria-label="Color swatch for #f8f9fa"></span>
+          <code>#f8f9fa</code>
+        </token-preview-color>
+        
+
+        <p slot="description">Secondary background for sidebar, code blocks, and cards.</p>
+
+        
+        <token-examples slot="examples">
+          <details>
+            <summary>Usage</summary>
+            <ul><li><code>background: var(--color-bg-secondary)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer slot="meta">
+          <code>&lt;color&gt;</code>
+          <small>./examples/tokens.css:19</small>
+        </footer>
+      </token-card>
+      
     </token-category>
     
     <token-category id="color.brand">
       <h2>color.brand</h2>
+      
+      <token-card deprecated>
+        <code slot="name">--color-accent</code>
+        <span slot="type">color</span>
+        <span slot="deprecated">deprecated</span>
+
+        
+        <token-preview-color slot="preview" value="#6366f1">
+          <span style="background:#6366f1" aria-label="Color swatch for #6366f1"></span>
+          <code>#6366f1</code>
+        </token-preview-color>
+        
+
+        <p slot="description">Legacy accent color. Use --color-primary instead.</p>
+
+        
+
+        
+        <token-aliases slot="aliases">
+          <span>Aliases:</span>
+          <code>--color-primary</code>
+        </token-aliases>
+        
+
+        <footer slot="meta">
+          <code>&lt;color&gt;</code>
+          <small>./examples/tokens.css:394</small>
+        </footer>
+      </token-card>
       
       <token-card>
         <code slot="name">--color-primary</code>
@@ -156,70 +177,10 @@
         </footer>
       </token-card>
       
-      <token-card deprecated>
-        <code slot="name">--color-accent</code>
-        <span slot="type">color</span>
-        <span slot="deprecated">deprecated</span>
-
-        
-        <token-preview-color slot="preview" value="#6366f1">
-          <span style="background:#6366f1" aria-label="Color swatch for #6366f1"></span>
-          <code>#6366f1</code>
-        </token-preview-color>
-        
-
-        <p slot="description">Legacy accent color. Use --color-primary instead.</p>
-
-        
-
-        
-        <token-aliases slot="aliases">
-          <span>Aliases:</span>
-          <code>--color-primary</code>
-        </token-aliases>
-        
-
-        <footer slot="meta">
-          <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:394</small>
-        </footer>
-      </token-card>
-      
     </token-category>
     
     <token-category id="color.semantic">
       <h2>color.semantic</h2>
-      
-      <token-card>
-        <code slot="name">--color-border</code>
-        <span slot="type">color</span>
-        
-
-        
-        <token-preview-color slot="preview" value="#e9ecef">
-          <span style="background:#e9ecef" aria-label="Color swatch for #e9ecef"></span>
-          <code>#e9ecef</code>
-        </token-preview-color>
-        
-
-        <p slot="description">Default border color for cards, dividers, and inputs.</p>
-
-        
-        <token-examples slot="examples">
-          <details>
-            <summary>Usage</summary>
-            <ul><li><code>border: 1px solid var(--color-border)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer slot="meta">
-          <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:72</small>
-        </footer>
-      </token-card>
       
       <token-card>
         <code slot="name">--color-danger</code>
@@ -283,30 +244,25 @@
         </footer>
       </token-card>
       
-    </token-category>
-    
-    <token-category id="color.text">
-      <h2>color.text</h2>
-      
       <token-card>
-        <code slot="name">--color-text</code>
+        <code slot="name">--color-border</code>
         <span slot="type">color</span>
         
 
         
-        <token-preview-color slot="preview" value="#1a1a2e">
-          <span style="background:#1a1a2e" aria-label="Color swatch for #1a1a2e"></span>
-          <code>#1a1a2e</code>
+        <token-preview-color slot="preview" value="#e9ecef">
+          <span style="background:#e9ecef" aria-label="Color swatch for #e9ecef"></span>
+          <code>#e9ecef</code>
         </token-preview-color>
         
 
-        <p slot="description">Primary text color for body content.</p>
+        <p slot="description">Default border color for cards, dividers, and inputs.</p>
 
         
         <token-examples slot="examples">
           <details>
             <summary>Usage</summary>
-            <ul><li><code>color: var(--color-text)</code></li></ul>
+            <ul><li><code>border: 1px solid var(--color-border)</code></li></ul>
           </details>
         </token-examples>
         
@@ -315,9 +271,14 @@
 
         <footer slot="meta">
           <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:33</small>
+          <small>./examples/tokens.css:72</small>
         </footer>
       </token-card>
+      
+    </token-category>
+    
+    <token-category id="color.text">
+      <h2>color.text</h2>
       
       <token-card>
         <code slot="name">--color-text-muted</code>
@@ -347,6 +308,37 @@
         <footer slot="meta">
           <code>&lt;color&gt;</code>
           <small>./examples/tokens.css:43</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code slot="name">--color-text</code>
+        <span slot="type">color</span>
+        
+
+        
+        <token-preview-color slot="preview" value="#1a1a2e">
+          <span style="background:#1a1a2e" aria-label="Color swatch for #1a1a2e"></span>
+          <code>#1a1a2e</code>
+        </token-preview-color>
+        
+
+        <p slot="description">Primary text color for body content.</p>
+
+        
+        <token-examples slot="examples">
+          <details>
+            <summary>Usage</summary>
+            <ul><li><code>color: var(--color-text)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer slot="meta">
+          <code>&lt;color&gt;</code>
+          <small>./examples/tokens.css:33</small>
         </footer>
       </token-card>
       
@@ -421,23 +413,23 @@
       </token-card>
       
       <token-card>
-        <code slot="name">--swatch-size</code>
+        <code slot="name">--card-min-width</code>
         <span slot="type">size</span>
         
 
         
         <token-preview-generic slot="preview">
-          <code>24px</code>
+          <code>320px</code>
         </token-preview-generic>
         
 
-        <p slot="description">Size of color swatch indicators.</p>
+        <p slot="description">Minimum width for token cards in the grid.</p>
 
         
         <token-examples slot="examples">
           <details>
             <summary>Usage</summary>
-            <ul><li><code>width: var(--swatch-size)</code></li><li><code>height: var(--swatch-size)</code></li></ul>
+            <ul><li><code>grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr))</code></li></ul>
           </details>
         </token-examples>
         
@@ -446,7 +438,7 @@
 
         <footer slot="meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:366</small>
+          <small>./examples/tokens.css:356</small>
         </footer>
       </token-card>
       
@@ -481,23 +473,23 @@
       </token-card>
       
       <token-card>
-        <code slot="name">--card-min-width</code>
+        <code slot="name">--swatch-size</code>
         <span slot="type">size</span>
         
 
         
         <token-preview-generic slot="preview">
-          <code>320px</code>
+          <code>24px</code>
         </token-preview-generic>
         
 
-        <p slot="description">Minimum width for token cards in the grid.</p>
+        <p slot="description">Size of color swatch indicators.</p>
 
         
         <token-examples slot="examples">
           <details>
             <summary>Usage</summary>
-            <ul><li><code>grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr))</code></li></ul>
+            <ul><li><code>width: var(--swatch-size)</code></li><li><code>height: var(--swatch-size)</code></li></ul>
           </details>
         </token-examples>
         
@@ -506,7 +498,7 @@
 
         <footer slot="meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:356</small>
+          <small>./examples/tokens.css:366</small>
         </footer>
       </token-card>
       
@@ -578,37 +570,6 @@
       </token-card>
       
       <token-card>
-        <code slot="name">--radius-sm</code>
-        <span slot="type">size</span>
-        
-
-        
-        <token-preview-radius slot="preview" value="2px">
-          <span style="border-radius:2px" aria-label="Border radius 2px"></span>
-          <code>2px</code>
-        </token-preview-radius>
-        
-
-        <p slot="description">Small border radius for inline code and subtle rounding.</p>
-
-        
-        <token-examples slot="examples">
-          <details>
-            <summary>Usage</summary>
-            <ul><li><code>border-radius: var(--radius-sm)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer slot="meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:278</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
         <code slot="name">--radius-md</code>
         <span slot="type">size</span>
         
@@ -639,30 +600,25 @@
         </footer>
       </token-card>
       
-    </token-category>
-    
-    <token-category id="spacing">
-      <h2>spacing</h2>
-      
       <token-card>
-        <code slot="name">--space-3</code>
+        <code slot="name">--radius-sm</code>
         <span slot="type">size</span>
         
 
         
-        <token-preview-spacing slot="preview" value="0.5rem">
-          <span style="width:0.5rem;height:0.5rem" aria-label="Spacing 0.5rem"></span>
-          <code>0.5rem</code>
-        </token-preview-spacing>
+        <token-preview-radius slot="preview" value="2px">
+          <span style="border-radius:2px" aria-label="Border radius 2px"></span>
+          <code>2px</code>
+        </token-preview-radius>
         
 
-        <p slot="description">Small spacing for compact layouts.</p>
+        <p slot="description">Small border radius for inline code and subtle rounding.</p>
 
         
         <token-examples slot="examples">
           <details>
             <summary>Usage</summary>
-            <ul><li><code>padding: var(--space-3)</code></li><li><code>gap: var(--space-3)</code></li></ul>
+            <ul><li><code>border-radius: var(--radius-sm)</code></li></ul>
           </details>
         </token-examples>
         
@@ -671,7 +627,43 @@
 
         <footer slot="meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:204</small>
+          <small>./examples/tokens.css:278</small>
+        </footer>
+      </token-card>
+      
+    </token-category>
+    
+    <token-category id="spacing">
+      <h2>spacing</h2>
+      
+      <token-card>
+        <code slot="name">--space-8</code>
+        <span slot="type">size</span>
+        
+
+        
+        <token-preview-spacing slot="preview" value="2rem">
+          <span style="width:2rem;height:2rem" aria-label="Spacing 2rem"></span>
+          <code>2rem</code>
+        </token-preview-spacing>
+        
+
+        <p slot="description">Large spacing for major sections.</p>
+
+        
+        <token-examples slot="examples">
+          <details>
+            <summary>Usage</summary>
+            <ul><li><code>padding: var(--space-8)</code></li><li><code>margin-bottom: var(--space-8)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer slot="meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:254</small>
         </footer>
       </token-card>
       
@@ -707,6 +699,99 @@
       </token-card>
       
       <token-card>
+        <code slot="name">--space-4</code>
+        <span slot="type">size</span>
+        
+
+        
+        <token-preview-spacing slot="preview" value="0.75rem">
+          <span style="width:0.75rem;height:0.75rem" aria-label="Spacing 0.75rem"></span>
+          <code>0.75rem</code>
+        </token-preview-spacing>
+        
+
+        <p slot="description">Medium-small spacing for card content.</p>
+
+        
+        <token-examples slot="examples">
+          <details>
+            <summary>Usage</summary>
+            <ul><li><code>padding: var(--space-4)</code></li><li><code>margin-bottom: var(--space-4)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer slot="meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:214</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code slot="name">--space-3</code>
+        <span slot="type">size</span>
+        
+
+        
+        <token-preview-spacing slot="preview" value="0.5rem">
+          <span style="width:0.5rem;height:0.5rem" aria-label="Spacing 0.5rem"></span>
+          <code>0.5rem</code>
+        </token-preview-spacing>
+        
+
+        <p slot="description">Small spacing for compact layouts.</p>
+
+        
+        <token-examples slot="examples">
+          <details>
+            <summary>Usage</summary>
+            <ul><li><code>padding: var(--space-3)</code></li><li><code>gap: var(--space-3)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer slot="meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:204</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code slot="name">--space-9</code>
+        <span slot="type">size</span>
+        
+
+        
+        <token-preview-spacing slot="preview" value="3rem">
+          <span style="width:3rem;height:3rem" aria-label="Spacing 3rem"></span>
+          <code>3rem</code>
+        </token-preview-spacing>
+        
+
+        <p slot="description">Extra large spacing for category separations.</p>
+
+        
+        <token-examples slot="examples">
+          <details>
+            <summary>Usage</summary>
+            <ul><li><code>margin-bottom: var(--space-9)</code></li><li><code>padding: var(--space-9)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer slot="meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:264</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
         <code slot="name">--space-6</code>
         <span slot="type">size</span>
         
@@ -734,37 +819,6 @@
         <footer slot="meta">
           <code>&lt;length&gt;</code>
           <small>./examples/tokens.css:234</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code slot="name">--space-7</code>
-        <span slot="type">size</span>
-        
-
-        
-        <token-preview-spacing slot="preview" value="1.5rem">
-          <span style="width:1.5rem;height:1.5rem" aria-label="Spacing 1.5rem"></span>
-          <code>1.5rem</code>
-        </token-preview-spacing>
-        
-
-        <p slot="description">Medium-large spacing for section gaps.</p>
-
-        
-        <token-examples slot="examples">
-          <details>
-            <summary>Usage</summary>
-            <ul><li><code>gap: var(--space-7)</code></li><li><code>margin-bottom: var(--space-7)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer slot="meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:244</small>
         </footer>
       </token-card>
       
@@ -831,24 +885,24 @@
       </token-card>
       
       <token-card>
-        <code slot="name">--space-9</code>
+        <code slot="name">--space-7</code>
         <span slot="type">size</span>
         
 
         
-        <token-preview-spacing slot="preview" value="3rem">
-          <span style="width:3rem;height:3rem" aria-label="Spacing 3rem"></span>
-          <code>3rem</code>
+        <token-preview-spacing slot="preview" value="1.5rem">
+          <span style="width:1.5rem;height:1.5rem" aria-label="Spacing 1.5rem"></span>
+          <code>1.5rem</code>
         </token-preview-spacing>
         
 
-        <p slot="description">Extra large spacing for category separations.</p>
+        <p slot="description">Medium-large spacing for section gaps.</p>
 
         
         <token-examples slot="examples">
           <details>
             <summary>Usage</summary>
-            <ul><li><code>margin-bottom: var(--space-9)</code></li><li><code>padding: var(--space-9)</code></li></ul>
+            <ul><li><code>gap: var(--space-7)</code></li><li><code>margin-bottom: var(--space-7)</code></li></ul>
           </details>
         </token-examples>
         
@@ -857,69 +911,7 @@
 
         <footer slot="meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:264</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code slot="name">--space-4</code>
-        <span slot="type">size</span>
-        
-
-        
-        <token-preview-spacing slot="preview" value="0.75rem">
-          <span style="width:0.75rem;height:0.75rem" aria-label="Spacing 0.75rem"></span>
-          <code>0.75rem</code>
-        </token-preview-spacing>
-        
-
-        <p slot="description">Medium-small spacing for card content.</p>
-
-        
-        <token-examples slot="examples">
-          <details>
-            <summary>Usage</summary>
-            <ul><li><code>padding: var(--space-4)</code></li><li><code>margin-bottom: var(--space-4)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer slot="meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:214</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code slot="name">--space-8</code>
-        <span slot="type">size</span>
-        
-
-        
-        <token-preview-spacing slot="preview" value="2rem">
-          <span style="width:2rem;height:2rem" aria-label="Spacing 2rem"></span>
-          <code>2rem</code>
-        </token-preview-spacing>
-        
-
-        <p slot="description">Large spacing for major sections.</p>
-
-        
-        <token-examples slot="examples">
-          <details>
-            <summary>Usage</summary>
-            <ul><li><code>padding: var(--space-8)</code></li><li><code>margin-bottom: var(--space-8)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer slot="meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:254</small>
+          <small>./examples/tokens.css:244</small>
         </footer>
       </token-card>
       
@@ -927,37 +919,6 @@
     
     <token-category id="typography.family">
       <h2>typography.family</h2>
-      
-      <token-card>
-        <code slot="name">--font-sans</code>
-        <span slot="type">font</span>
-        
-
-        
-        <token-preview-font slot="preview" value="-apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, sans-serif">
-          <span style="font-family:-apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, sans-serif">Aa Bb Cc</span>
-          <small style="font-family:-apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, sans-serif">The quick brown fox</small>
-        </token-preview-font>
-        
-
-        <p slot="description">Primary sans-serif font stack for body text and UI.</p>
-
-        
-        <token-examples slot="examples">
-          <details>
-            <summary>Usage</summary>
-            <ul><li><code>font-family: var(--font-sans)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer slot="meta">
-          <code>*</code>
-          <small>./examples/tokens.css:106</small>
-        </footer>
-      </token-card>
       
       <token-card>
         <code slot="name">--font-mono</code>
@@ -987,6 +948,37 @@
         <footer slot="meta">
           <code>*</code>
           <small>./examples/tokens.css:116</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code slot="name">--font-sans</code>
+        <span slot="type">font</span>
+        
+
+        
+        <token-preview-font slot="preview" value="-apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, sans-serif">
+          <span style="font-family:-apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, sans-serif">Aa Bb Cc</span>
+          <small style="font-family:-apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, sans-serif">The quick brown fox</small>
+        </token-preview-font>
+        
+
+        <p slot="description">Primary sans-serif font stack for body text and UI.</p>
+
+        
+        <token-examples slot="examples">
+          <details>
+            <summary>Usage</summary>
+            <ul><li><code>font-family: var(--font-sans)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer slot="meta">
+          <code>*</code>
+          <small>./examples/tokens.css:106</small>
         </footer>
       </token-card>
       
@@ -1031,68 +1023,6 @@
       <h2>typography.size</h2>
       
       <token-card>
-        <code slot="name">--font-size-base</code>
-        <span slot="type">size</span>
-        
-
-        
-        <token-preview-fontsize slot="preview" value="1rem">
-          <span style="font-size:1rem">Aa</span>
-          <code>1rem</code>
-        </token-preview-fontsize>
-        
-
-        <p slot="description">Base text size for body content.</p>
-
-        
-        <token-examples slot="examples">
-          <details>
-            <summary>Usage</summary>
-            <ul><li><code>font-size: var(--font-size-base)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer slot="meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:150</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code slot="name">--font-size-sm</code>
-        <span slot="type">size</span>
-        
-
-        
-        <token-preview-fontsize slot="preview" value="0.875rem">
-          <span style="font-size:0.875rem">Aa</span>
-          <code>0.875rem</code>
-        </token-preview-fontsize>
-        
-
-        <p slot="description">Small text for descriptions and secondary content.</p>
-
-        
-        <token-examples slot="examples">
-          <details>
-            <summary>Usage</summary>
-            <ul><li><code>font-size: var(--font-size-sm)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer slot="meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:140</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
         <code slot="name">--font-size-lg</code>
         <span slot="type">size</span>
         
@@ -1120,6 +1050,37 @@
         <footer slot="meta">
           <code>&lt;length&gt;</code>
           <small>./examples/tokens.css:160</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code slot="name">--font-size-xs</code>
+        <span slot="type">size</span>
+        
+
+        
+        <token-preview-fontsize slot="preview" value="0.75rem">
+          <span style="font-size:0.75rem">Aa</span>
+          <code>0.75rem</code>
+        </token-preview-fontsize>
+        
+
+        <p slot="description">Extra small text for metadata and fine print.</p>
+
+        
+        <token-examples slot="examples">
+          <details>
+            <summary>Usage</summary>
+            <ul><li><code>font-size: var(--font-size-xs)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer slot="meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:130</small>
         </footer>
       </token-card>
       
@@ -1155,24 +1116,24 @@
       </token-card>
       
       <token-card>
-        <code slot="name">--font-size-xs</code>
+        <code slot="name">--font-size-sm</code>
         <span slot="type">size</span>
         
 
         
-        <token-preview-fontsize slot="preview" value="0.75rem">
-          <span style="font-size:0.75rem">Aa</span>
-          <code>0.75rem</code>
+        <token-preview-fontsize slot="preview" value="0.875rem">
+          <span style="font-size:0.875rem">Aa</span>
+          <code>0.875rem</code>
         </token-preview-fontsize>
         
 
-        <p slot="description">Extra small text for metadata and fine print.</p>
+        <p slot="description">Small text for descriptions and secondary content.</p>
 
         
         <token-examples slot="examples">
           <details>
             <summary>Usage</summary>
-            <ul><li><code>font-size: var(--font-size-xs)</code></li></ul>
+            <ul><li><code>font-size: var(--font-size-sm)</code></li></ul>
           </details>
         </token-examples>
         
@@ -1181,7 +1142,38 @@
 
         <footer slot="meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:130</small>
+          <small>./examples/tokens.css:140</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code slot="name">--font-size-base</code>
+        <span slot="type">size</span>
+        
+
+        
+        <token-preview-fontsize slot="preview" value="1rem">
+          <span style="font-size:1rem">Aa</span>
+          <code>1rem</code>
+        </token-preview-fontsize>
+        
+
+        <p slot="description">Base text size for body content.</p>
+
+        
+        <token-examples slot="examples">
+          <details>
+            <summary>Usage</summary>
+            <ul><li><code>font-size: var(--font-size-base)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer slot="meta">
+          <code>&lt;length&gt;</code>
+          <small>./examples/tokens.css:150</small>
         </footer>
       </token-card>
       
@@ -1190,419 +1182,500 @@
   </main>
 </token-docs>
 
-<script>
+<script type="module">
 
+
+
+
+const baseSheet = new CSSStyleSheet();
+baseSheet.replaceSync(`
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-family: var(--font-sans, system-ui, sans-serif); }
+  body { background: var(--color-bg, #fff); color: var(--color-text, #1a1a2e); line-height: var(--line-height-base, 1.6); }
+  a { color: var(--color-primary, #0055ff); }
+  code { font-family: var(--font-mono, ui-monospace, monospace); }
+`);
+document.adoptedStyleSheets = [baseSheet];
+
+
+const sheets = {
+  docs: new CSSStyleSheet(),
+  category: new CSSStyleSheet(),
+  card: new CSSStyleSheet(),
+  previewColor: new CSSStyleSheet(),
+  previewSpacing: new CSSStyleSheet(),
+  previewRadius: new CSSStyleSheet(),
+  previewFont: new CSSStyleSheet(),
+  previewFontsize: new CSSStyleSheet(),
+  previewShadow: new CSSStyleSheet(),
+  previewGeneric: new CSSStyleSheet(),
+  examples: new CSSStyleSheet(),
+  aliases: new CSSStyleSheet(),
+};
+
+sheets.docs.replaceSync(`
+  :host {
+    display: grid;
+    grid-template-columns: var(--sidebar-width, 280px) 1fr;
+    min-height: 100vh;
+  }
+  nav {
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-right: 1px solid var(--color-border, #e9ecef);
+    padding: var(--space-8, 2rem);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  nav h1 {
+    font-size: var(--font-size-xl, 1.5rem);
+    font-weight: 700;
+    color: var(--color-primary, #0055ff);
+    margin-bottom: var(--space-1, 0.125rem);
+  }
+  nav > p {
+    font-size: var(--font-size-sm, 0.875rem);
+    color: var(--color-text-muted, #6c757d);
+    margin-bottom: var(--space-3, 0.5rem);
+  }
+  nav > span {
+    display: inline-block;
+    color: var(--color-text-muted, #6c757d);
+    font-size: var(--font-size-xs, 0.75rem);
+    padding: var(--space-2, 0.25rem) var(--space-3, 0.5rem);
+    background: var(--color-bg, #fff);
+    border-radius: var(--radius-md, 4px);
+    margin-bottom: var(--space-7, 1.5rem);
+  }
+  ul { list-style: none; }
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3, 0.5rem) 0;
+    border-bottom: 1px solid var(--color-border, #e9ecef);
+  }
+  li:last-child { border-bottom: none; }
+  a {
+    color: var(--color-text, #1a1a2e);
+    text-decoration: none;
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+  a:hover { color: var(--color-primary, #0055ff); }
+  li > span {
+    background: var(--color-bg, #fff);
+    padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+    border-radius: var(--radius-full, 999px);
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--color-text-muted, #6c757d);
+  }
+  main {
+    padding: var(--space-8, 2rem) var(--space-9, 3rem);
+    max-width: var(--content-max-width, 1200px);
+  }
+  @media (max-width: 768px) {
+    :host { grid-template-columns: 1fr; }
+    nav { position: static; height: auto; padding: var(--space-6, 1.25rem); }
+    main { padding: var(--space-6, 1.25rem); }
+  }
+`);
+
+sheets.category.replaceSync(`
+  :host {
+    display: block;
+    margin-bottom: var(--space-9, 3rem);
+  }
+  h2 {
+    font-size: var(--font-size-xl, 1.5rem);
+    margin-bottom: var(--space-7, 1.5rem);
+    padding-bottom: var(--space-3, 0.5rem);
+    border-bottom: 2px solid var(--color-primary, #0055ff);
+    display: inline-block;
+  }
+`);
+
+sheets.card.replaceSync(`
+  :host {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg, #fff);
+    border: 1px solid var(--color-border, #e9ecef);
+    border-radius: var(--radius-lg, 8px);
+    padding: var(--space-6, 1.25rem);
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1));
+    margin-bottom: var(--space-5, 1rem);
+  }
+  :host([deprecated]) {
+    opacity: 0.7;
+    border-color: var(--color-warning, #ffc107);
+    background: linear-gradient(135deg, var(--color-bg, #fff) 0%, rgba(255,193,7,0.05) 100%);
+  }
+  ::slotted(code[slot="name"]) {
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+    color: var(--color-primary, #0055ff);
+    word-break: break-all;
+  }
+  ::slotted(span[slot="type"]) {
+    display: inline-block;
+    background: var(--color-bg-secondary, #f8f9fa);
+    padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+    border-radius: var(--radius-md, 4px);
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--color-text-muted, #6c757d);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: var(--space-2, 0.25rem) var(--space-2, 0.25rem) var(--space-2, 0.25rem) 0;
+  }
+  ::slotted(span[slot="deprecated"]) {
+    display: inline-block;
+    background: var(--color-warning, #ffc107);
+    color: #000;
+    padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+    border-radius: var(--radius-md, 4px);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  ::slotted(p[slot="description"]) {
+    color: var(--color-text-muted, #6c757d);
+    font-size: var(--font-size-sm, 0.875rem);
+    margin: var(--space-4, 0.75rem) 0;
+    line-height: 1.5;
+  }
+  ::slotted(footer[slot="meta"]) {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--color-text-muted, #6c757d);
+    padding-top: var(--space-4, 0.75rem);
+    border-top: 1px solid var(--color-border, #e9ecef);
+    margin-top: auto;
+  }
+`);
+
+sheets.previewColor.replaceSync(`
+  :host {
+    display: flex;
+    gap: var(--space-5, 1rem);
+    align-items: center;
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-md, 4px);
+    border: 1px solid var(--color-border, #e9ecef);
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+  }
+  code {
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 500;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.previewSpacing.replaceSync(`
+  :host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3, 0.5rem);
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span {
+    background: var(--color-primary, #0055ff);
+    border-radius: var(--radius-sm, 2px);
+    max-width: 100%;
+    min-width: 4px;
+    min-height: 4px;
+  }
+  code {
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 500;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.previewRadius.replaceSync(`
+  :host {
+    display: flex;
+    gap: var(--space-5, 1rem);
+    align-items: center;
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span {
+    width: 64px;
+    height: 64px;
+    background: var(--color-primary, #0055ff);
+    opacity: 0.8;
+    flex-shrink: 0;
+  }
+  code {
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 500;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.previewFont.replaceSync(`
+  :host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 0.25rem);
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span { font-size: var(--font-size-xl, 1.5rem); }
+  small {
+    font-size: var(--font-size-sm, 0.875rem);
+    color: var(--color-text-muted, #6c757d);
+  }
+`);
+
+sheets.previewFontsize.replaceSync(`
+  :host {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-5, 1rem);
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span { font-weight: 600; line-height: 1; }
+  code {
+    font-size: var(--font-size-sm, 0.875rem);
+    color: var(--color-text-muted, #6c757d);
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.previewShadow.replaceSync(`
+  :host {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-8, 2rem) var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  span {
+    width: 120px;
+    height: 60px;
+    background: var(--color-bg, #fff);
+    border-radius: var(--radius-md, 4px);
+  }
+`);
+
+sheets.previewGeneric.replaceSync(`
+  :host {
+    display: block;
+    padding: var(--space-5, 1rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: var(--radius-md, 4px);
+    margin: var(--space-4, 0.75rem) 0;
+  }
+  code {
+    font-size: var(--font-size-sm, 0.875rem);
+    word-break: break-all;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.examples.replaceSync(`
+  :host {
+    display: block;
+    font-size: var(--font-size-sm, 0.875rem);
+    margin-bottom: var(--space-4, 0.75rem);
+  }
+  details {
+    border: 1px solid var(--color-border, #e9ecef);
+    border-radius: var(--radius-md, 4px);
+    overflow: hidden;
+  }
+  summary {
+    padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: var(--font-size-xs, 0.75rem);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted, #6c757d);
+  }
+  summary:hover { background: var(--color-border, #e9ecef); }
+  ul { list-style: none; padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem); }
+  li { padding: var(--space-2, 0.25rem) 0; }
+  li:not(:last-child) { border-bottom: 1px solid var(--color-border, #e9ecef); }
+  code {
+    font-size: var(--font-size-xs, 0.75rem);
+    word-break: break-all;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
+
+sheets.aliases.replaceSync(`
+  :host {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2, 0.25rem);
+    font-size: var(--font-size-sm, 0.875rem);
+    margin-bottom: var(--space-4, 0.75rem);
+  }
+  span {
+    color: var(--color-text-muted, #6c757d);
+    font-size: var(--font-size-xs, 0.75rem);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  code {
+    font-size: var(--font-size-xs, 0.75rem);
+    background: var(--color-bg-secondary, #f8f9fa);
+    padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+    border-radius: var(--radius-sm, 2px);
+    color: var(--color-text-muted, #6c757d);
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+`);
 
 
 class TokenDocs extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.docs];
+    this.shadowRoot.innerHTML = `<nav><slot name="sidebar"></slot></nav><main><slot name="content"></slot></main>`;
+  }
   connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-docs {
-        display: grid;
-        grid-template-columns: var(--sidebar-width, 280px) 1fr;
-        min-height: 100vh;
-      }
-      token-docs > nav {
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-right: 1px solid var(--color-border, #e9ecef);
-        padding: var(--space-8, 2rem);
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        overflow-y: auto;
-      }
-      token-docs > nav h1 {
-        font-size: var(--font-size-xl, 1.5rem);
-        font-weight: 700;
-        color: var(--color-primary, #0055ff);
-        margin-bottom: var(--space-1, 0.125rem);
-      }
-      token-docs > nav > p {
-        font-size: var(--font-size-sm, 0.875rem);
-        color: var(--color-text-muted, #6c757d);
-        margin-bottom: var(--space-3, 0.5rem);
-      }
-      token-docs > nav > span {
-        display: inline-block;
-        color: var(--color-text-muted, #6c757d);
-        font-size: var(--font-size-xs, 0.75rem);
-        padding: var(--space-2, 0.25rem) var(--space-3, 0.5rem);
-        background: var(--color-bg, #fff);
-        border-radius: var(--radius-md, 4px);
-        margin-bottom: var(--space-7, 1.5rem);
-      }
-      token-docs > nav ul { list-style: none; }
-      token-docs > nav li {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--space-3, 0.5rem) 0;
-        border-bottom: 1px solid var(--color-border, #e9ecef);
-      }
-      token-docs > nav li:last-child { border-bottom: none; }
-      token-docs > nav a {
-        color: var(--color-text, #1a1a2e);
-        text-decoration: none;
-        font-size: var(--font-size-sm, 0.875rem);
-      }
-      token-docs > nav a:hover { color: var(--color-primary, #0055ff); }
-      token-docs > nav li > span {
-        background: var(--color-bg, #fff);
-        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
-        border-radius: var(--radius-full, 999px);
-        font-size: var(--font-size-xs, 0.75rem);
-        color: var(--color-text-muted, #6c757d);
-      }
-      token-docs > main {
-        padding: var(--space-8, 2rem) var(--space-9, 3rem);
-        max-width: var(--content-max-width, 1200px);
-      }
-      @media (max-width: 768px) {
-        token-docs { grid-template-columns: 1fr; }
-        token-docs > nav { position: static; height: auto; padding: var(--space-6, 1.25rem); }
-        token-docs > main { padding: var(--space-6, 1.25rem); }
-      }
-    `;
-    this.prepend(style);
+    
+    const nav = this.querySelector('[slot="sidebar"]');
+    const main = this.querySelector('[slot="content"]');
+    if (nav) nav.removeAttribute('slot');
+    if (main) main.removeAttribute('slot');
+    this.shadowRoot.querySelector('nav').replaceWith(nav || this.shadowRoot.querySelector('nav'));
+    this.shadowRoot.querySelector('main').replaceWith(main || this.shadowRoot.querySelector('main'));
   }
 }
 
 class TokenCategory extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-category {
-        display: block;
-        margin-bottom: var(--space-9, 3rem);
-      }
-      token-category h2 {
-        font-size: var(--font-size-xl, 1.5rem);
-        margin-bottom: var(--space-7, 1.5rem);
-        padding-bottom: var(--space-3, 0.5rem);
-        border-bottom: 2px solid var(--color-primary, #0055ff);
-        display: inline-block;
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.category];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenCard extends HTMLElement {
-  connectedCallback() {
-    const deprecated = this.hasAttribute('deprecated');
-    const style = document.createElement('style');
-    style.textContent = `
-      token-card {
-        display: flex;
-        flex-direction: column;
-        background: var(--color-bg, #fff);
-        border: 1px solid var(--color-border, #e9ecef);
-        border-radius: var(--radius-lg, 8px);
-        padding: var(--space-6, 1.25rem);
-        box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1));
-        margin-bottom: var(--space-5, 1rem);
-      }
-      token-card[deprecated] {
-        opacity: 0.7;
-        border-color: var(--color-warning, #ffc107);
-        background: linear-gradient(135deg, var(--color-bg, #fff) 0%, rgba(255,193,7,0.05) 100%);
-      }
-      token-card > code[slot="name"] {
-        font-size: var(--font-size-sm, 0.875rem);
-        font-weight: 600;
-        color: var(--color-primary, #0055ff);
-        word-break: break-all;
-      }
-      token-card > span[slot="type"] {
-        display: inline-block;
-        background: var(--color-bg-secondary, #f8f9fa);
-        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
-        border-radius: var(--radius-md, 4px);
-        font-size: var(--font-size-xs, 0.75rem);
-        color: var(--color-text-muted, #6c757d);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin: var(--space-2, 0.25rem) var(--space-2, 0.25rem) var(--space-2, 0.25rem) 0;
-      }
-      token-card > span[slot="deprecated"] {
-        display: inline-block;
-        background: var(--color-warning, #ffc107);
-        color: #000;
-        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
-        border-radius: var(--radius-md, 4px);
-        font-size: var(--font-size-xs, 0.75rem);
-        font-weight: 600;
-        text-transform: uppercase;
-      }
-      token-card > p[slot="description"] {
-        color: var(--color-text-muted, #6c757d);
-        font-size: var(--font-size-sm, 0.875rem);
-        margin: var(--space-4, 0.75rem) 0;
-        line-height: 1.5;
-      }
-      token-card > footer[slot="meta"] {
-        display: flex;
-        justify-content: space-between;
-        font-size: var(--font-size-xs, 0.75rem);
-        color: var(--color-text-muted, #6c757d);
-        padding-top: var(--space-4, 0.75rem);
-        border-top: 1px solid var(--color-border, #e9ecef);
-        margin-top: auto;
-      }
-      token-card > footer[slot="meta"] code {
-        background: var(--color-bg-secondary, #f8f9fa);
-        padding: var(--space-1, 0.125rem) var(--space-2, 0.25rem);
-        border-radius: var(--radius-sm, 2px);
-      }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.card];
+    this.shadowRoot.innerHTML = `
+      <slot name="name"></slot>
+      <slot name="type"></slot>
+      <slot name="deprecated"></slot>
+      <slot name="preview"></slot>
+      <slot name="description"></slot>
+      <slot name="examples"></slot>
+      <slot name="aliases"></slot>
+      <slot name="meta"></slot>
     `;
-    this.prepend(style);
   }
 }
 
 class TokenPreviewColor extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-color {
-        display: flex;
-        gap: var(--space-5, 1rem);
-        align-items: center;
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-color > span {
-        width: 64px;
-        height: 64px;
-        border-radius: var(--radius-md, 4px);
-        border: 1px solid var(--color-border, #e9ecef);
-        flex-shrink: 0;
-        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
-      }
-      token-preview-color > code {
-        font-size: var(--font-size-sm, 0.875rem);
-        font-weight: 500;
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewColor];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewSpacing extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-spacing {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-3, 0.5rem);
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-spacing > span {
-        background: var(--color-primary, #0055ff);
-        border-radius: var(--radius-sm, 2px);
-        max-width: 100%;
-        min-width: 4px;
-        min-height: 4px;
-      }
-      token-preview-spacing > code {
-        font-size: var(--font-size-sm, 0.875rem);
-        font-weight: 500;
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewSpacing];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewRadius extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-radius {
-        display: flex;
-        gap: var(--space-5, 1rem);
-        align-items: center;
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-radius > span {
-        width: 64px;
-        height: 64px;
-        background: var(--color-primary, #0055ff);
-        opacity: 0.8;
-        flex-shrink: 0;
-      }
-      token-preview-radius > code {
-        font-size: var(--font-size-sm, 0.875rem);
-        font-weight: 500;
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewRadius];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewFont extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-font {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-2, 0.25rem);
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-font > span {
-        font-size: var(--font-size-xl, 1.5rem);
-      }
-      token-preview-font > small {
-        font-size: var(--font-size-sm, 0.875rem);
-        color: var(--color-text-muted, #6c757d);
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewFont];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewFontsize extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-fontsize {
-        display: flex;
-        align-items: baseline;
-        gap: var(--space-5, 1rem);
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-fontsize > span {
-        font-weight: 600;
-        line-height: 1;
-      }
-      token-preview-fontsize > code {
-        font-size: var(--font-size-sm, 0.875rem);
-        color: var(--color-text-muted, #6c757d);
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewFontsize];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewShadow extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-shadow {
-        display: flex;
-        justify-content: center;
-        padding: var(--space-8, 2rem) var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-shadow > span {
-        width: 120px;
-        height: 60px;
-        background: var(--color-bg, #fff);
-        border-radius: var(--radius-md, 4px);
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewShadow];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenPreviewGeneric extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-preview-generic {
-        display: block;
-        padding: var(--space-5, 1rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        border-radius: var(--radius-md, 4px);
-        margin: var(--space-4, 0.75rem) 0;
-      }
-      token-preview-generic > code {
-        font-size: var(--font-size-sm, 0.875rem);
-        word-break: break-all;
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.previewGeneric];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenExamples extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-examples {
-        display: block;
-        font-size: var(--font-size-sm, 0.875rem);
-        margin-bottom: var(--space-4, 0.75rem);
-      }
-      token-examples details {
-        border: 1px solid var(--color-border, #e9ecef);
-        border-radius: var(--radius-md, 4px);
-        overflow: hidden;
-      }
-      token-examples summary {
-        padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        cursor: pointer;
-        font-weight: 500;
-        font-size: var(--font-size-xs, 0.75rem);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--color-text-muted, #6c757d);
-      }
-      token-examples summary:hover { background: var(--color-border, #e9ecef); }
-      token-examples ul { list-style: none; padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem); }
-      token-examples li { padding: var(--space-2, 0.25rem) 0; }
-      token-examples li:not(:last-child) { border-bottom: 1px solid var(--color-border, #e9ecef); }
-      token-examples code { font-size: var(--font-size-xs, 0.75rem); word-break: break-all; }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.examples];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
 class TokenAliases extends HTMLElement {
-  connectedCallback() {
-    const style = document.createElement('style');
-    style.textContent = `
-      token-aliases {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: var(--space-2, 0.25rem);
-        font-size: var(--font-size-sm, 0.875rem);
-        margin-bottom: var(--space-4, 0.75rem);
-      }
-      token-aliases > span {
-        color: var(--color-text-muted, #6c757d);
-        font-size: var(--font-size-xs, 0.75rem);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      token-aliases > code {
-        font-size: var(--font-size-xs, 0.75rem);
-        background: var(--color-bg-secondary, #f8f9fa);
-        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
-        border-radius: var(--radius-sm, 2px);
-        color: var(--color-text-muted, #6c757d);
-      }
-    `;
-    this.prepend(style);
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [sheets.aliases];
+    this.shadowRoot.innerHTML = `<slot></slot>`;
   }
 }
 
