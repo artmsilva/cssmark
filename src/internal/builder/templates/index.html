@@ -408,6 +408,34 @@
       border: 1px solid var(--color-border, #e9ecef);
     }
 
+    /* Mode toggle */
+    .mode-toggle {
+      display: flex;
+      gap: var(--space-2, 0.25rem);
+      margin-bottom: var(--space-5, 1rem);
+    }
+    .mode-toggle button {
+      flex: 1;
+      padding: var(--space-2, 0.25rem) var(--space-3, 0.5rem);
+      border: 1px solid var(--color-border, #e9ecef);
+      border-radius: var(--radius-md, 4px);
+      background: var(--color-bg, #fff);
+      color: var(--color-text-muted, #6c757d);
+      font-family: inherit;
+      font-size: var(--font-size-xs, 0.75rem);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .mode-toggle button:hover {
+      border-color: var(--color-primary, #0055ff);
+      color: var(--color-primary, #0055ff);
+    }
+    .mode-toggle button[aria-pressed="true"] {
+      background: var(--color-primary, #0055ff);
+      color: #fff;
+      border-color: var(--color-primary, #0055ff);
+    }
+
     /* Footer */
     token-footer {
       display: flex;
@@ -442,7 +470,14 @@
     <h1>cssmark</h1>
     <p>Design Tokens</p>
     <span class="count">{{.TotalCount}} tokens</span>
-    
+    {{if .Modes}}
+    <div class="mode-toggle">
+      <button data-mode="" aria-pressed="true">Default</button>
+      {{range .Modes}}<button data-mode="{{.}}" aria-pressed="false">{{.}}</button>
+      {{end}}
+    </div>
+    {{end}}
+
     <div class="nav-section">Getting Started</div>
     <ul>
       <li><a href="#tutorial">Tutorial</a></li>
@@ -611,5 +646,20 @@ cssmark validate ./tokens/**/*.css</code></pre>
   </main>
 </token-docs>
 
+<script>
+  document.querySelectorAll('.mode-toggle button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var mode = this.dataset.mode;
+      if (mode) {
+        document.documentElement.setAttribute('data-color-mode', mode);
+      } else {
+        document.documentElement.removeAttribute('data-color-mode');
+      }
+      document.querySelectorAll('.mode-toggle button').forEach(function(b) {
+        b.setAttribute('aria-pressed', b.dataset.mode === mode ? 'true' : 'false');
+      });
+    });
+  });
+</script>
 </body>
 </html>
