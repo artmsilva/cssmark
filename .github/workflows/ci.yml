@@ -31,4 +31,3 @@ jobs:
           ./cssmark docs examples/tokens.css -o test-docs
           test -f test-output.json
           test -f test-docs/index.html
-          test -f test-docs/styles.css

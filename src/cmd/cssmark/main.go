@@ -65,14 +65,33 @@ Examples:
 func runBuild(args []string) {
 	fs := flag.NewFlagSet("build", flag.ExitOnError)
 	out := fs.String("out", "tokens.json", "Output JSON file")
-	fs.Parse(args)
+	fs.String("o", "tokens.json", "Output JSON file (shorthand)")
 
-	if fs.NArg() < 1 {
+	// Manually parse to support both -o and --out with positional args in any order
+	var positional []string
+	outValue := "tokens.json"
+	for i := 0; i < len(args); i++ {
+		if args[i] == "--out" || args[i] == "-out" || args[i] == "-o" {
+			if i+1 < len(args) {
+				outValue = args[i+1]
+				i++
+			}
+		} else if strings.HasPrefix(args[i], "-o=") {
+			outValue = strings.TrimPrefix(args[i], "-o=")
+		} else if strings.HasPrefix(args[i], "--out=") {
+			outValue = strings.TrimPrefix(args[i], "--out=")
+		} else if !strings.HasPrefix(args[i], "-") {
+			positional = append(positional, args[i])
+		}
+	}
+	*out = outValue
+
+	if len(positional) < 1 {
 		fmt.Fprintln(os.Stderr, "Error: No input files specified")
 		os.Exit(1)
 	}
 
-	files := expandGlobs(fs.Args())
+	files := expandGlobs(positional)
 	tokens, err := parser.ParseFiles(files)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
@@ -90,17 +109,19 @@ func runBuild(args []string) {
 }
 
 func runDocs(args []string) {
-	fs := flag.NewFlagSet("docs", flag.ExitOnError)
-	out := fs.String("out", "./docs", "Output directory")
-
-	// Separate flags from positional args
+	// Manually parse to support both -o and --out with positional args in any order
 	var positional []string
+	out := "./docs"
 	for i := 0; i < len(args); i++ {
-		if args[i] == "--out" || args[i] == "-out" {
+		if args[i] == "--out" || args[i] == "-out" || args[i] == "-o" {
 			if i+1 < len(args) {
-				*out = args[i+1]
+				out = args[i+1]
 				i++
 			}
+		} else if strings.HasPrefix(args[i], "-o=") {
+			out = strings.TrimPrefix(args[i], "-o=")
+		} else if strings.HasPrefix(args[i], "--out=") {
+			out = strings.TrimPrefix(args[i], "--out=")
 		} else if !strings.HasPrefix(args[i], "-") {
 			positional = append(positional, args[i])
 		}
@@ -120,12 +141,12 @@ func runDocs(args []string) {
 
 	fmt.Printf("✓ %d tokens parsed\n", len(tokens))
 
-	if err := builder.WriteDocs(tokens, *out); err != nil {
+	if err := builder.WriteDocs(tokens, out); err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing docs: %v\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("→ %s\n", *out)
+	fmt.Printf("→ %s\n", out)
 }
 
 func runValidate(args []string) {
