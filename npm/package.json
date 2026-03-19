@@ -1,0 +1,38 @@
+{
+  "name": "@artmsilva/cssmark",
+  "version": "0.1.0",
+  "description": "Design token toolchain using CSS @property as the single source of truth",
+  "bin": {
+    "cssmark": "scripts/run.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/install.js"
+  },
+  "files": [
+    "bin",
+    "scripts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artmsilva/cssmark.git"
+  },
+  "keywords": [
+    "design-tokens",
+    "css",
+    "css-custom-properties",
+    "css-variables",
+    "documentation",
+    "css-property"
+  ],
+  "author": "artmsilva",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/artmsilva/cssmark/issues"
+  },
+  "homepage": "https://github.com/artmsilva/cssmark#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "os": ["darwin", "linux", "win32"],
+  "cpu": ["x64", "arm64"]
+}

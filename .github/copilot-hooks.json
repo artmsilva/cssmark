@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "./.github/hooks/post-tool-commit.sh",
+        "comment": "Auto-commit after file changes to prevent data loss",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}
