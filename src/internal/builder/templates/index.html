@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Tokens</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h1>Design Tokens</h1>
+      <p class="count">{{.TotalCount}} tokens</p>
+      <ul class="nav-list">
+        {{range .Groups}}
+        <li><a href="#{{.Name}}">{{.Name}}</a> <span class="badge">{{len .Tokens}}</span></li>
+        {{end}}
+      </ul>
+    </nav>
+    
+    <main class="content">
+      {{range .Groups}}
+      <section id="{{.Name}}" class="category">
+        <h2>{{.Name}}</h2>
+        <div class="token-grid">
+          {{range .Tokens}}
+          <article class="token-card{{if .Deprecated}} deprecated{{end}}">
+            <header class="token-header">
+              {{if isColor .}}
+              <span class="color-swatch" style="background: {{.InitialValue}};"></span>
+              {{end}}
+              <code class="token-name">{{.Name}}</code>
+              {{if .Type}}<span class="type-badge">{{.Type}}</span>{{end}}
+              {{if .Deprecated}}<span class="deprecated-badge">deprecated</span>{{end}}
+            </header>
+            
+            <div class="token-value">{{.InitialValue}}</div>
+            
+            {{if .Description}}
+            <p class="token-description">{{.Description}}</p>
+            {{end}}
+            
+            {{if .Examples}}
+            <div class="token-examples">
+              <strong>Examples:</strong>
+              <ul>
+                {{range .Examples}}
+                <li><code>{{.}}</code></li>
+                {{end}}
+              </ul>
+            </div>
+            {{end}}
+            
+            {{if .Aliases}}
+            <div class="token-aliases">
+              <strong>Aliases:</strong> {{join .Aliases ", "}}
+            </div>
+            {{end}}
+            
+            <footer class="token-meta">
+              <span class="syntax">{{.Syntax}}</span>
+              <span class="source">{{.Source.File}}:{{.Source.Line}}</span>
+            </footer>
+          </article>
+          {{end}}
+        </div>
+      </section>
+      {{end}}
+    </main>
+  </div>
+</body>
+</html>

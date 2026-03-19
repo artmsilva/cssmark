@@ -1,0 +1,63 @@
+/* Example Design Tokens */
+
+@property --color-brand-primary {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #0055ff;
+  description: "Primary brand color for interactive elements.";
+  category: "color.brand";
+  type: "color";
+  aliases: "--color-primary, --color-action";
+  deprecated: false;
+  examples: "background: var(--color-brand-primary); border-color: var(--color-brand-primary);";
+}
+
+@property --color-brand-secondary {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #6366f1;
+  description: "Secondary brand color for accents.";
+  category: "color.brand";
+  type: "color";
+}
+
+@property --color-text-primary {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #1a1a2e;
+  description: "Primary text color for body content.";
+  category: "color.text";
+  type: "color";
+}
+
+@property --color-text-muted {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #6c757d;
+  description: "Muted text color for secondary content.";
+  category: "color.text";
+  type: "color";
+}
+
+@property --space-4 {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 1rem;
+  description: "Base spacing unit (16px).";
+  category: "spacing";
+  type: "size";
+}
+
+@property --space-8 {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 2rem;
+  description: "Double spacing unit (32px).";
+  category: "spacing";
+  type: "size";
+}
+
+:root {
+  --space-4: 16px;
+  --space-8: 32px;
+}

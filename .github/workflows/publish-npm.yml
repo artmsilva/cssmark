@@ -1,0 +1,46 @@
+name: Publish npm
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.repository == 'artmsilva/cssmark'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@artmsilva'
+
+      - name: Update package version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          cd src/npm
+          npm version $VERSION --no-git-tag-version
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build binary
+        run: |
+          go build -o src/npm/bin/cssmark ./src/cmd/cssmark
+          chmod +x src/npm/bin/cssmark
+
+      - name: Copy README
+        run: cp README.md src/npm/
+
+      - name: Publish to GitHub Packages
+        run: |
+          cd src/npm
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

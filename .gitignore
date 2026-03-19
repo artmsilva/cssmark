@@ -1,0 +1,8 @@
+/cssmark
+/dist/
+*.json
+!examples/*.json
+.DS_Store
+/bin/
+node_modules/
+*.tgz
