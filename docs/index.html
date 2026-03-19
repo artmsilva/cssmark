@@ -522,8 +522,11 @@
         </div>
       </div>
 
-      <h3>3. Generate documentation</h3>
-      <pre><code># Build JSON output
+      <h3>3. Generate outputs</h3>
+      <pre><code># Generate clean CSS with :root variables (for consumption)
+cssmark css ./tokens/**/*.css --out variables.css
+
+# Build JSON output (for tooling/integrations)
 cssmark build ./tokens/**/*.css --out tokens.json
 
 # Generate this documentation site
@@ -533,6 +536,7 @@ cssmark docs ./tokens/**/*.css --out ./docs
 cssmark validate ./tokens/**/*.css</code></pre>
 
       <h3>4. Use in your CSS</h3>
+      <p>Import the generated <code>variables.css</code> and use your tokens:</p>
       <pre><code>.button {
   background: var(--color-primary);
   padding: var(--space-3) var(--space-5);
@@ -575,7 +579,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:19</small>
+          <small>examples/tokens.css:19</small>
         </footer>
       </token-card>
       
@@ -608,7 +612,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:9</small>
+          <small>examples/tokens.css:9</small>
         </footer>
       </token-card>
       
@@ -616,6 +620,37 @@ cssmark validate ./tokens/**/*.css</code></pre>
     
     <token-category id="color.brand">
       <h2>color.brand</h2>
+      
+      <token-card deprecated>
+        <code class="token-name">--color-accent</code>
+        <div class="token-badges">
+          <span class="badge">color</span>
+          <span class="badge badge-deprecated">deprecated</span>
+        </div>
+
+        
+        <token-preview-color>
+          <span class="swatch" style="background:#6366f1" aria-label="Color swatch for #6366f1"></span>
+          <code>#6366f1</code>
+        </token-preview-color>
+        
+
+        <p class="token-description">Legacy accent color. Use --color-primary instead.</p>
+
+        
+
+        
+        <token-aliases>
+          <span>Aliases:</span>
+          <code>--color-primary</code>
+        </token-aliases>
+        
+
+        <footer class="token-meta">
+          <code>&lt;color&gt;</code>
+          <small>examples/tokens.css:394</small>
+        </footer>
+      </token-card>
       
       <token-card>
         <code class="token-name">--color-primary</code>
@@ -651,38 +686,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:57</small>
-        </footer>
-      </token-card>
-      
-      <token-card deprecated>
-        <code class="token-name">--color-accent</code>
-        <div class="token-badges">
-          <span class="badge">color</span>
-          <span class="badge badge-deprecated">deprecated</span>
-        </div>
-
-        
-        <token-preview-color>
-          <span class="swatch" style="background:#6366f1" aria-label="Color swatch for #6366f1"></span>
-          <code>#6366f1</code>
-        </token-preview-color>
-        
-
-        <p class="token-description">Legacy accent color. Use --color-primary instead.</p>
-
-        
-
-        
-        <token-aliases>
-          <span>Aliases:</span>
-          <code>--color-primary</code>
-        </token-aliases>
-        
-
-        <footer class="token-meta">
-          <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:394</small>
+          <small>examples/tokens.css:57</small>
         </footer>
       </token-card>
       
@@ -690,6 +694,39 @@ cssmark validate ./tokens/**/*.css</code></pre>
     
     <token-category id="color.semantic">
       <h2>color.semantic</h2>
+      
+      <token-card>
+        <code class="token-name">--color-danger</code>
+        <div class="token-badges">
+          <span class="badge">color</span>
+          
+        </div>
+
+        
+        <token-preview-color>
+          <span class="swatch" style="background:#dc3545" aria-label="Color swatch for #dc3545"></span>
+          <code>#dc3545</code>
+        </token-preview-color>
+        
+
+        <p class="token-description">Danger/error color for destructive actions and error states.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>color: var(--color-danger)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;color&gt;</code>
+          <small>examples/tokens.css:82</small>
+        </footer>
+      </token-card>
       
       <token-card>
         <code class="token-name">--color-warning</code>
@@ -720,7 +757,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:92</small>
+          <small>examples/tokens.css:92</small>
         </footer>
       </token-card>
       
@@ -753,40 +790,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:72</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code class="token-name">--color-danger</code>
-        <div class="token-badges">
-          <span class="badge">color</span>
-          
-        </div>
-
-        
-        <token-preview-color>
-          <span class="swatch" style="background:#dc3545" aria-label="Color swatch for #dc3545"></span>
-          <code>#dc3545</code>
-        </token-preview-color>
-        
-
-        <p class="token-description">Danger/error color for destructive actions and error states.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>color: var(--color-danger)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:82</small>
+          <small>examples/tokens.css:72</small>
         </footer>
       </token-card>
       
@@ -794,39 +798,6 @@ cssmark validate ./tokens/**/*.css</code></pre>
     
     <token-category id="color.text">
       <h2>color.text</h2>
-      
-      <token-card>
-        <code class="token-name">--color-text</code>
-        <div class="token-badges">
-          <span class="badge">color</span>
-          
-        </div>
-
-        
-        <token-preview-color>
-          <span class="swatch" style="background:#1a1a2e" aria-label="Color swatch for #1a1a2e"></span>
-          <code>#1a1a2e</code>
-        </token-preview-color>
-        
-
-        <p class="token-description">Primary text color for body content.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>color: var(--color-text)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:33</small>
-        </footer>
-      </token-card>
       
       <token-card>
         <code class="token-name">--color-text-muted</code>
@@ -857,7 +828,40 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;color&gt;</code>
-          <small>./examples/tokens.css:43</small>
+          <small>examples/tokens.css:43</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--color-text</code>
+        <div class="token-badges">
+          <span class="badge">color</span>
+          
+        </div>
+
+        
+        <token-preview-color>
+          <span class="swatch" style="background:#1a1a2e" aria-label="Color swatch for #1a1a2e"></span>
+          <code>#1a1a2e</code>
+        </token-preview-color>
+        
+
+        <p class="token-description">Primary text color for body content.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>color: var(--color-text)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;color&gt;</code>
+          <small>examples/tokens.css:33</small>
         </footer>
       </token-card>
       
@@ -894,7 +898,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>*</code>
-          <small>./examples/tokens.css:322</small>
+          <small>examples/tokens.css:322</small>
         </footer>
       </token-card>
       
@@ -931,71 +935,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:356</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code class="token-name">--swatch-size</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-generic>
-          <code>24px</code>
-        </token-preview-generic>
-        
-
-        <p class="token-description">Size of color swatch indicators.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>width: var(--swatch-size)</code></li><li><code>height: var(--swatch-size)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:366</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code class="token-name">--content-max-width</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-generic>
-          <code>1200px</code>
-        </token-preview-generic>
-        
-
-        <p class="token-description">Maximum width of the main content area.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>max-width: var(--content-max-width)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:346</small>
+          <small>examples/tokens.css:356</small>
         </footer>
       </token-card>
       
@@ -1027,7 +967,71 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:336</small>
+          <small>examples/tokens.css:336</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--content-max-width</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-generic>
+          <code>1200px</code>
+        </token-preview-generic>
+        
+
+        <p class="token-description">Maximum width of the main content area.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>max-width: var(--content-max-width)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>examples/tokens.css:346</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--swatch-size</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-generic>
+          <code>24px</code>
+        </token-preview-generic>
+        
+
+        <p class="token-description">Size of color swatch indicators.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>width: var(--swatch-size)</code></li><li><code>height: var(--swatch-size)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>examples/tokens.css:366</small>
         </footer>
       </token-card>
       
@@ -1035,72 +1039,6 @@ cssmark validate ./tokens/**/*.css</code></pre>
     
     <token-category id="radius">
       <h2>radius</h2>
-      
-      <token-card>
-        <code class="token-name">--radius-sm</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-radius>
-          <span class="shape" style="border-radius:2px" aria-label="Border radius 2px"></span>
-          <code>2px</code>
-        </token-preview-radius>
-        
-
-        <p class="token-description">Small border radius for inline code and subtle rounding.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>border-radius: var(--radius-sm)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:278</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code class="token-name">--radius-lg</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-radius>
-          <span class="shape" style="border-radius:8px" aria-label="Border radius 8px"></span>
-          <code>8px</code>
-        </token-preview-radius>
-        
-
-        <p class="token-description">Large border radius for cards and containers.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>border-radius: var(--radius-lg)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:298</small>
-        </footer>
-      </token-card>
       
       <token-card>
         <code class="token-name">--radius-md</code>
@@ -1131,7 +1069,40 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:288</small>
+          <small>examples/tokens.css:288</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--radius-sm</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-radius>
+          <span class="shape" style="border-radius:2px" aria-label="Border radius 2px"></span>
+          <code>2px</code>
+        </token-preview-radius>
+        
+
+        <p class="token-description">Small border radius for inline code and subtle rounding.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>border-radius: var(--radius-sm)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>examples/tokens.css:278</small>
         </footer>
       </token-card>
       
@@ -1164,7 +1135,40 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:308</small>
+          <small>examples/tokens.css:308</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--radius-lg</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-radius>
+          <span class="shape" style="border-radius:8px" aria-label="Border radius 8px"></span>
+          <code>8px</code>
+        </token-preview-radius>
+        
+
+        <p class="token-description">Large border radius for cards and containers.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>border-radius: var(--radius-lg)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>examples/tokens.css:298</small>
         </footer>
       </token-card>
       
@@ -1174,7 +1178,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
       <h2>spacing</h2>
       
       <token-card>
-        <code class="token-name">--space-3</code>
+        <code class="token-name">--space-7</code>
         <div class="token-badges">
           <span class="badge">size</span>
           
@@ -1182,18 +1186,18 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         
         <token-preview-spacing>
-          <span class="bar" style="width:0.5rem;height:0.5rem" aria-label="Spacing 0.5rem"></span>
-          <code>0.5rem</code>
+          <span class="bar" style="width:1.5rem;height:1.5rem" aria-label="Spacing 1.5rem"></span>
+          <code>1.5rem</code>
         </token-preview-spacing>
         
 
-        <p class="token-description">Small spacing for compact layouts.</p>
+        <p class="token-description">Medium-large spacing for section gaps.</p>
 
         
         <token-examples>
           <details>
             <summary>Usage examples</summary>
-            <ul><li><code>padding: var(--space-3)</code></li><li><code>gap: var(--space-3)</code></li></ul>
+            <ul><li><code>gap: var(--space-7)</code></li><li><code>margin-bottom: var(--space-7)</code></li></ul>
           </details>
         </token-examples>
         
@@ -1202,73 +1206,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:204</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code class="token-name">--space-4</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-spacing>
-          <span class="bar" style="width:0.75rem;height:0.75rem" aria-label="Spacing 0.75rem"></span>
-          <code>0.75rem</code>
-        </token-preview-spacing>
-        
-
-        <p class="token-description">Medium-small spacing for card content.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>padding: var(--space-4)</code></li><li><code>margin-bottom: var(--space-4)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:214</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code class="token-name">--space-1</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-spacing>
-          <span class="bar" style="width:0.125rem;height:0.125rem" aria-label="Spacing 0.125rem"></span>
-          <code>0.125rem</code>
-        </token-preview-spacing>
-        
-
-        <p class="token-description">Minimal spacing for tight padding.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>padding: var(--space-1)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:184</small>
+          <small>examples/tokens.css:244</small>
         </footer>
       </token-card>
       
@@ -1301,7 +1239,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:264</small>
+          <small>examples/tokens.css:264</small>
         </footer>
       </token-card>
       
@@ -1334,12 +1272,12 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:234</small>
+          <small>examples/tokens.css:234</small>
         </footer>
       </token-card>
       
       <token-card>
-        <code class="token-name">--space-2</code>
+        <code class="token-name">--space-4</code>
         <div class="token-badges">
           <span class="badge">size</span>
           
@@ -1347,18 +1285,18 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         
         <token-preview-spacing>
-          <span class="bar" style="width:0.25rem;height:0.25rem" aria-label="Spacing 0.25rem"></span>
-          <code>0.25rem</code>
+          <span class="bar" style="width:0.75rem;height:0.75rem" aria-label="Spacing 0.75rem"></span>
+          <code>0.75rem</code>
         </token-preview-spacing>
         
 
-        <p class="token-description">Extra small spacing for inline elements.</p>
+        <p class="token-description">Medium-small spacing for card content.</p>
 
         
         <token-examples>
           <details>
             <summary>Usage examples</summary>
-            <ul><li><code>padding: var(--space-2)</code></li><li><code>margin-top: var(--space-2)</code></li></ul>
+            <ul><li><code>padding: var(--space-4)</code></li><li><code>margin-bottom: var(--space-4)</code></li></ul>
           </details>
         </token-examples>
         
@@ -1367,12 +1305,12 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:194</small>
+          <small>examples/tokens.css:214</small>
         </footer>
       </token-card>
       
       <token-card>
-        <code class="token-name">--space-5</code>
+        <code class="token-name">--space-1</code>
         <div class="token-badges">
           <span class="badge">size</span>
           
@@ -1380,18 +1318,18 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         
         <token-preview-spacing>
-          <span class="bar" style="width:1rem;height:1rem" aria-label="Spacing 1rem"></span>
-          <code>1rem</code>
+          <span class="bar" style="width:0.125rem;height:0.125rem" aria-label="Spacing 0.125rem"></span>
+          <code>0.125rem</code>
         </token-preview-spacing>
         
 
-        <p class="token-description">Base spacing unit.</p>
+        <p class="token-description">Minimal spacing for tight padding.</p>
 
         
         <token-examples>
           <details>
             <summary>Usage examples</summary>
-            <ul><li><code>padding: var(--space-5)</code></li><li><code>gap: var(--space-5)</code></li></ul>
+            <ul><li><code>padding: var(--space-1)</code></li></ul>
           </details>
         </token-examples>
         
@@ -1400,12 +1338,12 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:224</small>
+          <small>examples/tokens.css:184</small>
         </footer>
       </token-card>
       
       <token-card>
-        <code class="token-name">--space-7</code>
+        <code class="token-name">--space-3</code>
         <div class="token-badges">
           <span class="badge">size</span>
           
@@ -1413,18 +1351,18 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         
         <token-preview-spacing>
-          <span class="bar" style="width:1.5rem;height:1.5rem" aria-label="Spacing 1.5rem"></span>
-          <code>1.5rem</code>
+          <span class="bar" style="width:0.5rem;height:0.5rem" aria-label="Spacing 0.5rem"></span>
+          <code>0.5rem</code>
         </token-preview-spacing>
         
 
-        <p class="token-description">Medium-large spacing for section gaps.</p>
+        <p class="token-description">Small spacing for compact layouts.</p>
 
         
         <token-examples>
           <details>
             <summary>Usage examples</summary>
-            <ul><li><code>gap: var(--space-7)</code></li><li><code>margin-bottom: var(--space-7)</code></li></ul>
+            <ul><li><code>padding: var(--space-3)</code></li><li><code>gap: var(--space-3)</code></li></ul>
           </details>
         </token-examples>
         
@@ -1433,7 +1371,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:244</small>
+          <small>examples/tokens.css:204</small>
         </footer>
       </token-card>
       
@@ -1466,36 +1404,31 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:254</small>
+          <small>examples/tokens.css:254</small>
         </footer>
       </token-card>
       
-    </token-category>
-    
-    <token-category id="typography.family">
-      <h2>typography.family</h2>
-      
       <token-card>
-        <code class="token-name">--font-mono</code>
+        <code class="token-name">--space-2</code>
         <div class="token-badges">
-          <span class="badge">font</span>
+          <span class="badge">size</span>
           
         </div>
 
         
-        <token-preview-font>
-          <span class="sample" style="font-family:ui-monospace, &#39;SF Mono&#39;, Monaco, &#39;Cascadia Code&#39;, monospace">Aa Bb Cc 123</span>
-          <span class="pangram" style="font-family:ui-monospace, &#39;SF Mono&#39;, Monaco, &#39;Cascadia Code&#39;, monospace">The quick brown fox jumps over the lazy dog</span>
-        </token-preview-font>
+        <token-preview-spacing>
+          <span class="bar" style="width:0.25rem;height:0.25rem" aria-label="Spacing 0.25rem"></span>
+          <code>0.25rem</code>
+        </token-preview-spacing>
         
 
-        <p class="token-description">Monospace font stack for code, token names, and technical content.</p>
+        <p class="token-description">Extra small spacing for inline elements.</p>
 
         
         <token-examples>
           <details>
             <summary>Usage examples</summary>
-            <ul><li><code>font-family: var(--font-mono)</code></li></ul>
+            <ul><li><code>padding: var(--space-2)</code></li><li><code>margin-top: var(--space-2)</code></li></ul>
           </details>
         </token-examples>
         
@@ -1503,10 +1436,48 @@ cssmark validate ./tokens/**/*.css</code></pre>
         
 
         <footer class="token-meta">
-          <code>*</code>
-          <small>./examples/tokens.css:116</small>
+          <code>&lt;length&gt;</code>
+          <small>examples/tokens.css:194</small>
         </footer>
       </token-card>
+      
+      <token-card>
+        <code class="token-name">--space-5</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-spacing>
+          <span class="bar" style="width:1rem;height:1rem" aria-label="Spacing 1rem"></span>
+          <code>1rem</code>
+        </token-preview-spacing>
+        
+
+        <p class="token-description">Base spacing unit.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>padding: var(--space-5)</code></li><li><code>gap: var(--space-5)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>examples/tokens.css:224</small>
+        </footer>
+      </token-card>
+      
+    </token-category>
+    
+    <token-category id="typography.family">
+      <h2>typography.family</h2>
       
       <token-card>
         <code class="token-name">--font-sans</code>
@@ -1537,7 +1508,40 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>*</code>
-          <small>./examples/tokens.css:106</small>
+          <small>examples/tokens.css:106</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--font-mono</code>
+        <div class="token-badges">
+          <span class="badge">font</span>
+          
+        </div>
+
+        
+        <token-preview-font>
+          <span class="sample" style="font-family:ui-monospace, &#39;SF Mono&#39;, Monaco, &#39;Cascadia Code&#39;, monospace">Aa Bb Cc 123</span>
+          <span class="pangram" style="font-family:ui-monospace, &#39;SF Mono&#39;, Monaco, &#39;Cascadia Code&#39;, monospace">The quick brown fox jumps over the lazy dog</span>
+        </token-preview-font>
+        
+
+        <p class="token-description">Monospace font stack for code, token names, and technical content.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>font-family: var(--font-mono)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>*</code>
+          <small>examples/tokens.css:116</small>
         </footer>
       </token-card>
       
@@ -1574,7 +1578,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;number&gt;</code>
-          <small>./examples/tokens.css:380</small>
+          <small>examples/tokens.css:380</small>
         </footer>
       </token-card>
       
@@ -1612,40 +1616,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:140</small>
-        </footer>
-      </token-card>
-      
-      <token-card>
-        <code class="token-name">--font-size-xs</code>
-        <div class="token-badges">
-          <span class="badge">size</span>
-          
-        </div>
-
-        
-        <token-preview-fontsize>
-          <span class="sample" style="font-size:0.75rem">Aa</span>
-          <code>0.75rem</code>
-        </token-preview-fontsize>
-        
-
-        <p class="token-description">Extra small text for metadata and fine print.</p>
-
-        
-        <token-examples>
-          <details>
-            <summary>Usage examples</summary>
-            <ul><li><code>font-size: var(--font-size-xs)</code></li></ul>
-          </details>
-        </token-examples>
-        
-
-        
-
-        <footer class="token-meta">
-          <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:130</small>
+          <small>examples/tokens.css:140</small>
         </footer>
       </token-card>
       
@@ -1678,12 +1649,12 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:170</small>
+          <small>examples/tokens.css:170</small>
         </footer>
       </token-card>
       
       <token-card>
-        <code class="token-name">--font-size-base</code>
+        <code class="token-name">--font-size-xs</code>
         <div class="token-badges">
           <span class="badge">size</span>
           
@@ -1691,18 +1662,18 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         
         <token-preview-fontsize>
-          <span class="sample" style="font-size:1rem">Aa</span>
-          <code>1rem</code>
+          <span class="sample" style="font-size:0.75rem">Aa</span>
+          <code>0.75rem</code>
         </token-preview-fontsize>
         
 
-        <p class="token-description">Base text size for body content.</p>
+        <p class="token-description">Extra small text for metadata and fine print.</p>
 
         
         <token-examples>
           <details>
             <summary>Usage examples</summary>
-            <ul><li><code>font-size: var(--font-size-base)</code></li></ul>
+            <ul><li><code>font-size: var(--font-size-xs)</code></li></ul>
           </details>
         </token-examples>
         
@@ -1711,7 +1682,7 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:150</small>
+          <small>examples/tokens.css:130</small>
         </footer>
       </token-card>
       
@@ -1744,7 +1715,40 @@ cssmark validate ./tokens/**/*.css</code></pre>
 
         <footer class="token-meta">
           <code>&lt;length&gt;</code>
-          <small>./examples/tokens.css:160</small>
+          <small>examples/tokens.css:160</small>
+        </footer>
+      </token-card>
+      
+      <token-card>
+        <code class="token-name">--font-size-base</code>
+        <div class="token-badges">
+          <span class="badge">size</span>
+          
+        </div>
+
+        
+        <token-preview-fontsize>
+          <span class="sample" style="font-size:1rem">Aa</span>
+          <code>1rem</code>
+        </token-preview-fontsize>
+        
+
+        <p class="token-description">Base text size for body content.</p>
+
+        
+        <token-examples>
+          <details>
+            <summary>Usage examples</summary>
+            <ul><li><code>font-size: var(--font-size-base)</code></li></ul>
+          </details>
+        </token-examples>
+        
+
+        
+
+        <footer class="token-meta">
+          <code>&lt;length&gt;</code>
+          <small>examples/tokens.css:150</small>
         </footer>
       </token-card>
       

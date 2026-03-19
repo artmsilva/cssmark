@@ -24,6 +24,8 @@ func main() {
 	switch os.Args[1] {
 	case "build":
 		runBuild(os.Args[2:])
+	case "css":
+		runCSS(os.Args[2:])
 	case "docs":
 		runDocs(os.Args[2:])
 	case "validate":
@@ -49,6 +51,7 @@ Usage:
 
 Commands:
   build      Parse tokens and output JSON
+  css        Generate clean CSS with :root variables
   docs       Generate static documentation site
   validate   Validate tokens for errors
   diff       Compare two token snapshots
@@ -57,6 +60,7 @@ Commands:
 
 Examples:
   cssmark build tokens.css --out tokens.json
+  cssmark css tokens.css --out variables.css
   cssmark docs tokens.css --out ./docs
   cssmark validate tokens.css
   cssmark diff tokens.old.json tokens.new.json`)
@@ -106,6 +110,46 @@ func runBuild(args []string) {
 	}
 
 	fmt.Printf("→ %s\n", *out)
+}
+
+func runCSS(args []string) {
+	var positional []string
+	outValue := "variables.css"
+	for i := 0; i < len(args); i++ {
+		if args[i] == "--out" || args[i] == "-out" || args[i] == "-o" {
+			if i+1 < len(args) {
+				outValue = args[i+1]
+				i++
+			}
+		} else if strings.HasPrefix(args[i], "-o=") {
+			outValue = strings.TrimPrefix(args[i], "-o=")
+		} else if strings.HasPrefix(args[i], "--out=") {
+			outValue = strings.TrimPrefix(args[i], "--out=")
+		} else if !strings.HasPrefix(args[i], "-") {
+			positional = append(positional, args[i])
+		}
+	}
+
+	if len(positional) < 1 {
+		fmt.Fprintln(os.Stderr, "Error: No input files specified")
+		os.Exit(1)
+	}
+
+	files := expandGlobs(positional)
+	tokens, err := parser.ParseFiles(files)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("✓ %d tokens parsed\n", len(tokens))
+
+	if err := builder.WriteCSS(tokens, outValue); err != nil {
+		fmt.Fprintf(os.Stderr, "Error writing CSS: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("→ %s\n", outValue)
 }
 
 func runDocs(args []string) {

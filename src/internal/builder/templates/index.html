@@ -502,8 +502,11 @@
         </div>
       </div>
 
-      <h3>3. Generate documentation</h3>
-      <pre><code># Build JSON output
+      <h3>3. Generate outputs</h3>
+      <pre><code># Generate clean CSS with :root variables (for consumption)
+cssmark css ./tokens/**/*.css --out variables.css
+
+# Build JSON output (for tooling/integrations)
 cssmark build ./tokens/**/*.css --out tokens.json
 
 # Generate this documentation site
@@ -513,6 +516,7 @@ cssmark docs ./tokens/**/*.css --out ./docs
 cssmark validate ./tokens/**/*.css</code></pre>
 
       <h3>4. Use in your CSS</h3>
+      <p>Import the generated <code>variables.css</code> and use your tokens:</p>
       <pre><code>.button {
   background: var(--color-primary);
   padding: var(--space-3) var(--space-5);
