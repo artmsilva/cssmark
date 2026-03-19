@@ -5,120 +5,533 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Design Tokens — cssmark</title>
   <link rel="stylesheet" href="tokens.css">
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Base reset - minimal, works without JS */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: var(--font-sans, system-ui, sans-serif); }
+    body { background: var(--color-bg, #fff); color: var(--color-text, #1a1a2e); line-height: var(--line-height-base, 1.6); }
+    a { color: var(--color-primary, #0055ff); }
+    code { font-family: var(--font-mono, ui-monospace, monospace); }
+  </style>
 </head>
 <body>
-  <div class="layout">
-    <nav class="sidebar">
-      <h1>cssmark</h1>
-      <p class="subtitle">Design Tokens</p>
-      <p class="count">{{.TotalCount}} tokens</p>
-      <ul class="nav-list">
-        {{range .Groups}}
-        <li><a href="#{{.Name}}">{{.Name}}</a> <span class="badge">{{len .Tokens}}</span></li>
-        {{end}}
-      </ul>
-    </nav>
-    
-    <main class="content">
+
+<token-docs>
+  <nav slot="sidebar">
+    <h1>cssmark</h1>
+    <p>Design Tokens</p>
+    <span>{{.TotalCount}} tokens</span>
+    <ul>
       {{range .Groups}}
-      <section id="{{.Name}}" class="category">
-        <h2>{{.Name}}</h2>
-        <div class="token-grid">
-          {{range .Tokens}}
-          <article class="token-card{{if .Deprecated}} deprecated{{end}}" data-type="{{.Type}}">
-            <header class="token-header">
-              <code class="token-name">{{.Name}}</code>
-              {{if .Type}}<span class="type-badge">{{.Type}}</span>{{end}}
-              {{if .Deprecated}}<span class="deprecated-badge">deprecated</span>{{end}}
-            </header>
-            
-            <!-- Visual Preview based on token type -->
-            <div class="token-preview">
-              {{if isColor .}}
-              <div class="preview-color">
-                <div class="color-swatch-large" style="background: {{.InitialValue}};"></div>
-                <div class="color-info">
-                  <span class="color-value">{{.InitialValue}}</span>
-                  <div class="color-demo">
-                    <span class="demo-text" style="color: {{.InitialValue}};">Aa</span>
-                    <span class="demo-bg" style="background: {{.InitialValue}};"></span>
-                    <span class="demo-border" style="border-color: {{.InitialValue}};"></span>
-                  </div>
-                </div>
-              </div>
-              {{else if isSpacing .}}
-              <div class="preview-spacing">
-                <div class="spacing-visual" style="width: {{.InitialValue}}; height: {{.InitialValue}};"></div>
-                <div class="spacing-ruler">
-                  <div class="ruler-bar" style="width: {{.InitialValue}};"></div>
-                  <span class="ruler-label">{{.InitialValue}}</span>
-                </div>
-              </div>
-              {{else if isRadius .}}
-              <div class="preview-radius">
-                <div class="radius-box" style="border-radius: {{.InitialValue}};"></div>
-                <span class="radius-value">{{.InitialValue}}</span>
-              </div>
-              {{else if isFont .}}
-              <div class="preview-font">
-                <div class="font-sample" style="font-family: {{safeCSS .InitialValue}};">
-                  <span class="font-large">Aa Bb Cc</span>
-                  <span class="font-small">The quick brown fox jumps over the lazy dog</span>
-                </div>
-              </div>
-              {{else if isFontSize .}}
-              <div class="preview-font-size">
-                <span class="font-size-sample" style="font-size: {{.InitialValue}};">Aa</span>
-                <span class="font-size-value">{{.InitialValue}}</span>
-              </div>
-              {{else if isShadow .}}
-              <div class="preview-shadow">
-                <div class="shadow-box" style="box-shadow: {{safeCSS .InitialValue}};"></div>
-              </div>
-              {{else}}
-              <div class="preview-generic">
-                <code class="token-value">{{.InitialValue}}</code>
-              </div>
-              {{end}}
-            </div>
-            
-            {{if .Description}}
-            <p class="token-description">{{.Description}}</p>
-            {{end}}
-            
-            {{if .Examples}}
-            <div class="token-examples">
-              <details>
-                <summary>Usage Examples</summary>
-                <ul>
-                  {{range .Examples}}
-                  <li><code>{{.}}</code></li>
-                  {{end}}
-                </ul>
-              </details>
-            </div>
-            {{end}}
-            
-            {{if .Aliases}}
-            <div class="token-aliases">
-              <span class="aliases-label">Aliases:</span>
-              {{range .Aliases}}
-              <code class="alias">{{.}}</code>
-              {{end}}
-            </div>
-            {{end}}
-            
-            <footer class="token-meta">
-              <span class="syntax">{{.Syntax}}</span>
-              <span class="source">{{.Source.File}}:{{.Source.Line}}</span>
-            </footer>
-          </article>
-          {{end}}
-        </div>
-      </section>
+      <li><a href="#{{.Name}}">{{.Name}}</a> <span>{{len .Tokens}}</span></li>
       {{end}}
-    </main>
-  </div>
+    </ul>
+  </nav>
+
+  <main slot="content">
+    {{range .Groups}}
+    <token-category id="{{.Name}}">
+      <h2>{{.Name}}</h2>
+      {{range .Tokens}}
+      <token-card{{if .Deprecated}} deprecated{{end}}>
+        <code slot="name">{{.Name}}</code>
+        {{if .Type}}<span slot="type">{{.Type}}</span>{{end}}
+        {{if .Deprecated}}<span slot="deprecated">deprecated</span>{{end}}
+
+        {{if isColor .}}
+        <token-preview-color slot="preview" value="{{.InitialValue}}">
+          <span style="background:{{.InitialValue}}" aria-label="Color swatch for {{.InitialValue}}"></span>
+          <code>{{.InitialValue}}</code>
+        </token-preview-color>
+        {{else if isSpacing .}}
+        <token-preview-spacing slot="preview" value="{{.InitialValue}}">
+          <span style="width:{{.InitialValue}};height:{{.InitialValue}}" aria-label="Spacing {{.InitialValue}}"></span>
+          <code>{{.InitialValue}}</code>
+        </token-preview-spacing>
+        {{else if isRadius .}}
+        <token-preview-radius slot="preview" value="{{.InitialValue}}">
+          <span style="border-radius:{{.InitialValue}}" aria-label="Border radius {{.InitialValue}}"></span>
+          <code>{{.InitialValue}}</code>
+        </token-preview-radius>
+        {{else if isFont .}}
+        <token-preview-font slot="preview" value="{{safeCSS .InitialValue}}">
+          <span style="font-family:{{safeCSS .InitialValue}}">Aa Bb Cc</span>
+          <small style="font-family:{{safeCSS .InitialValue}}">The quick brown fox</small>
+        </token-preview-font>
+        {{else if isFontSize .}}
+        <token-preview-fontsize slot="preview" value="{{.InitialValue}}">
+          <span style="font-size:{{.InitialValue}}">Aa</span>
+          <code>{{.InitialValue}}</code>
+        </token-preview-fontsize>
+        {{else if isShadow .}}
+        <token-preview-shadow slot="preview" value="{{safeCSS .InitialValue}}">
+          <span style="box-shadow:{{safeCSS .InitialValue}}" aria-label="Shadow preview"></span>
+        </token-preview-shadow>
+        {{else}}
+        <token-preview-generic slot="preview">
+          <code>{{.InitialValue}}</code>
+        </token-preview-generic>
+        {{end}}
+
+        {{if .Description}}<p slot="description">{{.Description}}</p>{{end}}
+
+        {{if .Examples}}
+        <token-examples slot="examples">
+          <details>
+            <summary>Usage</summary>
+            <ul>{{range .Examples}}<li><code>{{.}}</code></li>{{end}}</ul>
+          </details>
+        </token-examples>
+        {{end}}
+
+        {{if .Aliases}}
+        <token-aliases slot="aliases">
+          <span>Aliases:</span>
+          {{range .Aliases}}<code>{{.}}</code>{{end}}
+        </token-aliases>
+        {{end}}
+
+        <footer slot="meta">
+          <code>{{.Syntax}}</code>
+          <small>{{.Source.File}}:{{.Source.Line}}</small>
+        </footer>
+      </token-card>
+      {{end}}
+    </token-category>
+    {{end}}
+  </main>
+</token-docs>
+
+<script>
+// HTML Web Components - Progressive Enhancement
+// These enhance existing HTML, they don't replace it
+
+class TokenDocs extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-docs {
+        display: grid;
+        grid-template-columns: var(--sidebar-width, 280px) 1fr;
+        min-height: 100vh;
+      }
+      token-docs > nav {
+        background: var(--color-bg-secondary, #f8f9fa);
+        border-right: 1px solid var(--color-border, #e9ecef);
+        padding: var(--space-8, 2rem);
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+      }
+      token-docs > nav h1 {
+        font-size: var(--font-size-xl, 1.5rem);
+        font-weight: 700;
+        color: var(--color-primary, #0055ff);
+        margin-bottom: var(--space-1, 0.125rem);
+      }
+      token-docs > nav > p {
+        font-size: var(--font-size-sm, 0.875rem);
+        color: var(--color-text-muted, #6c757d);
+        margin-bottom: var(--space-3, 0.5rem);
+      }
+      token-docs > nav > span {
+        display: inline-block;
+        color: var(--color-text-muted, #6c757d);
+        font-size: var(--font-size-xs, 0.75rem);
+        padding: var(--space-2, 0.25rem) var(--space-3, 0.5rem);
+        background: var(--color-bg, #fff);
+        border-radius: var(--radius-md, 4px);
+        margin-bottom: var(--space-7, 1.5rem);
+      }
+      token-docs > nav ul { list-style: none; }
+      token-docs > nav li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-3, 0.5rem) 0;
+        border-bottom: 1px solid var(--color-border, #e9ecef);
+      }
+      token-docs > nav li:last-child { border-bottom: none; }
+      token-docs > nav a {
+        color: var(--color-text, #1a1a2e);
+        text-decoration: none;
+        font-size: var(--font-size-sm, 0.875rem);
+      }
+      token-docs > nav a:hover { color: var(--color-primary, #0055ff); }
+      token-docs > nav li > span {
+        background: var(--color-bg, #fff);
+        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+        border-radius: var(--radius-full, 999px);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-text-muted, #6c757d);
+      }
+      token-docs > main {
+        padding: var(--space-8, 2rem) var(--space-9, 3rem);
+        max-width: var(--content-max-width, 1200px);
+      }
+      @media (max-width: 768px) {
+        token-docs { grid-template-columns: 1fr; }
+        token-docs > nav { position: static; height: auto; padding: var(--space-6, 1.25rem); }
+        token-docs > main { padding: var(--space-6, 1.25rem); }
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenCategory extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-category {
+        display: block;
+        margin-bottom: var(--space-9, 3rem);
+      }
+      token-category h2 {
+        font-size: var(--font-size-xl, 1.5rem);
+        margin-bottom: var(--space-7, 1.5rem);
+        padding-bottom: var(--space-3, 0.5rem);
+        border-bottom: 2px solid var(--color-primary, #0055ff);
+        display: inline-block;
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenCard extends HTMLElement {
+  connectedCallback() {
+    const deprecated = this.hasAttribute('deprecated');
+    const style = document.createElement('style');
+    style.textContent = `
+      token-card {
+        display: flex;
+        flex-direction: column;
+        background: var(--color-bg, #fff);
+        border: 1px solid var(--color-border, #e9ecef);
+        border-radius: var(--radius-lg, 8px);
+        padding: var(--space-6, 1.25rem);
+        box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1));
+        margin-bottom: var(--space-5, 1rem);
+      }
+      token-card[deprecated] {
+        opacity: 0.7;
+        border-color: var(--color-warning, #ffc107);
+        background: linear-gradient(135deg, var(--color-bg, #fff) 0%, rgba(255,193,7,0.05) 100%);
+      }
+      token-card > code[slot="name"] {
+        font-size: var(--font-size-sm, 0.875rem);
+        font-weight: 600;
+        color: var(--color-primary, #0055ff);
+        word-break: break-all;
+      }
+      token-card > span[slot="type"] {
+        display: inline-block;
+        background: var(--color-bg-secondary, #f8f9fa);
+        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+        border-radius: var(--radius-md, 4px);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-text-muted, #6c757d);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: var(--space-2, 0.25rem) var(--space-2, 0.25rem) var(--space-2, 0.25rem) 0;
+      }
+      token-card > span[slot="deprecated"] {
+        display: inline-block;
+        background: var(--color-warning, #ffc107);
+        color: #000;
+        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+        border-radius: var(--radius-md, 4px);
+        font-size: var(--font-size-xs, 0.75rem);
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      token-card > p[slot="description"] {
+        color: var(--color-text-muted, #6c757d);
+        font-size: var(--font-size-sm, 0.875rem);
+        margin: var(--space-4, 0.75rem) 0;
+        line-height: 1.5;
+      }
+      token-card > footer[slot="meta"] {
+        display: flex;
+        justify-content: space-between;
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-text-muted, #6c757d);
+        padding-top: var(--space-4, 0.75rem);
+        border-top: 1px solid var(--color-border, #e9ecef);
+        margin-top: auto;
+      }
+      token-card > footer[slot="meta"] code {
+        background: var(--color-bg-secondary, #f8f9fa);
+        padding: var(--space-1, 0.125rem) var(--space-2, 0.25rem);
+        border-radius: var(--radius-sm, 2px);
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenPreviewColor extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-preview-color {
+        display: flex;
+        gap: var(--space-5, 1rem);
+        align-items: center;
+        padding: var(--space-5, 1rem);
+        background: var(--color-bg-secondary, #f8f9fa);
+        border-radius: var(--radius-md, 4px);
+        margin: var(--space-4, 0.75rem) 0;
+      }
+      token-preview-color > span {
+        width: 64px;
+        height: 64px;
+        border-radius: var(--radius-md, 4px);
+        border: 1px solid var(--color-border, #e9ecef);
+        flex-shrink: 0;
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+      }
+      token-preview-color > code {
+        font-size: var(--font-size-sm, 0.875rem);
+        font-weight: 500;
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenPreviewSpacing extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-preview-spacing {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3, 0.5rem);
+        padding: var(--space-5, 1rem);
+        background: var(--color-bg-secondary, #f8f9fa);
+        border-radius: var(--radius-md, 4px);
+        margin: var(--space-4, 0.75rem) 0;
+      }
+      token-preview-spacing > span {
+        background: var(--color-primary, #0055ff);
+        border-radius: var(--radius-sm, 2px);
+        max-width: 100%;
+        min-width: 4px;
+        min-height: 4px;
+      }
+      token-preview-spacing > code {
+        font-size: var(--font-size-sm, 0.875rem);
+        font-weight: 500;
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenPreviewRadius extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-preview-radius {
+        display: flex;
+        gap: var(--space-5, 1rem);
+        align-items: center;
+        padding: var(--space-5, 1rem);
+        background: var(--color-bg-secondary, #f8f9fa);
+        border-radius: var(--radius-md, 4px);
+        margin: var(--space-4, 0.75rem) 0;
+      }
+      token-preview-radius > span {
+        width: 64px;
+        height: 64px;
+        background: var(--color-primary, #0055ff);
+        opacity: 0.8;
+        flex-shrink: 0;
+      }
+      token-preview-radius > code {
+        font-size: var(--font-size-sm, 0.875rem);
+        font-weight: 500;
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenPreviewFont extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-preview-font {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2, 0.25rem);
+        padding: var(--space-5, 1rem);
+        background: var(--color-bg-secondary, #f8f9fa);
+        border-radius: var(--radius-md, 4px);
+        margin: var(--space-4, 0.75rem) 0;
+      }
+      token-preview-font > span {
+        font-size: var(--font-size-xl, 1.5rem);
+      }
+      token-preview-font > small {
+        font-size: var(--font-size-sm, 0.875rem);
+        color: var(--color-text-muted, #6c757d);
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenPreviewFontsize extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-preview-fontsize {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-5, 1rem);
+        padding: var(--space-5, 1rem);
+        background: var(--color-bg-secondary, #f8f9fa);
+        border-radius: var(--radius-md, 4px);
+        margin: var(--space-4, 0.75rem) 0;
+      }
+      token-preview-fontsize > span {
+        font-weight: 600;
+        line-height: 1;
+      }
+      token-preview-fontsize > code {
+        font-size: var(--font-size-sm, 0.875rem);
+        color: var(--color-text-muted, #6c757d);
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenPreviewShadow extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-preview-shadow {
+        display: flex;
+        justify-content: center;
+        padding: var(--space-8, 2rem) var(--space-5, 1rem);
+        background: var(--color-bg-secondary, #f8f9fa);
+        border-radius: var(--radius-md, 4px);
+        margin: var(--space-4, 0.75rem) 0;
+      }
+      token-preview-shadow > span {
+        width: 120px;
+        height: 60px;
+        background: var(--color-bg, #fff);
+        border-radius: var(--radius-md, 4px);
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenPreviewGeneric extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-preview-generic {
+        display: block;
+        padding: var(--space-5, 1rem);
+        background: var(--color-bg-secondary, #f8f9fa);
+        border-radius: var(--radius-md, 4px);
+        margin: var(--space-4, 0.75rem) 0;
+      }
+      token-preview-generic > code {
+        font-size: var(--font-size-sm, 0.875rem);
+        word-break: break-all;
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenExamples extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-examples {
+        display: block;
+        font-size: var(--font-size-sm, 0.875rem);
+        margin-bottom: var(--space-4, 0.75rem);
+      }
+      token-examples details {
+        border: 1px solid var(--color-border, #e9ecef);
+        border-radius: var(--radius-md, 4px);
+        overflow: hidden;
+      }
+      token-examples summary {
+        padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem);
+        background: var(--color-bg-secondary, #f8f9fa);
+        cursor: pointer;
+        font-weight: 500;
+        font-size: var(--font-size-xs, 0.75rem);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted, #6c757d);
+      }
+      token-examples summary:hover { background: var(--color-border, #e9ecef); }
+      token-examples ul { list-style: none; padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem); }
+      token-examples li { padding: var(--space-2, 0.25rem) 0; }
+      token-examples li:not(:last-child) { border-bottom: 1px solid var(--color-border, #e9ecef); }
+      token-examples code { font-size: var(--font-size-xs, 0.75rem); word-break: break-all; }
+    `;
+    this.prepend(style);
+  }
+}
+
+class TokenAliases extends HTMLElement {
+  connectedCallback() {
+    const style = document.createElement('style');
+    style.textContent = `
+      token-aliases {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-2, 0.25rem);
+        font-size: var(--font-size-sm, 0.875rem);
+        margin-bottom: var(--space-4, 0.75rem);
+      }
+      token-aliases > span {
+        color: var(--color-text-muted, #6c757d);
+        font-size: var(--font-size-xs, 0.75rem);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      token-aliases > code {
+        font-size: var(--font-size-xs, 0.75rem);
+        background: var(--color-bg-secondary, #f8f9fa);
+        padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+        border-radius: var(--radius-sm, 2px);
+        color: var(--color-text-muted, #6c757d);
+      }
+    `;
+    this.prepend(style);
+  }
+}
+
+// Register all components
+customElements.define('token-docs', TokenDocs);
+customElements.define('token-category', TokenCategory);
+customElements.define('token-card', TokenCard);
+customElements.define('token-preview-color', TokenPreviewColor);
+customElements.define('token-preview-spacing', TokenPreviewSpacing);
+customElements.define('token-preview-radius', TokenPreviewRadius);
+customElements.define('token-preview-font', TokenPreviewFont);
+customElements.define('token-preview-fontsize', TokenPreviewFontsize);
+customElements.define('token-preview-shadow', TokenPreviewShadow);
+customElements.define('token-preview-generic', TokenPreviewGeneric);
+customElements.define('token-examples', TokenExamples);
+customElements.define('token-aliases', TokenAliases);
+</script>
+
 </body>
 </html>
