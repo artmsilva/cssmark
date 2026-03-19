@@ -402,40 +402,4 @@
   aliases: "--color-primary";
 }
 
-/* Runtime values (browser uses these) */
-:root {
-  --color-bg: #ffffff;
-  --color-bg-secondary: #f8f9fa;
-  --color-text: #1a1a2e;
-  --color-text-muted: #6c757d;
-  --color-primary: #0055ff;
-  --color-border: #e9ecef;
-  --color-danger: #dc3545;
-  --color-warning: #ffc107;
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', Monaco, 'Cascadia Code', monospace;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.25rem;
-  --font-size-xl: 1.5rem;
-  --space-1: 0.125rem;
-  --space-2: 0.25rem;
-  --space-3: 0.5rem;
-  --space-4: 0.75rem;
-  --space-5: 1rem;
-  --space-6: 1.25rem;
-  --space-7: 1.5rem;
-  --space-8: 2rem;
-  --space-9: 3rem;
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 8px;
-  --radius-full: 999px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-  --sidebar-width: 280px;
-  --content-max-width: 1200px;
-  --card-min-width: 320px;
-  --swatch-size: 24px;
-  --line-height-base: 1.6;
-}
+

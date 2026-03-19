@@ -2,8 +2,45 @@
  * cssmark Documentation Site Styles
  * 
  * This stylesheet dogfoods cssmark's own design tokens.
- * All custom properties used here are defined in the tokens being documented.
+ * CSS variable fallbacks ensure the site works even with minimal token sets.
+ * When your tokens define these variables, they override the fallbacks.
  */
+
+:root {
+  /* Fallback values - overridden by your tokens when present */
+  --_font-sans: system-ui, -apple-system, sans-serif;
+  --_font-mono: ui-monospace, monospace;
+  --_color-bg: #ffffff;
+  --_color-bg-secondary: #f8f9fa;
+  --_color-text: #1a1a2e;
+  --_color-text-muted: #6b7280;
+  --_color-primary: #0055ff;
+  --_color-border: #e5e7eb;
+  --_color-warning: #ffc107;
+  --_space-1: 0.25rem;
+  --_space-2: 0.5rem;
+  --_space-3: 0.75rem;
+  --_space-4: 1rem;
+  --_space-5: 1.25rem;
+  --_space-6: 1.5rem;
+  --_space-7: 2rem;
+  --_space-8: 2.5rem;
+  --_space-9: 3rem;
+  --_radius-sm: 4px;
+  --_radius-md: 8px;
+  --_radius-lg: 12px;
+  --_radius-full: 9999px;
+  --_font-size-xs: 0.75rem;
+  --_font-size-sm: 0.875rem;
+  --_font-size-base: 1rem;
+  --_font-size-lg: 1.125rem;
+  --_font-size-xl: 1.5rem;
+  --_line-height-base: 1.6;
+  --_shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --_sidebar-width: 280px;
+  --_content-max-width: 1200px;
+  --_card-min-width: 320px;
+}
 
 * {
   box-sizing: border-box;
@@ -12,23 +49,23 @@
 }
 
 body {
-  font-family: var(--font-sans);
-  background: var(--color-bg);
-  color: var(--color-text);
-  line-height: var(--line-height-base);
+  font-family: var(--font-sans, var(--_font-sans));
+  background: var(--color-bg, var(--_color-bg));
+  color: var(--color-text, var(--_color-text));
+  line-height: var(--line-height-base, var(--_line-height-base));
 }
 
 .layout {
   display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-columns: var(--sidebar-width, var(--_sidebar-width)) 1fr;
   min-height: 100vh;
 }
 
 /* Sidebar Navigation */
 .sidebar {
-  background: var(--color-bg-secondary);
-  border-right: 1px solid var(--color-border);
-  padding: var(--space-8);
+  background: var(--color-bg-secondary, var(--_color-bg-secondary));
+  border-right: 1px solid var(--color-border, var(--_color-border));
+  padding: var(--space-8, var(--_space-8));
   position: sticky;
   top: 0;
   height: 100vh;
@@ -36,25 +73,25 @@ body {
 }
 
 .sidebar h1 {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-xl, var(--_font-size-xl));
   font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: var(--space-1);
+  color: var(--color-primary, var(--_color-primary));
+  margin-bottom: var(--space-1, var(--_space-1));
 }
 
 .sidebar .subtitle {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-3);
+  font-size: var(--font-size-sm, var(--_font-size-sm));
+  color: var(--color-text-muted, var(--_color-text-muted));
+  margin-bottom: var(--space-3, var(--_space-3));
 }
 
 .sidebar .count {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  margin-bottom: var(--space-7);
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-bg);
-  border-radius: var(--radius-md);
+  color: var(--color-text-muted, var(--_color-text-muted));
+  font-size: var(--font-size-xs, var(--_font-size-xs));
+  margin-bottom: var(--space-7, var(--_space-7));
+  padding: var(--space-2, var(--_space-2)) var(--space-3, var(--_space-3));
+  background: var(--color-bg, var(--_color-bg));
+  border-radius: var(--radius-md, var(--_radius-md));
   display: inline-block;
 }
 
@@ -66,8 +103,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3, var(--_space-3)) 0;
+  border-bottom: 1px solid var(--color-border, var(--_color-border));
 }
 
 .nav-list li:last-child {
@@ -75,98 +112,98 @@ body {
 }
 
 .nav-list a {
-  color: var(--color-text);
+  color: var(--color-text, var(--_color-text));
   text-decoration: none;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-sm, var(--_font-size-sm));
 }
 
 .nav-list a:hover {
-  color: var(--color-primary);
+  color: var(--color-primary, var(--_color-primary));
 }
 
 .nav-list .badge {
-  background: var(--color-bg);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
+  background: var(--color-bg, var(--_color-bg));
+  padding: var(--space-1, var(--_space-1)) var(--space-3, var(--_space-3));
+  border-radius: var(--radius-full, var(--_radius-full));
+  font-size: var(--font-size-xs, var(--_font-size-xs));
+  color: var(--color-text-muted, var(--_color-text-muted));
   font-weight: 500;
 }
 
 /* Main Content */
 .content {
-  padding: var(--space-8) var(--space-9);
-  max-width: var(--content-max-width);
+  padding: var(--space-8, var(--_space-8)) var(--space-9, var(--_space-9));
+  max-width: var(--content-max-width, var(--_content-max-width));
 }
 
 .category {
-  margin-bottom: var(--space-9);
+  margin-bottom: var(--space-9, var(--_space-9));
 }
 
 .category h2 {
-  font-size: var(--font-size-xl);
-  margin-bottom: var(--space-7);
-  padding-bottom: var(--space-3);
-  border-bottom: 2px solid var(--color-primary);
+  font-size: var(--font-size-xl, var(--_font-size-xl));
+  margin-bottom: var(--space-7, var(--_space-7));
+  padding-bottom: var(--space-3, var(--_space-3));
+  border-bottom: 2px solid var(--color-primary, var(--_color-primary));
   display: inline-block;
 }
 
 /* Token Grid */
 .token-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr));
-  gap: var(--space-7);
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width, var(--_card-min-width)), 1fr));
+  gap: var(--space-7, var(--_space-7));
 }
 
 /* Token Card */
 .token-card {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  box-shadow: var(--shadow-sm);
+  background: var(--color-bg, var(--_color-bg));
+  border: 1px solid var(--color-border, var(--_color-border));
+  border-radius: var(--radius-lg, var(--_radius-lg));
+  padding: var(--space-6, var(--_space-6));
+  box-shadow: var(--shadow-sm, var(--_shadow-sm));
   display: flex;
   flex-direction: column;
 }
 
 .token-card.deprecated {
   opacity: 0.7;
-  border-color: var(--color-warning);
-  background: linear-gradient(135deg, var(--color-bg) 0%, rgba(255, 193, 7, 0.05) 100%);
+  border-color: var(--color-warning, var(--_color-warning));
+  background: linear-gradient(135deg, var(--color-bg, var(--_color-bg)) 0%, rgba(255, 193, 7, 0.05) 100%);
 }
 
 .token-header {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-5);
+  gap: var(--space-3, var(--_space-3));
+  margin-bottom: var(--space-5, var(--_space-5));
   flex-wrap: wrap;
 }
 
 .token-name {
-  font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
+  font-family: var(--font-mono, var(--_font-mono));
+  font-size: var(--font-size-sm, var(--_font-size-sm));
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary, var(--_color-primary));
   word-break: break-all;
 }
 
 .type-badge {
-  background: var(--color-bg-secondary);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
+  background: var(--color-bg-secondary, var(--_color-bg-secondary));
+  padding: var(--space-1, var(--_space-1)) var(--space-3, var(--_space-3));
+  border-radius: var(--radius-md, var(--_radius-md));
+  font-size: var(--font-size-xs, var(--_font-size-xs));
+  color: var(--color-text-muted, var(--_color-text-muted));
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .deprecated-badge {
-  background: var(--color-warning);
+  background: var(--color-warning, var(--_color-warning));
   color: #000;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-xs);
+  padding: var(--space-1, var(--_space-1)) var(--space-3, var(--_space-3));
+  border-radius: var(--radius-md, var(--_radius-md));
+  font-size: var(--font-size-xs, var(--_font-size-xs));
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
