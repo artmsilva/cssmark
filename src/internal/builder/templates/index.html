@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Design Tokens — cssmark</title>
+  <title>Design Token Reference</title>
   <link rel="stylesheet" href="tokens.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-family: var(--font-sans, system-ui, sans-serif); scroll-behavior: smooth; }
+    html { font-family: var(--font-sans, system-ui, sans-serif); scroll-behavior: smooth; scroll-padding-top: var(--space-6, 1.25rem); }
     body { background: var(--color-bg, #fff); color: var(--color-text, #1a1a2e); line-height: var(--line-height-base, 1.6); }
     a { color: var(--color-primary, #0055ff); }
     code { font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.9em; }
-    pre { font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.85em; line-height: 1.5; }
+    pre { font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.85em; line-height: 1.5; max-width: 100%; }
 
     /* Layout */
     token-docs {
       display: grid;
-      grid-template-columns: var(--sidebar-width, 280px) 1fr;
+      grid-template-columns: var(--sidebar-width, 280px) minmax(0, 1fr);
       min-height: 100vh;
+      min-width: 0;
     }
     token-docs > nav {
       background: var(--color-bg-secondary, #f8f9fa);
@@ -28,6 +29,9 @@
       height: 100vh;
       overflow-y: auto;
     }
+    .mobile-nav-bar,
+    .drawer-backdrop,
+    .drawer-close { display: none; }
     token-docs > nav h1 {
       font-size: var(--font-size-xl, 1.5rem);
       font-weight: 700;
@@ -81,16 +85,235 @@
       color: var(--color-text-muted, #6c757d);
     }
     token-docs > main {
-      padding: var(--space-8, 2rem) var(--space-9, 3rem);
+      width: 100%;
       max-width: var(--content-max-width, 1200px);
-    }
-    @media (max-width: 768px) {
-      token-docs { grid-template-columns: 1fr; }
-      token-docs > nav { position: static; height: auto; padding: var(--space-6, 1.25rem); }
-      token-docs > main { padding: var(--space-6, 1.25rem); }
+      min-width: 0;
+      padding: var(--space-8, 2rem) var(--space-9, 3rem);
     }
 
+    /* Hero */
+    token-hero {
+      display: block;
+      margin-bottom: var(--space-9, 3rem);
+      padding: var(--space-9, 3rem);
+      background: linear-gradient(135deg, var(--color-primary, #0055ff) 0%, var(--color-accent, #6366f1) 100%);
+      border-radius: var(--radius-lg, 8px);
+      color: #fff;
+      box-shadow: 0 20px 60px rgba(0, 85, 255, 0.18);
+    }
+    token-hero .eyebrow {
+      display: inline-block;
+      margin-bottom: var(--space-4, 0.75rem);
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+    token-hero h2 {
+      max-width: 12ch;
+      margin-bottom: var(--space-5, 1rem);
+      font-size: clamp(2rem, 8vw, 4.5rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+    token-hero .lede {
+      max-width: 62ch;
+      margin-bottom: var(--space-7, 1.5rem);
+      font-size: var(--font-size-lg, 1.25rem);
+      line-height: 1.5;
+      opacity: 0.92;
+    }
+    token-hero .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-5, 1rem);
+    }
+    token-hero .hero-card {
+      min-width: 0;
+      padding: var(--space-5, 1rem);
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: var(--radius-md, 4px);
+      backdrop-filter: blur(16px);
+    }
+    token-hero .hero-card strong {
+      display: block;
+      margin-bottom: var(--space-2, 0.25rem);
+      font-size: var(--font-size-sm, 0.875rem);
+    }
+    token-hero .hero-card p {
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: 1.45;
+      opacity: 0.86;
+    }
+    token-hero a { color: inherit; text-decoration-color: rgba(255, 255, 255, 0.55); }
+    token-hero a:hover { text-decoration-color: currentColor; }
+
+    /* Source stylesheet */
+    token-source {
+      display: block;
+      margin-bottom: var(--space-9, 3rem);
+      border: 1px solid var(--color-border, #e9ecef);
+      border-radius: var(--radius-lg, 8px);
+      background: var(--color-bg, #fff);
+      overflow: hidden;
+    }
+    token-source details { display: block; }
+    token-source summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4, 0.75rem);
+      padding: var(--space-5, 1rem) var(--space-6, 1.25rem);
+      background: var(--color-bg-secondary, #f8f9fa);
+      cursor: pointer;
+      list-style: none;
+    }
+    token-source summary::-webkit-details-marker { display: none; }
+    token-source summary::after {
+      content: '+';
+      flex-shrink: 0;
+      color: var(--color-primary, #0055ff);
+      font-size: var(--font-size-xl, 1.5rem);
+      line-height: 1;
+    }
+    token-source details[open] summary::after { content: '–'; }
+    token-source h2 {
+      font-size: var(--font-size-base, 1rem);
+      color: var(--color-text, #1a1a2e);
+    }
+    token-source .source-meta {
+      padding: var(--space-4, 0.75rem) var(--space-6, 1.25rem) 0;
+      color: var(--color-text-muted, #6c757d);
+      font-size: var(--font-size-xs, 0.75rem);
+    }
+    token-source pre {
+      margin: var(--space-4, 0.75rem) var(--space-6, 1.25rem) var(--space-6, 1.25rem);
+      padding: var(--space-5, 1rem);
+      overflow-x: auto;
+      background: var(--color-text, #1a1a2e);
+      color: var(--color-bg, #fff);
+      border-radius: var(--radius-md, 4px);
+    }
+    token-source pre code { color: inherit; font-size: var(--font-size-xs, 0.75rem); }
+    token-source pre code .tok-comment { color: #8b9bb4; font-style: italic; }
+    token-source pre code .tok-atrule { color: #7dd3fc; }
+    token-source pre code .tok-property { color: #c4b5fd; }
+    token-source pre code .tok-variable { color: #93c5fd; }
+    token-source pre code .tok-string { color: #fcd34d; }
+    token-source pre code .tok-color { color: #86efac; }
+    token-source pre code .tok-function { color: #f0abfc; }
+    token-source pre code .tok-punctuation { color: #94a3b8; }
+
+    /* Reference tools */
+    token-tools {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-4, 0.75rem);
+      align-items: end;
+      margin-bottom: var(--space-7, 1.5rem);
+      padding: var(--space-5, 1rem);
+      background: var(--color-bg, #fff);
+      border: 1px solid var(--color-border, #e9ecef);
+      border-radius: var(--radius-lg, 8px);
+      box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1));
+    }
+    token-tools label {
+      display: block;
+      margin-bottom: var(--space-2, 0.25rem);
+      color: var(--color-text-muted, #6c757d);
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    token-tools input {
+      width: 100%;
+      min-height: 44px;
+      padding: var(--space-3, 0.5rem) var(--space-4, 0.75rem);
+      border: 1px solid var(--color-border, #e9ecef);
+      border-radius: var(--radius-md, 4px);
+      background: var(--color-bg-secondary, #f8f9fa);
+      color: var(--color-text, #1a1a2e);
+      font: inherit;
+    }
+    token-tools .filter-status {
+      color: var(--color-text-muted, #6c757d);
+      font-size: var(--font-size-sm, 0.875rem);
+      white-space: nowrap;
+    }
+    token-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+      gap: var(--space-4, 0.75rem);
+      margin-bottom: var(--space-7, 1.5rem);
+    }
+    token-summary a {
+      display: block;
+      padding: var(--space-4, 0.75rem);
+      background: var(--color-bg, #fff);
+      border: 1px solid var(--color-border, #e9ecef);
+      border-radius: var(--radius-md, 4px);
+      color: var(--color-text, #1a1a2e);
+      text-decoration: none;
+      box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.1));
+    }
+    token-summary a:hover { border-color: var(--color-primary, #0055ff); }
+    token-summary strong { display: block; font-size: var(--font-size-lg, 1.25rem); }
+    token-summary span { color: var(--color-text-muted, #6c757d); font-size: var(--font-size-xs, 0.75rem); }
+    .token-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3, 0.5rem);
+    }
+    .token-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2, 0.25rem);
+      margin: var(--space-3, 0.5rem) 0;
+    }
+    .copy-token,
+    .token-link {
+      min-height: 32px;
+      padding: var(--space-1, 0.125rem) var(--space-3, 0.5rem);
+      border: 1px solid var(--color-border, #e9ecef);
+      border-radius: var(--radius-md, 4px);
+      background: var(--color-bg-secondary, #f8f9fa);
+      color: var(--color-text-muted, #6c757d);
+      font: inherit;
+      font-size: var(--font-size-xs, 0.75rem);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .copy-token:hover,
+    .token-link:hover {
+      border-color: var(--color-primary, #0055ff);
+      color: var(--color-primary, #0055ff);
+    }
+    token-card:target {
+      border-color: var(--color-primary, #0055ff);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #0055ff) 18%, transparent);
+    }
+    token-card[hidden],
+    token-category[hidden] { display: none !important; }
+    .no-results {
+      display: none;
+      margin-bottom: var(--space-7, 1.5rem);
+      padding: var(--space-5, 1rem);
+      background: var(--color-bg-secondary, #f8f9fa);
+      border: 1px solid var(--color-border, #e9ecef);
+      border-radius: var(--radius-md, 4px);
+      color: var(--color-text-muted, #6c757d);
+    }
+    .no-results[aria-hidden="false"] { display: block; }
+
     /* Category */
+    token-category,
+    token-tutorial {
+      scroll-margin-top: var(--space-6, 1.25rem);
+    }
     token-category {
       display: block;
       margin-bottom: var(--space-9, 3rem);
@@ -107,6 +330,7 @@
     token-card {
       display: flex;
       flex-direction: column;
+      min-width: 0;
       background: var(--color-bg, #fff);
       border: 1px solid var(--color-border, #e9ecef);
       border-radius: var(--radius-lg, 8px);
@@ -171,6 +395,7 @@
     token-preview-shadow,
     token-preview-generic {
       display: flex;
+      min-width: 0;
       padding: var(--space-5, 1rem);
       background: var(--color-bg-secondary, #f8f9fa);
       border-radius: var(--radius-md, 4px);
@@ -347,6 +572,16 @@
       color: inherit;
       font-size: var(--font-size-sm, 0.875rem);
     }
+    token-tutorial pre code .tok-comment { color: #8b9bb4; font-style: italic; }
+    token-tutorial pre code .tok-atrule { color: #7dd3fc; }
+    token-tutorial pre code .tok-property { color: #c4b5fd; }
+    token-tutorial pre code .tok-variable { color: #93c5fd; }
+    token-tutorial pre code .tok-string { color: #fcd34d; }
+    token-tutorial pre code .tok-color { color: #86efac; }
+    token-tutorial pre code .tok-function { color: #f0abfc; }
+    token-tutorial pre code .tok-punctuation { color: #94a3b8; }
+    token-tutorial pre code .tok-command { color: #7dd3fc; font-weight: 700; }
+    token-tutorial pre code .tok-flag { color: #c4b5fd; }
     token-tutorial .example-box {
       background: var(--color-bg, #fff);
       border: 1px solid var(--color-border, #e9ecef);
@@ -408,13 +643,16 @@
       border: 1px solid var(--color-border, #e9ecef);
     }
 
-    /* Mode toggle */
-    .mode-toggle {
+    /* Toolbar toggles */
+    .mode-toggle,
+    .density-toggle {
       display: flex;
       gap: var(--space-2, 0.25rem);
       margin-bottom: var(--space-5, 1rem);
     }
-    .mode-toggle button {
+    .density-toggle { margin-bottom: var(--space-4, 0.75rem); }
+    .mode-toggle button,
+    .density-toggle button {
       flex: 1;
       padding: var(--space-2, 0.25rem) var(--space-3, 0.5rem);
       border: 1px solid var(--color-border, #e9ecef);
@@ -426,14 +664,70 @@
       cursor: pointer;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
-    .mode-toggle button:hover {
+    .mode-toggle button:hover,
+    .density-toggle button:hover {
       border-color: var(--color-primary, #0055ff);
       color: var(--color-primary, #0055ff);
     }
-    .mode-toggle button[aria-pressed="true"] {
+    .mode-toggle button[aria-pressed="true"],
+    .density-toggle button[aria-pressed="true"] {
       background: var(--color-primary, #0055ff);
       color: #fff;
       border-color: var(--color-primary, #0055ff);
+    }
+
+    /* Dense reference mode */
+    body.density-dense token-category { margin-bottom: var(--space-7, 1.5rem); }
+    body.density-dense token-category > h2 {
+      margin-bottom: var(--space-4, 0.75rem);
+      font-size: var(--font-size-base, 1rem);
+    }
+    body.density-dense token-card {
+      display: grid;
+      grid-template-columns: minmax(12rem, 1.2fr) minmax(10rem, 1fr) minmax(9rem, auto);
+      align-items: center;
+      gap: var(--space-4, 0.75rem);
+      padding: var(--space-4, 0.75rem);
+      margin-bottom: var(--space-3, 0.5rem);
+    }
+    body.density-dense token-card > .token-badges,
+    body.density-dense token-card > .token-description,
+    body.density-dense token-aliases,
+    body.density-dense token-examples { display: none; }
+    body.density-dense .token-header { align-items: flex-start; }
+    body.density-dense .token-actions { margin: 0; justify-content: flex-end; }
+    body.density-dense .copy-token,
+    body.density-dense .token-link { min-height: 28px; padding-inline: var(--space-2, 0.25rem); }
+    body.density-dense token-preview-color,
+    body.density-dense token-preview-spacing,
+    body.density-dense token-preview-radius,
+    body.density-dense token-preview-font,
+    body.density-dense token-preview-fontsize,
+    body.density-dense token-preview-shadow,
+    body.density-dense token-preview-generic {
+      margin: 0;
+      padding: var(--space-2, 0.25rem) var(--space-3, 0.5rem);
+    }
+    body.density-dense token-preview-color > .swatch,
+    body.density-dense token-preview-radius > .shape {
+      width: 24px;
+      height: 24px;
+    }
+    body.density-dense token-preview-shadow { justify-content: flex-start; }
+    body.density-dense token-preview-shadow > .shape {
+      width: 56px;
+      height: 24px;
+    }
+    body.density-dense token-preview-font > .sample { font-size: var(--font-size-base, 1rem); }
+    body.density-dense token-preview-font > .pangram { display: none; }
+    body.density-dense token-preview-fontsize > .sample { font-size: var(--font-size-lg, 1.25rem) !important; }
+    body.density-dense token-card > .token-meta {
+      margin: 0;
+      padding: 0;
+      border-top: 0;
+      justify-content: flex-end;
+      gap: var(--space-3, 0.5rem);
+      text-align: right;
     }
 
     /* Footer */
@@ -461,28 +755,210 @@
       width: 16px;
       height: 16px;
     }
+
+    @media (max-width: 768px) {
+      html { scroll-padding-top: 72px; }
+      body.nav-open { overflow: hidden; }
+      token-docs { display: block; }
+      .mobile-nav-bar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4, 0.75rem);
+        min-height: 56px;
+        padding: var(--space-3, 0.5rem) var(--space-5, 1rem);
+        background: rgba(255, 255, 255, 0.94);
+        background: color-mix(in srgb, var(--color-bg, #fff) 94%, transparent);
+        border-bottom: 1px solid var(--color-border, #e9ecef);
+        backdrop-filter: blur(12px);
+      }
+      .mobile-nav-title {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .mobile-nav-title strong {
+        color: var(--color-primary, #0055ff);
+        font-size: var(--font-size-base, 1rem);
+        line-height: 1.2;
+      }
+      .mobile-nav-title span {
+        color: var(--color-text-muted, #6c757d);
+        font-size: var(--font-size-xs, 0.75rem);
+      }
+      .mobile-nav-toggle,
+      .drawer-close {
+        min-width: 44px;
+        min-height: 44px;
+        border: 1px solid var(--color-border, #e9ecef);
+        border-radius: var(--radius-md, 4px);
+        background: var(--color-bg, #fff);
+        color: var(--color-text, #1a1a2e);
+        font: inherit;
+        font-size: var(--font-size-sm, 0.875rem);
+        cursor: pointer;
+      }
+      .mobile-nav-toggle { padding: 0 var(--space-4, 0.75rem); }
+      .drawer-close {
+        display: block;
+        position: absolute;
+        top: var(--space-4, 0.75rem);
+        right: var(--space-4, 0.75rem);
+        font-size: var(--font-size-xl, 1.5rem);
+        line-height: 1;
+      }
+      .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: block;
+        visibility: hidden;
+        background: rgba(0, 0, 0, 0.35);
+        border: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+      }
+      token-docs > nav {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 40;
+        width: min(84vw, 320px);
+        height: 100dvh;
+        padding: var(--space-8, 2rem) var(--space-5, 1rem) var(--space-5, 1rem);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        border-right: 1px solid var(--color-border, #e9ecef);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        visibility: hidden;
+        transform: translateX(-105%);
+        transition: transform 0.2s ease, visibility 0.2s ease;
+      }
+      body.nav-open .drawer-backdrop {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+      }
+      body.nav-open token-docs > nav {
+        visibility: visible;
+        transform: translateX(0);
+      }
+      token-docs > nav > span.count,
+      .mode-toggle,
+      .density-toggle { margin-bottom: var(--space-4, 0.75rem); }
+      token-docs > nav > .nav-section { margin-top: var(--space-4, 0.75rem); }
+      token-docs > nav ul { margin-bottom: var(--space-4, 0.75rem); }
+      token-docs > nav li { min-height: 44px; }
+      token-docs > nav a { overflow-wrap: anywhere; }
+      token-docs > main { padding: var(--space-5, 1rem); }
+      token-category,
+      token-tutorial { scroll-margin-top: 72px; }
+      token-hero {
+        margin-bottom: var(--space-8, 2rem);
+        padding: var(--space-7, 1.5rem);
+      }
+      token-hero .hero-grid { grid-template-columns: 1fr; }
+      token-hero .lede { font-size: var(--font-size-base, 1rem); }
+      token-source { margin-bottom: var(--space-8, 2rem); }
+      token-source summary { padding: var(--space-4, 0.75rem) var(--space-5, 1rem); }
+      token-source .source-meta { padding-inline: var(--space-5, 1rem); }
+      token-source pre { margin-inline: var(--space-5, 1rem); }
+      token-category { margin-bottom: var(--space-8, 2rem); }
+      token-category > h2 { margin-bottom: var(--space-5, 1rem); }
+      token-card { padding: var(--space-5, 1rem); }
+      token-card > .token-meta {
+        flex-direction: column;
+        gap: var(--space-2, 0.25rem);
+      }
+      token-preview-color,
+      token-preview-radius,
+      token-preview-fontsize {
+        flex-wrap: wrap;
+        gap: var(--space-4, 0.75rem);
+      }
+      token-preview-color > .swatch,
+      token-preview-radius > .shape {
+        width: 48px;
+        height: 48px;
+      }
+      token-preview-color > code,
+      token-preview-radius > code,
+      token-preview-fontsize > code { overflow-wrap: anywhere; }
+      token-tutorial { padding: var(--space-5, 1rem); }
+      token-tutorial pre { padding: var(--space-4, 0.75rem); }
+      token-tutorial pre code { font-size: var(--font-size-xs, 0.75rem); }
+      .mode-toggle button,
+      .density-toggle button { min-height: 44px; }
+      body.density-dense token-card {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        gap: var(--space-2, 0.25rem);
+      }
+      body.density-dense token-card > .token-meta {
+        justify-content: space-between;
+        text-align: left;
+      }
+      token-footer { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 420px) {
+      .mobile-nav-bar { padding-inline: var(--space-4, 0.75rem); }
+      token-docs > main { padding: var(--space-4, 0.75rem); }
+      token-hero,
+      token-tutorial,
+      token-card { padding: var(--space-4, 0.75rem); }
+      token-source summary,
+      token-source .source-meta { padding-inline: var(--space-4, 0.75rem); }
+      token-source pre { margin-inline: var(--space-4, 0.75rem); padding: var(--space-4, 0.75rem); }
+      token-preview-color,
+      token-preview-spacing,
+      token-preview-radius,
+      token-preview-font,
+      token-preview-fontsize,
+      token-preview-shadow,
+      token-preview-generic { padding: var(--space-4, 0.75rem); }
+    }
   </style>
 </head>
 <body>
 
 <token-docs>
-  <nav>
-    <h1>cssmark</h1>
-    <p>Design Tokens</p>
+  <header class="mobile-nav-bar">
+    <div class="mobile-nav-title">
+      <strong>Design Tokens</strong>
+      <span>{{.TotalCount}} tokens</span>
+    </div>
+    <button class="mobile-nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false">Menu</button>
+  </header>
+  <button class="drawer-backdrop" type="button" aria-label="Close navigation"></button>
+
+  <nav id="site-nav" aria-label="Token navigation">
+    <button class="drawer-close" type="button" aria-label="Close navigation">×</button>
+    <h1>Design Tokens</h1>
+    <p>Reference</p>
     <span class="count">{{.TotalCount}} tokens</span>
     {{if .Modes}}
-    <div class="mode-toggle">
+    <div class="mode-toggle" aria-label="Color mode">
       <button data-mode="" aria-pressed="true">Default</button>
       {{range .Modes}}<button data-mode="{{.}}" aria-pressed="false">{{.}}</button>
       {{end}}
     </div>
     {{end}}
 
-    <div class="nav-section">Getting Started</div>
+    <div class="nav-section">Density</div>
+    <div class="density-toggle" aria-label="Card density">
+      <button data-density="comfortable" aria-pressed="true">Comfort</button>
+      <button data-density="dense" aria-pressed="false">Dense</button>
+    </div>
+
+    <div class="nav-section">Overview</div>
     <ul>
-      <li><a href="#tutorial">Tutorial</a></li>
+      <li><a href="#overview">Using tokens</a></li>
     </ul>
-    
+
     <div class="nav-section">Categories</div>
     <ul>
       {{range .Groups}}
@@ -492,72 +968,73 @@
   </nav>
 
   <main>
-    <token-tutorial id="tutorial">
-      <h2>Getting Started with cssmark</h2>
-      <p>cssmark uses CSS <code>@property</code> rules as the single source of truth for design tokens. Define once, use everywhere.</p>
-
-      <h3>1. Define your tokens</h3>
-      <p>Create a CSS file with your design tokens using the <code>@property</code> syntax:</p>
-      <pre><code>@property --color-primary {
-  syntax: "&lt;color&gt;";
-  inherits: false;
-  initial-value: #0055ff;
-  description: "Primary brand color";
-  category: "color.brand";
-  type: "color";
-}</code></pre>
-
-      <h3>2. See them in action</h3>
-      <div class="example-box">
-        <div class="example-box-label">Colors from your tokens</div>
-        <div class="color-demo">
-          <div class="color-chip" style="background: var(--color-primary, #0055ff);" title="--color-primary"></div>
-          <div class="color-chip" style="background: var(--color-secondary, #6c757d);" title="--color-secondary"></div>
-          <div class="color-chip" style="background: var(--color-success, #28a745);" title="--color-success"></div>
-          <div class="color-chip" style="background: var(--color-warning, #ffc107);" title="--color-warning"></div>
-          <div class="color-chip" style="background: var(--color-error, #dc3545);" title="--color-error"></div>
+    <token-hero aria-labelledby="hero-title">
+      <span class="eyebrow">Generated reference</span>
+      <h2 id="hero-title">Design tokens from CSS source.</h2>
+      <p class="lede">This reference was generated from browser-native <code>@property</code> rules. Inspect token values, source metadata, modes, aliases, and usage examples in one static page.</p>
+      <div class="hero-grid">
+        <div class="hero-card">
+          <strong>{{.TotalCount}} tokens{{if .DeprecatedCount}} · {{.DeprecatedCount}} deprecated{{end}}</strong>
+          <p>Tokens are grouped by category and linked from the navigation for quick scanning.</p>
+        </div>
+        <div class="hero-card">
+          <strong>CSS-first context</strong>
+          <p>The source stylesheet is available below so generated docs can be reviewed beside the actual authoring format.</p>
+        </div>
+        <div class="hero-card">
+          <strong>Runtime-ready output</strong>
+          <p>References stay as <code>var()</code> in CSS output, while JSON output can use resolved values for tooling.</p>
         </div>
       </div>
+    </token-hero>
 
-      <div class="example-box">
-        <div class="example-box-label">Spacing scale</div>
-        <div class="spacing-demo">
-          <div class="spacing-bar" style="width: var(--space-2, 0.25rem); height: 24px;" title="--space-2"></div>
-          <div class="spacing-bar" style="width: var(--space-4, 0.75rem); height: 24px;" title="--space-4"></div>
-          <div class="spacing-bar" style="width: var(--space-6, 1.25rem); height: 24px;" title="--space-6"></div>
-          <div class="spacing-bar" style="width: var(--space-8, 2rem); height: 24px;" title="--space-8"></div>
-        </div>
+    <token-tools>
+      <div>
+        <label for="token-filter">Search tokens</label>
+        <input id="token-filter" type="search" placeholder="Filter by name, value, type, category, or description…" autocomplete="off">
       </div>
+      <div class="filter-status" aria-live="polite"><span id="visible-token-count">{{.TotalCount}}</span> / {{.TotalCount}} tokens</div>
+    </token-tools>
 
-      <div class="example-box">
-        <div class="example-box-label">Using tokens in components</div>
-        <div class="button-demo">
-          <button class="demo-button primary">Primary Action</button>
-          <button class="demo-button secondary">Secondary</button>
-        </div>
-      </div>
+    <token-summary aria-label="Category summary">
+      {{range .Groups}}<a href="#{{.Name}}"><strong>{{len .Tokens}}</strong><span>{{.Name}}</span></a>{{end}}
+    </token-summary>
 
-      <h3>3. Generate outputs</h3>
-      <pre><code># Generate clean CSS with :root variables (for consumption)
-cssmark css ./tokens/**/*.css --out variables.css
+    <p class="no-results" aria-hidden="true">No tokens match your filter.</p>
 
-# Build JSON output (for tooling/integrations)
-cssmark build ./tokens/**/*.css --out tokens.json
+    {{if .SourceCSS}}
+    <token-source>
+      <details>
+        <summary><h2>View source stylesheet</h2></summary>
+        <div class="source-meta">{{range $i, $file := .SourceFiles}}{{if $i}}, {{end}}{{$file}}{{end}} <button class="copy-token copy-source" type="button">Copy source</button></div>
+        <pre><code class="language-css source-css">{{.SourceCSS}}</code></pre>
+      </details>
+    </token-source>
+    {{end}}
 
-# Generate this documentation site
-cssmark docs ./tokens/**/*.css --out ./docs
+    <token-tutorial id="overview">
+      <h2>Using these tokens</h2>
+      <p>This site is a reference for the design tokens generated from the source stylesheet. Use it to inspect available custom properties, preview their values, and copy token names into product CSS.</p>
 
-# Validate your tokens
-cssmark validate ./tokens/**/*.css</code></pre>
+      <h3>Install the generated variables</h3>
+      <p>Import the generated CSS file once in your application or design system package:</p>
+      <pre><code class="language-css">@import "./tokens.css";</code></pre>
 
-      <h3>4. Use in your CSS</h3>
-      <p>Import the generated <code>variables.css</code> and use your tokens:</p>
-      <pre><code>.button {
+      <h3>Apply tokens in components</h3>
+      <p>Use token names directly with CSS custom properties. Keep semantic tokens in product code where possible.</p>
+      <pre><code class="language-css">.button {
   background: var(--color-primary);
+  color: var(--color-bg);
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-md);
   font-family: var(--font-sans);
   box-shadow: var(--shadow-sm);
+}</code></pre>
+
+      <h3>Switch modes when available</h3>
+      <p>If this token set defines modes, apply the matching attribute at the document or app shell level.</p>
+      <pre><code class="language-css">:root[data-color-mode="dark"] {
+  /* Mode overrides are generated here. */
 }</code></pre>
     </token-tutorial>
 
@@ -565,8 +1042,16 @@ cssmark validate ./tokens/**/*.css</code></pre>
     <token-category id="{{.Name}}">
       <h2>{{.Name}}</h2>
       {{range .Tokens}}
-      <token-card{{if .Deprecated}} deprecated{{end}}>
-        <code class="token-name">{{.Name}}</code>
+      <token-card id="{{tokenID .Name}}" data-token-name="{{.Name}}" data-token-value="{{.InitialValue}}" data-token-type="{{.Type}}" data-token-category="{{.Category}}" data-token-description="{{.Description}}"{{if .Deprecated}} deprecated{{end}}>
+        <div class="token-header">
+          <code class="token-name">{{.Name}}</code>
+          <a class="token-link" href="#{{tokenID .Name}}" aria-label="Link to {{.Name}}">#</a>
+        </div>
+        <div class="token-actions" aria-label="Copy options for {{.Name}}">
+          <button class="copy-token" type="button" data-copy="{{.Name}}">Copy name</button>
+          <button class="copy-token" type="button" data-copy="var({{.Name}})">Copy var()</button>
+          <button class="copy-token" type="button" data-copy="{{.InitialValue}}">Copy value</button>
+        </div>
         <div class="token-badges">
           {{if .Type}}<span class="badge">{{.Type}}</span>{{end}}
           {{if .Deprecated}}<span class="badge badge-deprecated">deprecated</span>{{end}}
@@ -647,6 +1132,179 @@ cssmark validate ./tokens/**/*.css</code></pre>
 </token-docs>
 
 <script>
+  var navToggle = document.querySelector('.mobile-nav-toggle');
+  var navDrawer = document.querySelector('#site-nav');
+  var drawerBackdrop = document.querySelector('.drawer-backdrop');
+  var drawerClose = document.querySelector('.drawer-close');
+
+  function setNavOpen(open) {
+    document.body.classList.toggle('nav-open', open);
+    if (navToggle) navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open && navDrawer) {
+      var firstButton = navDrawer.querySelector('button, a');
+      if (firstButton) firstButton.focus();
+    } else if (!open && navToggle) {
+      navToggle.focus();
+    }
+  }
+
+  if (navToggle) navToggle.addEventListener('click', function() { setNavOpen(true); });
+  if (drawerBackdrop) drawerBackdrop.addEventListener('click', function() { setNavOpen(false); });
+  if (drawerClose) drawerClose.addEventListener('click', function() { setNavOpen(false); });
+  if (navDrawer) {
+    navDrawer.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() { setNavOpen(false); });
+    });
+  }
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') setNavOpen(false);
+  });
+
+  function escapeHTML(value) {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function span(className, value) {
+    return '<span class="' + className + '">' + escapeHTML(value) + '</span>';
+  }
+
+  function highlight(text, matcher, classify) {
+    var output = '';
+    var lastIndex = 0;
+    text.replace(matcher, function(match) {
+      var offset = arguments[arguments.length - 2];
+      output += escapeHTML(text.slice(lastIndex, offset));
+      output += span(classify(match), match);
+      lastIndex = offset + match.length;
+      return match;
+    });
+    return output + escapeHTML(text.slice(lastIndex));
+  }
+
+  function highlightCSS(text) {
+    return highlight(text, /\/\*[\s\S]*?\*\/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|#[\da-fA-F]{3,8}\b|--[\w-]+|@[a-z-]+|\b(?:var|calc|rgb|rgba|hsl|hsla|color-mix)\b(?=\()|\b[a-z-]+(?=\s*:)|[{};]/g, function(match) {
+      if (match.startsWith('/*')) return 'tok-comment';
+      if (match[0] === '"' || match[0] === "'") return 'tok-string';
+      if (match[0] === '#') return 'tok-color';
+      if (match.startsWith('--')) return 'tok-variable';
+      if (match[0] === '@') return 'tok-atrule';
+      if (/^[{};]$/.test(match)) return 'tok-punctuation';
+      if (/^(var|calc|rgb|rgba|hsl|hsla|color-mix)$/.test(match)) return 'tok-function';
+      return 'tok-property';
+    });
+  }
+
+  function highlightShell(text) {
+    return text.split('\n').map(function(line) {
+      if (line.trim().startsWith('#')) return span('tok-comment', line);
+      return highlight(line, /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|--[\w-]+|-\w+|\b(?:cssmark|npx|npm|go)\b/g, function(match) {
+        if (match[0] === '"' || match[0] === "'") return 'tok-string';
+        if (match[0] === '-') return 'tok-flag';
+        return 'tok-command';
+      });
+    }).join('\n');
+  }
+
+  document.querySelectorAll('token-tutorial pre code, token-source pre code').forEach(function(code) {
+    var text = code.textContent;
+    var isShell = code.classList.contains('language-shell');
+    code.innerHTML = isShell ? highlightShell(text) : highlightCSS(text);
+  });
+
+  function tokenSearchText(card) {
+    return [
+      card.dataset.tokenName,
+      card.dataset.tokenValue,
+      card.dataset.tokenType,
+      card.dataset.tokenCategory,
+      card.dataset.tokenDescription,
+      card.textContent
+    ].join(' ').toLowerCase();
+  }
+
+  var tokenFilter = document.querySelector('#token-filter');
+  var visibleTokenCount = document.querySelector('#visible-token-count');
+  var noResults = document.querySelector('.no-results');
+  function applyTokenFilter() {
+    var query = tokenFilter ? tokenFilter.value.trim().toLowerCase() : '';
+    var visible = 0;
+    document.querySelectorAll('token-category').forEach(function(category) {
+      var categoryVisible = 0;
+      category.querySelectorAll('token-card').forEach(function(card) {
+        var match = !query || tokenSearchText(card).includes(query);
+        card.hidden = !match;
+        if (match) {
+          visible += 1;
+          categoryVisible += 1;
+        }
+      });
+      category.hidden = categoryVisible === 0;
+    });
+    if (visibleTokenCount) visibleTokenCount.textContent = String(visible);
+    if (noResults) noResults.setAttribute('aria-hidden', visible === 0 ? 'false' : 'true');
+  }
+  if (tokenFilter) tokenFilter.addEventListener('input', applyTokenFilter);
+
+  function copyText(value, button) {
+    function done() {
+      var oldText = button.textContent;
+      button.textContent = 'Copied';
+      window.setTimeout(function() { button.textContent = oldText; }, 1200);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(value).then(done).catch(function() { fallbackCopy(value, done); });
+    } else {
+      fallbackCopy(value, done);
+    }
+  }
+
+  function fallbackCopy(value, done) {
+    var textarea = document.createElement('textarea');
+    textarea.value = value;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try { document.execCommand('copy'); done(); } catch (error) {}
+    textarea.remove();
+  }
+
+  document.querySelectorAll('.copy-token').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var sourceCode = this.classList.contains('copy-source') ? document.querySelector('token-source code') : null;
+      copyText(sourceCode ? sourceCode.textContent : (this.dataset.copy || ''), this);
+    });
+  });
+
+  if (window.location.hash) {
+    var target = document.querySelector(window.location.hash);
+    if (target && target.tagName && target.tagName.toLowerCase() === 'token-card') {
+      target.scrollIntoView();
+    }
+  }
+
+  function setDensity(density) {
+    var isDense = density === 'dense';
+    document.body.classList.toggle('density-dense', isDense);
+    document.querySelectorAll('.density-toggle button').forEach(function(button) {
+      button.setAttribute('aria-pressed', button.dataset.density === density ? 'true' : 'false');
+    });
+    try { localStorage.setItem('cssmark-density', density); } catch (error) {}
+  }
+
+  var savedDensity = 'comfortable';
+  try { savedDensity = localStorage.getItem('cssmark-density') || 'comfortable'; } catch (error) {}
+  setDensity(savedDensity === 'dense' ? 'dense' : 'comfortable');
+
+  document.querySelectorAll('.density-toggle button').forEach(function(btn) {
+    btn.addEventListener('click', function() { setDensity(this.dataset.density); });
+  });
+
   document.querySelectorAll('.mode-toggle button').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var mode = this.dataset.mode;

@@ -12,21 +12,29 @@ var (
 	descriptorRe    = regexp.MustCompile(`([\w-]+)\s*:\s*("[^"]*"|[^;]+);?`)
 	rootBlockRe     = regexp.MustCompile(`:root\s*\{([^}]+)\}`)
 	customPropRe    = regexp.MustCompile(`(--[\w-]+)\s*:\s*([^;]+);`)
-	varRefRe        = regexp.MustCompile(`var\((--[\w-]+)\)`)
+	varRefRe        = regexp.MustCompile(`var\(\s*(--[\w-]+)\s*(?:,\s*([^)]*))?\)`)
 )
 
-// ParseFiles parses multiple CSS files and returns all tokens
+// ParseFiles parses multiple CSS files and returns all tokens.
+// References are resolved after all files are parsed so tokens can refer to
+// tokens defined in other files from the same invocation.
 func ParseFiles(paths []string) ([]Token, error) {
 	var allTokens []Token
 
 	for _, path := range paths {
-		tokens, err := ParseFile(path)
+		content, err := os.ReadFile(path)
+		if err != nil {
+			return nil, err
+		}
+
+		tokens, err := parse(string(content), path, false)
 		if err != nil {
 			return nil, err
 		}
 		allTokens = append(allTokens, tokens...)
 	}
 
+	resolveVarReferences(allTokens)
 	return allTokens, nil
 }
 
@@ -37,12 +45,17 @@ func ParseFile(path string) ([]Token, error) {
 		return nil, err
 	}
 
-	return Parse(string(content), path)
+	return parse(string(content), path, true)
 }
 
 // Parse parses CSS content and returns tokens
 func Parse(css string, filename string) ([]Token, error) {
-	tokens := make(map[string]*Token)
+	return parse(css, filename, true)
+}
+
+func parse(css string, filename string, resolveReferences bool) ([]Token, error) {
+	var tokens []*Token
+	latestByName := make(map[string]*Token)
 
 	// Parse @property blocks
 	matches := propertyBlockRe.FindAllStringSubmatchIndex(css, -1)
@@ -60,7 +73,8 @@ func Parse(css string, filename string) ([]Token, error) {
 		}
 
 		parseDescriptors(body, token)
-		tokens[name] = token
+		tokens = append(tokens, token)
+		latestByName[name] = token
 	}
 
 	// Parse :root blocks for runtime values
@@ -72,21 +86,23 @@ func Parse(css string, filename string) ([]Token, error) {
 			name := pm[1]
 			value := strings.TrimSpace(pm[2])
 
-			if token, exists := tokens[name]; exists {
-				// :root value overrides initial-value
+			if token, exists := latestByName[name]; exists {
+				// :root value overrides initial-value on the latest matching token.
+				// Duplicate tokens are preserved so validation can report them.
 				token.InitialValue = value
 			}
 		}
 	}
 
-	// Convert map to slice
+	// Convert pointer slice to value slice while preserving source order and duplicates.
 	result := make([]Token, 0, len(tokens))
 	for _, token := range tokens {
 		result = append(result, *token)
 	}
 
-	// Resolve var() references in initial values
-	resolveVarReferences(result)
+	if resolveReferences {
+		resolveVarReferences(result)
+	}
 
 	return result, nil
 }
@@ -128,19 +144,34 @@ func resolveVarValue(value string, byName map[string]*Token, seen map[string]boo
 		sub := varRefRe.FindStringSubmatch(match)
 		name := sub[1]
 
+		fallback := ""
+		if len(sub) > 2 {
+			fallback = strings.TrimSpace(sub[2])
+		}
+
 		if seen[name] {
+			if fallback != "" {
+				return fallback
+			}
 			return match // circular reference — keep as-is
 		}
-		seen[name] = true
+		branchSeen := make(map[string]bool, len(seen)+1)
+		for seenName, value := range seen {
+			branchSeen[seenName] = value
+		}
+		branchSeen[name] = true
 
 		target, exists := byName[name]
 		if !exists {
+			if fallback != "" {
+				return fallback
+			}
 			return match // unknown var — keep as-is
 		}
 
 		resolved := target.InitialValue
 		if varRefRe.MatchString(resolved) {
-			resolved = resolveVarValue(resolved, byName, seen)
+			resolved = resolveVarValue(resolved, byName, branchSeen)
 		}
 
 		return resolved

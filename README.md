@@ -211,8 +211,18 @@ A minimal, fast reference site with:
 - Token cards grouped by category
 - Color swatches, type badges, examples
 - Deprecated token warnings
+- Mobile drawer navigation
+- Optional source stylesheet viewer with tiny built-in syntax highlighting
 
-**Live Example:** [artmsilva.github.io/cssmark](https://artmsilva.github.io/cssmark)
+The project site and generated example docs are separate:
+- **Project docs:** [artmsilva.github.io/cssmark](https://artmsilva.github.io/cssmark)
+- **Generated example docs:** [artmsilva.github.io/cssmark/example](https://artmsilva.github.io/cssmark/example)
+
+## Trust Model and Current Parser Scope
+
+cssmark is a build-time tool for trusted source files in your repository. The generated docs inline token values into preview styles and display the source stylesheet, so do not generate public docs from secrets or untrusted CSS.
+
+The parser intentionally targets cssmark's authoring subset: standard `@property` blocks plus cssmark extended descriptors. It is not a full CSS parser yet. Complex CSS outside token definitions may be ignored, but cross-file `var()` references between parsed tokens are resolved after all input files are loaded.
 
 ## License
 

@@ -95,7 +95,11 @@ func runBuild(args []string) {
 		os.Exit(1)
 	}
 
-	files := expandGlobs(positional)
+	files, err := expandGlobs(positional)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
 	tokens, err := parser.ParseFiles(files)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
@@ -135,7 +139,11 @@ func runCSS(args []string) {
 		os.Exit(1)
 	}
 
-	files := expandGlobs(positional)
+	files, err := expandGlobs(positional)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
 	tokens, err := parser.ParseFiles(files)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
@@ -176,7 +184,11 @@ func runDocs(args []string) {
 		os.Exit(1)
 	}
 
-	files := expandGlobs(positional)
+	files, err := expandGlobs(positional)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
 	tokens, err := parser.ParseFiles(files)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
@@ -185,7 +197,7 @@ func runDocs(args []string) {
 
 	fmt.Printf("✓ %d tokens parsed\n", len(tokens))
 
-	if err := builder.WriteDocs(tokens, out); err != nil {
+	if err := builder.WriteDocs(tokens, out, files...); err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing docs: %v\n", err)
 		os.Exit(1)
 	}
@@ -202,7 +214,11 @@ func runValidate(args []string) {
 		os.Exit(1)
 	}
 
-	files := expandGlobs(fs.Args())
+	files, err := expandGlobs(fs.Args())
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
 	tokens, err := parser.ParseFiles(files)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
@@ -268,17 +284,24 @@ func loadTokensFromJSON(path string) ([]parser.Token, error) {
 	return tokens, nil
 }
 
-func expandGlobs(patterns []string) []string {
+func expandGlobs(patterns []string) ([]string, error) {
 	var files []string
 	for _, pattern := range patterns {
-		if strings.Contains(pattern, "*") {
+		if strings.ContainsAny(pattern, "*?[") {
 			matches, err := filepath.Glob(pattern)
-			if err == nil {
-				files = append(files, matches...)
+			if err != nil {
+				return nil, err
 			}
+			if len(matches) == 0 {
+				return nil, fmt.Errorf("no files matched %q", pattern)
+			}
+			files = append(files, matches...)
 		} else {
 			files = append(files, pattern)
 		}
 	}
-	return files
+	if len(files) == 0 {
+		return nil, fmt.Errorf("no input files matched")
+	}
+	return files, nil
 }

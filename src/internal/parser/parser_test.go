@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -160,6 +162,39 @@ func TestVarResolutionDirect(t *testing.T) {
 	}
 }
 
+func TestVarResolutionMultipleReferencesToSameToken(t *testing.T) {
+	css := `
+@property --space-a {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1rem;
+}
+
+@property --shadow-a {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 var(--space-a) var(--space-a) black;
+}
+`
+	tokens, err := ParseString(css)
+	if err != nil {
+		t.Fatalf("Parse error: %v", err)
+	}
+
+	var shadow *Token
+	for i := range tokens {
+		if tokens[i].Name == "--shadow-a" {
+			shadow = &tokens[i]
+		}
+	}
+	if shadow == nil {
+		t.Fatal("--shadow-a not found")
+	}
+	if shadow.InitialValue != "0 1rem 1rem black" {
+		t.Fatalf("Expected both references to resolve, got %s", shadow.InitialValue)
+	}
+}
+
 func TestVarResolutionChain(t *testing.T) {
 	css := `
 @property --color-hex {
@@ -245,6 +280,60 @@ func TestVarResolutionUnknownRef(t *testing.T) {
 
 	if tokens[0].InitialValue != "var(--unknown-token)" {
 		t.Errorf("Expected unknown ref kept as-is, got %s", tokens[0].InitialValue)
+	}
+}
+
+func TestVarResolutionUnknownRefWithFallback(t *testing.T) {
+	css := `
+@property --color-primary {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: var(--unknown-token, #0055ff);
+}
+`
+	tokens, err := ParseString(css)
+	if err != nil {
+		t.Fatalf("Parse error: %v", err)
+	}
+
+	if tokens[0].InitialValue != "#0055ff" {
+		t.Errorf("Expected fallback #0055ff, got %s", tokens[0].InitialValue)
+	}
+	if tokens[0].RawInitialValue != "var(--unknown-token, #0055ff)" {
+		t.Errorf("Expected raw fallback var() preserved, got %s", tokens[0].RawInitialValue)
+	}
+}
+
+func TestVarResolutionKnownRefIgnoresFallback(t *testing.T) {
+	css := `
+@property --color-blue {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #0055ff;
+}
+
+@property --color-primary {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: var(--color-blue, red);
+}
+`
+	tokens, err := ParseString(css)
+	if err != nil {
+		t.Fatalf("Parse error: %v", err)
+	}
+
+	var primary *Token
+	for i := range tokens {
+		if tokens[i].Name == "--color-primary" {
+			primary = &tokens[i]
+		}
+	}
+	if primary == nil {
+		t.Fatal("--color-primary not found")
+	}
+	if primary.InitialValue != "#0055ff" {
+		t.Errorf("Expected known reference #0055ff, got %s", primary.InitialValue)
 	}
 }
 
@@ -334,6 +423,52 @@ func TestModeDescriptor(t *testing.T) {
 	}
 	if tok.Modes["dark"] != "#1a1a2e" {
 		t.Errorf("Expected mode-dark #1a1a2e, got %s", tok.Modes["dark"])
+	}
+}
+
+func TestParseFilesResolvesReferencesAcrossFiles(t *testing.T) {
+	dir := t.TempDir()
+	basePath := filepath.Join(dir, "base.css")
+	semanticPath := filepath.Join(dir, "semantic.css")
+
+	if err := os.WriteFile(basePath, []byte(`
+@property --color-blue {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #0055ff;
+}
+`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(semanticPath, []byte(`
+@property --color-primary {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: var(--color-blue);
+}
+`), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	tokens, err := ParseFiles([]string{basePath, semanticPath})
+	if err != nil {
+		t.Fatalf("ParseFiles error: %v", err)
+	}
+
+	var primary *Token
+	for i := range tokens {
+		if tokens[i].Name == "--color-primary" {
+			primary = &tokens[i]
+		}
+	}
+	if primary == nil {
+		t.Fatal("--color-primary not found")
+	}
+	if primary.InitialValue != "#0055ff" {
+		t.Fatalf("Expected cross-file reference to resolve to #0055ff, got %s", primary.InitialValue)
+	}
+	if primary.RawInitialValue != "var(--color-blue)" {
+		t.Fatalf("Expected raw value to be preserved, got %s", primary.RawInitialValue)
 	}
 }
 
@@ -447,5 +582,32 @@ func TestValidateDuplicates(t *testing.T) {
 	errors := Validate(tokens)
 	if len(errors) == 0 {
 		t.Error("Expected duplicate error, got none")
+	}
+}
+
+func TestParsePreservesDuplicateTokensInSameFile(t *testing.T) {
+	css := `
+@property --color-a {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: red;
+}
+
+@property --color-a {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: blue;
+}
+`
+	tokens, err := ParseString(css)
+	if err != nil {
+		t.Fatalf("Parse error: %v", err)
+	}
+
+	if len(tokens) != 2 {
+		t.Fatalf("Expected duplicate tokens to be preserved, got %d", len(tokens))
+	}
+	if len(Validate(tokens)) == 0 {
+		t.Fatal("Expected duplicate validation error")
 	}
 }

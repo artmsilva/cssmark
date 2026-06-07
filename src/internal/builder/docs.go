@@ -21,7 +21,7 @@ type CategoryGroup struct {
 }
 
 // WriteDocs generates a static documentation site
-func WriteDocs(tokens []parser.Token, outDir string) error {
+func WriteDocs(tokens []parser.Token, outDir string, sourceFiles ...string) error {
 	if err := os.MkdirAll(outDir, 0755); err != nil {
 		return err
 	}
@@ -38,6 +38,7 @@ func WriteDocs(tokens []parser.Token, outDir string) error {
 		"isFontSize": isFontSize,
 		"isShadow":   isShadow,
 		"join":       strings.Join,
+		"tokenID":    tokenID,
 		"safeCSS":    func(s string) template.CSS { return template.CSS(s) },
 	}).ParseFS(templates, "templates/index.html")
 	if err != nil {
@@ -54,7 +55,11 @@ func WriteDocs(tokens []parser.Token, outDir string) error {
 
 	// Collect unique mode names from tokens
 	modeSet := make(map[string]bool)
+	deprecatedCount := 0
 	for _, t := range tokens {
+		if t.Deprecated {
+			deprecatedCount++
+		}
 		for m := range t.Modes {
 			modeSet[m] = true
 		}
@@ -65,14 +70,25 @@ func WriteDocs(tokens []parser.Token, outDir string) error {
 	}
 	sort.Strings(modes)
 
+	sourceCSS, readableSourceFiles, err := readSourceCSS(sourceFiles)
+	if err != nil {
+		return err
+	}
+
 	data := struct {
-		Groups     []CategoryGroup
-		TotalCount int
-		Modes      []string
+		Groups          []CategoryGroup
+		TotalCount      int
+		Modes           []string
+		SourceFiles     []string
+		SourceCSS       string
+		DeprecatedCount int
 	}{
-		Groups:     groups,
-		TotalCount: len(tokens),
-		Modes:      modes,
+		Groups:          groups,
+		TotalCount:      len(tokens),
+		Modes:           modes,
+		SourceFiles:     readableSourceFiles,
+		SourceCSS:       sourceCSS,
+		DeprecatedCount: deprecatedCount,
 	}
 
 	if err := tmpl.Execute(f, data); err != nil {
@@ -97,6 +113,52 @@ func WriteDocs(tokens []parser.Token, outDir string) error {
 // writeTokensCSS writes tokens as CSS using the full ToCSS builder (includes mode overrides)
 func writeTokensCSS(tokens []parser.Token, outPath string) error {
 	return os.WriteFile(outPath, []byte(ToCSS(tokens)), 0644)
+}
+
+func readSourceCSS(files []string) (string, []string, error) {
+	var parts []string
+	var readableFiles []string
+	for _, file := range files {
+		content, err := os.ReadFile(file)
+		if err != nil {
+			return "", nil, err
+		}
+
+		displayName := filepath.Clean(file)
+		if filepath.IsAbs(displayName) {
+			displayName = filepath.Base(displayName)
+		}
+		readableFiles = append(readableFiles, displayName)
+		if len(files) > 1 {
+			parts = append(parts, "/* "+sanitizeCSSComment(displayName)+" */\n"+string(content))
+		} else {
+			parts = append(parts, string(content))
+		}
+	}
+	return strings.Join(parts, "\n\n"), readableFiles, nil
+}
+
+func sanitizeCSSComment(value string) string {
+	return strings.ReplaceAll(value, "*/", "* /")
+}
+
+func tokenID(name string) string {
+	id := strings.TrimPrefix(name, "--")
+	if id == "" {
+		return "token"
+	}
+	var b strings.Builder
+	for _, r := range id {
+		switch {
+		case r >= 'a' && r <= 'z', r >= '0' && r <= '9':
+			b.WriteRune(r)
+		case r >= 'A' && r <= 'Z':
+			b.WriteRune(r + ('a' - 'A'))
+		default:
+			b.WriteRune('-')
+		}
+	}
+	return "token-" + strings.Trim(b.String(), "-")
 }
 
 func groupByCategory(tokens []parser.Token) []CategoryGroup {

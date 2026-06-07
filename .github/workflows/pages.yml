@@ -1,4 +1,4 @@
-# Deploy cssmark example documentation to GitHub Pages
+# Deploy cssmark project site and example documentation to GitHub Pages
 name: Deploy to GitHub Pages
 
 on:
@@ -30,8 +30,12 @@ jobs:
       - name: Build cssmark
         run: go build -o bin/cssmark ./src/cmd/cssmark/
 
-      - name: Generate documentation
-        run: ./bin/cssmark docs --out ./docs/site ./examples/tokens.css
+      - name: Assemble Pages site
+        run: |
+          mkdir -p ./docs/site
+          cp ./docs/index.html ./docs/.nojekyll ./docs/site/
+          ./bin/cssmark css --out ./docs/site/tokens.css ./examples/tokens.css
+          ./bin/cssmark docs --out ./docs/site/example ./examples/tokens.css
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -47,7 +47,7 @@ func ToCSS(tokens []parser.Token) string {
 		}
 
 		// Write category comment
-		sb.WriteString(fmt.Sprintf("  /* %s */\n", cat))
+		sb.WriteString(fmt.Sprintf("  /* %s */\n", sanitizeCSSComment(cat)))
 
 		// Sort tokens within category by name
 		catTokens := categories[cat]
