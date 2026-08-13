@@ -155,6 +155,16 @@ cssmark css tokens.css --out tokens.css \
 cssmark build tokens.css --out tokens.json
 ```
 
+### Import DTCG JSON for migration
+
+`dtcg` is a migration aid for existing DTCG token trees. It recursively flattens JSON files, inherits group `$type`, merges later mode-only overlays by token path, and preserves stable IDs, CSS names, values, and modes in a JSON manifest.
+
+```bash
+cssmark dtcg context palettes --prefix hb --out token-migration.json
+```
+
+It deliberately does **not** write `@property` source yet: composite token serialization (typography and transitions) needs an explicit CSS representation before a source-of-truth conversion is safe.
+
 ### Generate JavaScript artifacts
 
 Use `id` to preserve a stable programmatic key when the CSS variable name is not enough to reconstruct it.

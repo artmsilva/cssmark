@@ -10,6 +10,7 @@ import (
 
 	"github.com/artmsilva/cssmark/src/internal/builder"
 	"github.com/artmsilva/cssmark/src/internal/differ"
+	"github.com/artmsilva/cssmark/src/internal/dtcg"
 	"github.com/artmsilva/cssmark/src/internal/parser"
 )
 
@@ -28,6 +29,8 @@ func main() {
 		runCSS(os.Args[2:])
 	case "js":
 		runJS(os.Args[2:])
+	case "dtcg":
+		runDTCG(os.Args[2:])
 	case "docs":
 		runDocs(os.Args[2:])
 	case "validate":
@@ -55,6 +58,7 @@ Commands:
   build      Parse tokens and output JSON
   css        Generate clean CSS with :root variables
   js         Generate JavaScript, metadata, and declarations
+  dtcg       Flatten DTCG JSON sources into a migration manifest
   docs       Generate static documentation site
   validate   Validate tokens for errors
   diff       Compare two token snapshots
@@ -65,6 +69,7 @@ Examples:
   cssmark build tokens.css --out tokens.json
   cssmark css tokens.css --out variables.css
   cssmark js tokens.css --out tokens.js --meta-out tokens.meta.js --dts-out tokens.d.ts
+  cssmark dtcg context palettes --out token-migration.json
   cssmark docs tokens.css --out ./docs
   cssmark validate tokens.css
   cssmark diff tokens.old.json tokens.new.json`)
@@ -218,6 +223,53 @@ func runJS(args []string) {
 		os.Exit(1)
 	}
 	fmt.Printf("✓ %d tokens written to %s\n", len(tokens), jsPath)
+}
+
+func runDTCG(args []string) {
+	var positional []string
+	prefix, out := "hb", "token-migration.json"
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--out", "-o":
+			if i+1 < len(args) {
+				out = args[i+1]
+				i++
+			}
+		case "--prefix":
+			if i+1 < len(args) {
+				prefix = args[i+1]
+				i++
+			}
+		default:
+			if !strings.HasPrefix(args[i], "-") {
+				positional = append(positional, args[i])
+			}
+		}
+	}
+	if len(positional) == 0 {
+		fmt.Fprintln(os.Stderr, "Error: No DTCG files or directories specified")
+		os.Exit(1)
+	}
+	paths, err := dtcg.Expand(positional)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+	tokens, err := dtcg.Import(paths, prefix)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+	body, err := json.MarshalIndent(tokens, "", "  ")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+	if err := os.WriteFile(out, body, 0644); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("✓ %d DTCG tokens written to %s\n", len(tokens), out)
 }
 
 func runDocs(args []string) {
