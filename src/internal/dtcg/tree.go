@@ -45,7 +45,7 @@ func WriteFlatCSS(tokens []Token, directory string) error {
 		writeDenseDerivation(&body, typ, root)
 		body.WriteString("}\n")
 		if typ == "dimension" {
-			body.WriteString("\n@scale space {\n  unit: 0.25rem;\n  steps: 0, .25, .5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 14, 16, 18, 20;\n  sentinel 999: 249.75rem;\n}\n")
+			body.WriteString("\n@scale space {\n  unit: 0.25rem;\n  steps: 0, .25, .5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 45, 50, 100;\n  sentinel 999: 249.75rem;\n}\n")
 		}
 		if err := os.WriteFile(filepath.Join(directory, name), []byte(body.String()), 0644); err != nil {
 			return err
@@ -55,7 +55,9 @@ func WriteFlatCSS(tokens []Token, directory string) error {
 	sort.Strings(names)
 	var index strings.Builder
 	index.WriteString("@tokens {\n  namespace: hb;\n}\n\n")
-	for _, name := range names { index.WriteString(fmt.Sprintf("@import \"./%s\";\n", name)) }
+	for _, name := range names {
+		index.WriteString(fmt.Sprintf("@import \"./%s\";\n", name))
+	}
 	return os.WriteFile(filepath.Join(directory, "index.css"), []byte(index.String()), 0644)
 }
 
@@ -392,13 +394,10 @@ func sourcePath(token Token, typ string) []string {
 	if len(parts) > 0 && parts[0] == typ {
 		parts = parts[1:]
 	}
-	if typ == "typography" {
-		for i, part := range parts {
-			if part == "type" {
-				parts = append(parts[:i], parts[i+1:]...)
-				break
-			}
-		}
+	if typ == "typography" && len(parts) > 1 && (parts[0] == "action" || parts[0] == "decorative") && parts[1] == "type" {
+		// `action.type.*` and `decorative.type.*` retain their legacy runtime
+		// segment through lowering; source avoids repeating it under typography.
+		parts = append(parts[:1], parts[2:]...)
 	}
 	return parts
 }
