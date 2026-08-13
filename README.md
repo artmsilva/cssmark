@@ -195,7 +195,25 @@ cssmark build tokens.css --out tokens.json
 cssmark dtcg context palettes --prefix hb --out token-migration.json
 ```
 
-Add `--tree-out tokens` to produce a flat, composable **cssmark authoring** tree. Every file lives directly under `tokens/`, grouped by DTCG type—not consumer-oriented semantic domains—such as `color.css`, `dimension.css`, `typography.css`, `typography-shorthand.css`, and `transition.css`. Raw DTCG wire types are normalized where CSS has a clearer authoring name: `cubicBezier` → `timing-function.css`, `fontFamily` → `font-family.css`, `fontWeight` → `font-weight.css`, and the one mode string → `mode.css`. `index.css` contains only the ordered imports. It does not emit runtime `:root` or mode override files.
+Add `--tree-out tokens` to produce a flat, composable **cssmark authoring** tree. Every file lives directly under `tokens/`, grouped by DTCG type—not consumer-oriented semantic domains—such as `color.css`, `dimension.css`, `typography.css`, and `transition.css`. Raw DTCG wire types are normalized where CSS has a clearer authoring name: `cubicBezier` → `timing-function.css`, `fontFamily` → `font-family.css`, and `fontWeight` → `font-weight.css`. `index.css` contains only the ordered imports. It does not emit runtime `:root` or mode override files.
+
+Within each type file, semantic paths are nested. This keeps state modifiers together with their base concern:
+
+```css
+@token color {
+  @token action {
+    @token border {
+      @token primary {
+        @token default { value: var(--hb-color-brand-blue-450); }
+        @token hover { value: var(--hb-color-brand-blue-600); }
+        @token disabled { value: var(--hb-color-brand-gray-500); }
+      }
+    }
+  }
+}
+```
+
+The compiler flattens this to the existing CSS variable names (`--hb-color-action-border-primary-default`, etc.).
 
 Composite tokens avoid JSON authoring: typography becomes five scalar `@property` blocks (`font-family`, `font-size`, `font-style`, `font-weight`, and `line-height`) and transitions become scalar duration, delay, and timing-function blocks. A `composite` descriptor associates those axes so cssmark can later re-create existing shorthand output. Partial mode overrides stay on the affected axis only.
 

@@ -8,32 +8,34 @@ import (
 	"strings"
 )
 
-// WriteFlatCSS writes an easy-to-browse cssmark authoring tree. Each leaf is a
-// normal @property source file; index.css is only the flat composition order.
+// WriteFlatCSS writes flat, type-grouped cssmark source. The custom @token
+// grouping is authoring syntax; nesting mirrors semantic paths without forcing
+// every path segment into a separate file.
 func WriteFlatCSS(tokens []Token, directory string) error {
-	files := map[string]*strings.Builder{}
+	files := map[string]*tokenGroup{}
 	for _, token := range tokens {
-		// Legacy Cobalt composites duplicate the regular typography axes solely
-		// to emit `font`. cssmark rebuilds that shorthand from typography axes.
+		// Cobalt's type-sh tokens duplicate regular typography only to produce a
+		// font shorthand. cssmark derives that shorthand from typography axes.
 		if token.Type == "typography-shorthand" {
 			continue
 		}
-		file := sourceFile(token)
-		if files[file] == nil {
-			files[file] = &strings.Builder{}
-			files[file].WriteString("/* cssmark token source */\n\n")
+		typ := sourceType(token)
+		if files[typ] == nil {
+			files[typ] = &tokenGroup{children: map[string]*tokenGroup{}}
 		}
-		block, err := PropertySource(token)
-		if err != nil {
-			return err
-		}
-		files[file].WriteString(block)
+		files[typ].add(sourcePath(token, typ), token)
 	}
 	if err := os.MkdirAll(directory, 0755); err != nil {
 		return err
 	}
 	var names []string
-	for name, body := range files {
+	for typ, root := range files {
+		name := typ + ".css"
+		var body strings.Builder
+		body.WriteString("/* cssmark token source */\n\n")
+		body.WriteString("@token " + typ + " {\n")
+		root.write(&body, 1)
+		body.WriteString("}\n")
 		if err := os.WriteFile(filepath.Join(directory, name), []byte(body.String()), 0644); err != nil {
 			return err
 		}
@@ -47,90 +49,125 @@ func WriteFlatCSS(tokens []Token, directory string) error {
 	return os.WriteFile(filepath.Join(directory, "index.css"), []byte(index.String()), 0644)
 }
 
-func declarations(name string, value any) []string {
-	switch value := value.(type) {
-	case string:
-		return []string{fmt.Sprintf("  %s: %s;", name, cssValue(value))}
-	case map[string]any:
-		if isTypography(value) {
-			family := cssComposite(value["fontFamily"])
-			size, style := cssComposite(value["fontSize"]), cssComposite(value["fontStyle"])
-			weight, height := cssComposite(value["fontWeight"]), cssComposite(value["lineHeight"])
-			return []string{
-				fmt.Sprintf("  %s: %s %s %s/%s %s;", name, style, weight, size, height, family),
-				fmt.Sprintf("  %s-font-family: %s;", name, family),
-				fmt.Sprintf("  %s-font-size: %s;", name, size),
-				fmt.Sprintf("  %s-font-style: %s;", name, style),
-				fmt.Sprintf("  %s-font-weight: %s;", name, weight),
-				fmt.Sprintf("  %s-line-height: %s;", name, height),
-			}
-		}
-		if duration, ok := value["duration"]; ok {
-			return []string{fmt.Sprintf("  %s: %s %s %s;", name, cssComposite(duration), cssComposite(value["delay"]), cssComposite(value["timingFunction"]))}
-		}
-	}
-	return nil
+type tokenGroup struct {
+	children map[string]*tokenGroup
+	token    *Token
 }
 
-func mergeComposite(base, override any) any {
-	baseMap, baseOK := base.(map[string]any)
-	overrideMap, overrideOK := override.(map[string]any)
-	if !baseOK || !overrideOK {
-		return override
+func (group *tokenGroup) add(path []string, token Token) {
+	part := path[0]
+	child := group.children[part]
+	if child == nil {
+		child = &tokenGroup{children: map[string]*tokenGroup{}}
+		group.children[part] = child
 	}
-	merged := map[string]any{}
-	for key, value := range baseMap {
-		merged[key] = value
+	if len(path) == 1 {
+		child.token = &token
+		return
 	}
-	for key, value := range overrideMap {
-		merged[key] = value
-	}
-	return merged
+	child.add(path[1:], token)
 }
-func sourceFile(token Token) string {
-	// Group by the CSS concept authors look for, not raw DTCG wire types.
+
+func (group *tokenGroup) write(out *strings.Builder, indent int) {
+	keys := make([]string, 0, len(group.children))
+	for key := range group.children {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		child := group.children[key]
+		pad := strings.Repeat("  ", indent)
+		out.WriteString(pad + "@token " + key + " {\n")
+		if child.token != nil {
+			writeTokenFields(out, *child.token, indent+1)
+		}
+		child.write(out, indent+1)
+		out.WriteString(pad + "}\n")
+	}
+}
+
+func writeTokenFields(out *strings.Builder, token Token, indent int) {
+	pad := strings.Repeat("  ", indent)
+	if value, ok := token.Value.(map[string]any); ok {
+		keys := []string{"fontFamily", "fontSize", "fontStyle", "fontWeight", "lineHeight", "duration", "delay", "timingFunction"}
+		for _, key := range keys {
+			if field, exists := value[key]; exists {
+				out.WriteString(fmt.Sprintf("%s%s: %s;\n", pad, cssField(key), cssComposite(field)))
+			}
+		}
+	} else {
+		out.WriteString(fmt.Sprintf("%svalue: %s;\n", pad, cssComposite(token.Value)))
+	}
+	modes := make([]string, 0, len(token.Modes))
+	for mode := range token.Modes {
+		modes = append(modes, mode)
+	}
+	sort.Strings(modes)
+	for _, mode := range modes {
+		out.WriteString(fmt.Sprintf("%s@mode %s {\n", pad, mode))
+		value := token.Modes[mode]
+		if fields, ok := value.(map[string]any); ok {
+			keys := make([]string, 0, len(fields))
+			for key := range fields {
+				keys = append(keys, key)
+			}
+			sort.Strings(keys)
+			for _, key := range keys {
+				out.WriteString(fmt.Sprintf("%s  %s: %s;\n", pad, cssField(key), cssComposite(fields[key])))
+			}
+		} else {
+			out.WriteString(fmt.Sprintf("%s  value: %s;\n", pad, cssComposite(value)))
+		}
+		out.WriteString(pad + "}\n")
+	}
+}
+
+func sourceType(token Token) string {
 	switch token.Type {
 	case "", "string":
-		return "mode.css"
+		return "mode"
 	case "cubicBezier":
-		return "timing-function.css"
+		return "timing-function"
 	case "fontFamily":
-		return "font-family.css"
+		return "font-family"
 	case "fontWeight":
-		return "font-weight.css"
+		return "font-weight"
 	default:
-		return strings.ReplaceAll(token.Type, "/", "-") + ".css"
+		return strings.ReplaceAll(token.Type, "/", "-")
 	}
 }
-func modeSelector(mode string) string {
-	switch mode {
-	case "wireframe":
-		return "[data-color-mode=\"wireframe\"]"
-	case "dense":
-		return ":root[data-density=\"dense\"], [data-density=\"dense\"]"
-	default:
-		return fmt.Sprintf(":root[data-color-mode=\"%s\"]", mode)
+
+func sourcePath(token Token, typ string) []string {
+	parts := strings.Split(token.ID, ".")
+	if len(parts) > 1 && parts[0] == typ {
+		parts = parts[1:]
 	}
-}
-func uniqueSorted(values []string) []string {
-	seen := map[string]bool{}
-	out := make([]string, 0, len(values))
-	for _, value := range values {
-		if !seen[value] {
-			seen[value] = true
-			out = append(out, value)
+	if typ == "typography" {
+		for i, part := range parts {
+			if part == "type" {
+				parts = append(parts[:i], parts[i+1:]...)
+				break
+			}
 		}
 	}
-	sort.Strings(out)
-	return out
+	return parts
 }
-func layerFor(file string) string {
-	if strings.HasPrefix(file, "mode-") {
-		return "hb-tokens.modes"
+
+func cssField(key string) string {
+	switch key {
+	case "fontFamily":
+		return "font-family"
+	case "fontSize":
+		return "font-size"
+	case "fontStyle":
+		return "font-style"
+	case "fontWeight":
+		return "font-weight"
+	case "lineHeight":
+		return "line-height"
+	case "timingFunction":
+		return "timing-function"
+	default:
+		return key
 	}
-	return "hb-tokens.base"
-}
-func writeLayer(path, layer, selector string, declarations []string) error {
-	body := fmt.Sprintf("@layer %s {\n%s {\n%s\n}\n}\n", layer, selector, strings.Join(declarations, "\n"))
-	return os.WriteFile(path, []byte(body), 0644)
 }
