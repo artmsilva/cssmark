@@ -13,6 +13,11 @@ import (
 func WriteFlatCSS(tokens []Token, directory string) error {
 	files := map[string]*strings.Builder{}
 	for _, token := range tokens {
+		// Legacy Cobalt composites duplicate the regular typography axes solely
+		// to emit `font`. cssmark rebuilds that shorthand from typography axes.
+		if token.Type == "typography-shorthand" {
+			continue
+		}
 		file := sourceFile(token)
 		if files[file] == nil {
 			files[file] = &strings.Builder{}

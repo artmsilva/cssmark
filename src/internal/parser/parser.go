@@ -201,6 +201,10 @@ func parseDescriptors(body string, token *Token) {
 			token.Category = value
 		case "type":
 			token.Type = value
+		case "composite":
+			token.Composite = value
+		case "shorthand":
+			token.Shorthand = value
 		case "aliases":
 			aliases := strings.Split(value, ",")
 			for i, a := range aliases {

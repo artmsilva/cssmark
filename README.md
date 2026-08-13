@@ -97,7 +97,7 @@ CSS has no object-valued `@property`, so typography and transition tokens are au
 
 Typography uses `font-family`, `font-size`, `font-style`, `font-weight`, and `line-height` axes. Transition uses `duration`, `delay`, and `timing-function`. Override only the axis that changes in a mode.
 
-The DTCG migrator emits these scalar blocks today. Composite shorthand/runtime reconstruction is the next compiler step; existing `typography-shorthand` output stays until parity is checked.
+The compiler rebuilds the legacy `font` shorthand automatically from a complete typography composite, using axis-variable references. So `mode-dense` on only `font-size` still changes both the axis and the compatible shorthand token. The DTCG migrator omits duplicate `typography-shorthand` source tokens because their regular typography sibling now owns the same runtime shorthand.
 
 ### var() References
 

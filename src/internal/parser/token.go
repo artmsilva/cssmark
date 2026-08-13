@@ -14,6 +14,8 @@ type Token struct {
 	Description     string            `json:"description,omitempty"`
 	Category        string            `json:"category,omitempty"`
 	Type            string            `json:"type,omitempty"`
+	Composite       string            `json:"composite,omitempty"`
+	Shorthand       string            `json:"shorthand,omitempty"`
 	Aliases         []string          `json:"aliases,omitempty"`
 	Deprecated      bool              `json:"deprecated,omitempty"`
 	Examples        []string          `json:"examples,omitempty"`

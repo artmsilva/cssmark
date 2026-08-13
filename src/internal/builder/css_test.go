@@ -105,6 +105,19 @@ func TestToCSSUsesConfiguredModeSelector(t *testing.T) {
 	}
 }
 
+func TestToCSSRebuildsTypographyShorthandFromAxes(t *testing.T) {
+	axes := []string{"font-family", "font-size", "font-style", "font-weight", "line-height"}
+	var tokens []parser.Token
+	for _, axis := range axes {
+		tokens = append(tokens, parser.Token{Name: "--hb-type-body-" + axis, InitialValue: "x", Composite: "type.body"})
+	}
+	css := ToCSS(tokens)
+	expected := `--hb-type-body: var(--hb-type-body-font-style) var(--hb-type-body-font-weight) var(--hb-type-body-font-size)/var(--hb-type-body-line-height) var(--hb-type-body-font-family);`
+	if !strings.Contains(css, expected) {
+		t.Fatalf("missing shorthand:\n%s", css)
+	}
+}
+
 func TestToCSSSanitizesCategoryComments(t *testing.T) {
 	css := ToCSS([]parser.Token{{
 		Name:         "--color-primary",
