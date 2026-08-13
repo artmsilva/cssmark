@@ -26,7 +26,7 @@ func TestParseTokenSourceLowersImportsStateMapsAndRefs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(tokens) != 2 || tokens[0].Name != "--hb-color-action-default" || tokens[0].InitialValue != "var(--hb-color-brand-blue-450)" || tokens[1].Modes["dark"] != "#000" {
+	if len(tokens) != 2 || tokens[0].ID != "color.action.default" || tokens[0].Name != "--hb-color-action-default" || tokens[0].InitialValue != "var(--hb-color-brand-blue-450)" || tokens[1].ID != "color.action.hover" || tokens[1].Modes["dark"] != "#000" {
 		t.Fatalf("got %#v", tokens)
 	}
 }

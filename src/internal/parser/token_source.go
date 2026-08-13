@@ -141,13 +141,13 @@ func lowerNode(node *sourceNode, byPath map[string]*sourceNode, namespace, filen
 	modes = mergeAncestorModes(node.path, byPath, modes)
 	base := sourceName(namespace, node.path)
 	if hasTypography(fields) {
-		return lowerTypography(base, fields, modes, filename)
+		return lowerTypography(sourceID(node.path), base, fields, modes, filename)
 	}
 	if hasTransition(fields) {
-		return lowerTransition(base, fields, modes, filename)
+		return lowerTransition(sourceID(node.path), base, fields, modes, filename)
 	}
 	if value, ok := fields["value"]; ok {
-		t := Token{Name: base, InitialValue: lowerValue(value, namespace), Modes: lowerModes(modes, "value", namespace), Source: Source{File: filename}}
+		t := Token{ID: sourceID(node.path), Name: base, InitialValue: lowerValue(value, namespace), Modes: lowerModes(modes, "value", namespace), Source: Source{File: filename}}
 		return []Token{t}
 	}
 	if len(node.path) > 0 && node.path[0] == "timing-function" {
@@ -158,7 +158,7 @@ func lowerNode(node *sourceNode, byPath map[string]*sourceNode, namespace, filen
 		}
 		sort.Strings(keys)
 		for _, key := range keys {
-			out = append(out, Token{Name: "--" + namespace + "-timingFunction-" + key, InitialValue: "cubic-bezier(" + fields[key] + ")", Source: Source{File: filename}})
+			out = append(out, Token{ID: "timingFunction." + key, Name: "--" + namespace + "-timingFunction-" + key, InitialValue: "cubic-bezier(" + fields[key] + ")", Source: Source{File: filename}})
 		}
 		return out
 	}
@@ -172,7 +172,7 @@ func lowerNode(node *sourceNode, byPath map[string]*sourceNode, namespace, filen
 	sort.Strings(keys)
 	var out []Token
 	for _, key := range keys {
-		out = append(out, Token{Name: base + "-" + key, InitialValue: lowerValue(fields[key], namespace), Modes: lowerModes(modes, key, namespace), Source: Source{File: filename}})
+		out = append(out, Token{ID: sourceID(append(node.path, key)), Name: base + "-" + key, InitialValue: lowerValue(fields[key], namespace), Modes: lowerModes(modes, key, namespace), Source: Source{File: filename}})
 	}
 	return out
 }
@@ -244,26 +244,43 @@ func resolvedFields(node *sourceNode, byPath map[string]*sourceNode, seen map[st
 	return fields, modeCopy
 }
 
-func lowerTypography(base string, fields map[string]string, modes map[string]map[string]string, file string) []Token {
+func sourceID(path []string) string {
+	parts := append([]string{}, path...)
+	if len(parts) > 0 && parts[0] == "dimension" {
+		parts = parts[1:]
+	}
+	if len(parts) > 0 && parts[0] == "typography" {
+		parts = parts[1:]
+		if len(parts) > 0 && (parts[0] == "action" || parts[0] == "decorative") {
+			parts = append(parts[:1], append([]string{"type"}, parts[1:]...)...)
+		} else {
+			parts = append([]string{"type"}, parts...)
+		}
+	}
+	return strings.Join(parts, ".")
+}
+
+func lowerTypography(id, base string, fields map[string]string, modes map[string]map[string]string, file string) []Token {
 	axes := []string{"font-family", "font-size", "font-style", "font-weight", "line-height"}
 	var out []Token
+	axisID := map[string]string{"font-family": "fontFamily", "font-size": "fontSize", "font-style": "fontStyle", "font-weight": "fontWeight", "line-height": "lineHeight"}
 	for _, axis := range axes {
 		if value, ok := fields[axis]; ok {
-			out = append(out, Token{Name: base + "-" + axis, InitialValue: lowerValue(value, "hb"), Modes: lowerModes(modes, axis, "hb"), Source: Source{File: file}})
+			out = append(out, Token{ID: id + "." + axisID[axis], Name: base + "-" + axis, InitialValue: lowerValue(value, "hb"), Modes: lowerModes(modes, axis, "hb"), Source: Source{File: file}})
 		}
 	}
 	if len(out) == 5 {
-		out = append(out, Token{Name: base, InitialValue: fmt.Sprintf("var(%s-font-style) var(%s-font-weight) var(%s-font-size)/var(%s-line-height) var(%s-font-family)", base, base, base, base, base), Source: Source{File: file}})
+		out = append(out, Token{ID: strings.Replace(id, ".type.", ".type-sh.", 1), Name: base, InitialValue: fmt.Sprintf("var(%s-font-style) var(%s-font-weight) var(%s-font-size)/var(%s-line-height) var(%s-font-family)", base, base, base, base, base), Source: Source{File: file}})
 	}
 	return out
 }
-func lowerTransition(base string, fields map[string]string, modes map[string]map[string]string, file string) []Token {
+func lowerTransition(id, base string, fields map[string]string, modes map[string]map[string]string, file string) []Token {
 	if !hasTransition(fields) {
 		return nil
 	}
 	// Cobalt exposes only the composed transition token; keeping axes internal
 	// preserves the existing public CSS surface exactly.
-	return []Token{{Name: base, InitialValue: fields["duration"] + " " + fields["delay"] + " " + fields["timing-function"], Source: Source{File: file}}}
+	return []Token{{ID: id, Name: base, InitialValue: fields["duration"] + " " + fields["delay"] + " " + fields["timing-function"], Source: Source{File: file}}}
 }
 func lowerModes(modes map[string]map[string]string, field, namespace string) map[string]string {
 	out := map[string]string{}
@@ -348,10 +365,10 @@ func lowerSpaceScale(body, namespace, file string) []Token {
 		if strings.HasPrefix(step, ".") {
 			id = "0-" + id
 		}
-		out = append(out, Token{Name: "--" + namespace + "-space-" + id, InitialValue: strconv.FormatFloat(unit*n, 'f', -1, 64) + "rem", Source: Source{File: file}})
+		out = append(out, Token{ID: "space." + id, Name: "--" + namespace + "-space-" + id, InitialValue: strconv.FormatFloat(unit*n, 'f', -1, 64) + "rem", Source: Source{File: file}})
 	}
 	if len(match) > 3 && match[3] != "" {
-		out = append(out, Token{Name: "--" + namespace + "-space-999", InitialValue: match[3] + "rem", Source: Source{File: file}})
+		out = append(out, Token{ID: "space.999", Name: "--" + namespace + "-space-999", InitialValue: match[3] + "rem", Source: Source{File: file}})
 	}
 	return out
 }
