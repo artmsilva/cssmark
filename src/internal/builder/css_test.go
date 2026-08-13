@@ -105,6 +105,15 @@ func TestToCSSUsesConfiguredModeSelector(t *testing.T) {
 	}
 }
 
+func TestToCSSEmitsModeAndDensitySentinels(t *testing.T) {
+	css := ToCSSWithModeSelectors([]parser.Token{{Name: "--x", InitialValue: "a", Modes: map[string]string{"dark": "b", "dense": "c"}}}, map[string]string{"dense": ":root[data-density='dense'], [data-density='dense']"})
+	for _, expected := range []string{"--hb-mode: light;", "--hb-density: comfortable;", "--hb-mode: dark;", "--hb-density: dense;"} {
+		if !strings.Contains(css, expected) {
+			t.Fatalf("missing %q:\n%s", expected, css)
+		}
+	}
+}
+
 func TestToCSSRebuildsTypographyShorthandFromAxes(t *testing.T) {
 	axes := []string{"font-family", "font-size", "font-style", "font-weight", "line-height"}
 	var tokens []parser.Token

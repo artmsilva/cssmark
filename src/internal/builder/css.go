@@ -81,6 +81,9 @@ func ToCSSWithModeSelectors(tokens []parser.Token, modeSelectors map[string]stri
 	}
 
 	sb.WriteString("}\n")
+	// Sentinels let consumers inspect the active theme/density without coupling
+	// to a particular token. They are emitted by the legacy Cobalt pipeline too.
+	sb.WriteString("\n:root {\n  --hb-mode: light;\n  --hb-density: comfortable;\n}\n")
 
 	// Collect mode overrides across all tokens
 	modeTokens := make(map[string][]parser.Token) // modeName → tokens with that mode
@@ -103,6 +106,12 @@ func ToCSSWithModeSelectors(tokens []parser.Token, modeSelectors map[string]stri
 			selector = configured
 		}
 		sb.WriteString(fmt.Sprintf("\n%s {\n", selector))
+		if modeName == "dark" || modeName == "wireframe" {
+			sb.WriteString(fmt.Sprintf("  --hb-mode: %s;\n", modeName))
+		}
+		if modeName == "dense" {
+			sb.WriteString("  --hb-density: dense;\n")
+		}
 
 		mTokens := modeTokens[modeName]
 		sort.Slice(mTokens, func(i, j int) bool {
