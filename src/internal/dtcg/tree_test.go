@@ -28,6 +28,21 @@ func TestWriteFlatCSSNestsSemanticStateModifiers(t *testing.T) {
 	}
 }
 
+func TestWriteFlatCSSOmitsNoOpModeFields(t *testing.T) {
+	dir := t.TempDir()
+	err := WriteFlatCSS([]Token{{ID: "type.body", Type: "typography", Value: map[string]any{"fontSize": "16px", "fontFamily": "Inter"}, Modes: map[string]any{"dense": map[string]any{"fontSize": "14px", "fontFamily": "Inter"}}}}, dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, err := os.ReadFile(filepath.Join(dir, "typography.css"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(body), "font-family: Inter;\n        }") || !strings.Contains(string(body), "font-size: 14px;") {
+		t.Fatalf("unpruned mode:\n%s", body)
+	}
+}
+
 func TestWriteFlatCSSUsesTypographyWithoutLegacyTypeSegment(t *testing.T) {
 	dir := t.TempDir()
 	err := WriteFlatCSS([]Token{{ID: "decorative.type.body.regular", Type: "typography", Value: map[string]any{"fontSize": "{space.4}"}}}, dir)

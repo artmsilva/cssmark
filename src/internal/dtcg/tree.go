@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 )
@@ -34,6 +35,9 @@ func WriteFlatCSS(tokens []Token, directory string) error {
 		var body strings.Builder
 		body.WriteString("/* cssmark token source */\n\n")
 		body.WriteString("@token " + typ + " {\n")
+		if root.token != nil {
+			writeTokenFields(&body, *root.token, 1)
+		}
 		root.write(&body, 1)
 		body.WriteString("}\n")
 		if err := os.WriteFile(filepath.Join(directory, name), []byte(body.String()), 0644); err != nil {
@@ -55,6 +59,10 @@ type tokenGroup struct {
 }
 
 func (group *tokenGroup) add(path []string, token Token) {
+	if len(path) == 0 {
+		group.token = &token
+		return
+	}
 	part := path[0]
 	child := group.children[part]
 	if child == nil {
@@ -103,22 +111,35 @@ func writeTokenFields(out *strings.Builder, token Token, indent int) {
 		modes = append(modes, mode)
 	}
 	sort.Strings(modes)
+	baseFields, composite := token.Value.(map[string]any)
 	for _, mode := range modes {
-		out.WriteString(fmt.Sprintf("%s@mode %s {\n", pad, mode))
 		value := token.Modes[mode]
-		if fields, ok := value.(map[string]any); ok {
+		if composite {
+			fields, ok := value.(map[string]any)
+			if !ok {
+				continue
+			}
 			keys := make([]string, 0, len(fields))
-			for key := range fields {
-				keys = append(keys, key)
+			for key, field := range fields {
+				if !reflect.DeepEqual(field, baseFields[key]) {
+					keys = append(keys, key)
+				}
+			}
+			if len(keys) == 0 {
+				continue
 			}
 			sort.Strings(keys)
+			out.WriteString(fmt.Sprintf("%s@mode %s {\n", pad, mode))
 			for _, key := range keys {
 				out.WriteString(fmt.Sprintf("%s  %s: %s;\n", pad, cssField(key), cssComposite(fields[key])))
 			}
-		} else {
-			out.WriteString(fmt.Sprintf("%s  value: %s;\n", pad, cssComposite(value)))
+			out.WriteString(pad + "}\n")
+			continue
 		}
-		out.WriteString(pad + "}\n")
+		if reflect.DeepEqual(value, token.Value) {
+			continue
+		}
+		out.WriteString(fmt.Sprintf("%s@mode %s {\n%s  value: %s;\n%s}\n", pad, mode, pad, cssComposite(value), pad))
 	}
 }
 
@@ -139,7 +160,7 @@ func sourceType(token Token) string {
 
 func sourcePath(token Token, typ string) []string {
 	parts := strings.Split(token.ID, ".")
-	if len(parts) > 1 && parts[0] == typ {
+	if len(parts) > 0 && parts[0] == typ {
 		parts = parts[1:]
 	}
 	if typ == "typography" {
