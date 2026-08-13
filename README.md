@@ -48,9 +48,14 @@ go install github.com/artmsilva/cssmark/src/cmd/cssmark@latest
 
 ## Token Authoring Format
 
-Tokens are authored as standard `@property` rules with additional descriptors for metadata:
+Tokens are authored as standard `@property` rules with additional descriptors for metadata. Keep source files small and compose them through a flat `index.css`:
 
 ```css
+/* tokens/index.css */
+@import "./color.css";
+@import "./typography.css";
+
+/* tokens/color.css */
 @property --color-brand-primary {
   /* Standard @property descriptors — browser-native */
   syntax: "<color>";
@@ -66,6 +71,33 @@ Tokens are authored as standard `@property` rules with additional descriptors fo
   examples: "background: var(--color-brand-primary); border-color: var(--color-brand-primary);";
 }
 ```
+
+### Composite tokens: scalar axes, not JSON
+
+CSS has no object-valued `@property`, so typography and transition tokens are authored as scalar axes. `composite` links related axes without making the source JSON-shaped.
+
+```css
+@property --hb-decorative-type-body-regular-font-family {
+  id: "decorative.type.body.regular.fontFamily";
+  composite: "decorative.type.body.regular";
+  syntax: "*";
+  inherits: true;
+  initial-value: var(--hb-font-family-body);
+}
+
+@property --hb-decorative-type-body-regular-font-size {
+  id: "decorative.type.body.regular.fontSize";
+  composite: "decorative.type.body.regular";
+  syntax: "<length>";
+  inherits: true;
+  initial-value: var(--hb-space-4);
+  mode-dense: var(--hb-space-3-5);
+}
+```
+
+Typography uses `font-family`, `font-size`, `font-style`, `font-weight`, and `line-height` axes. Transition uses `duration`, `delay`, and `timing-function`. Override only the axis that changes in a mode.
+
+The DTCG migrator emits these scalar blocks today. Composite shorthand/runtime reconstruction is the next compiler step; existing `typography-shorthand` output stays until parity is checked.
 
 ### var() References
 
@@ -221,6 +253,8 @@ cssmark diff tokens.old.json tokens.new.json
 | deprecated   | boolean | no       | Marks token deprecated                   |
 | examples     | string  | no       | Semicolon-separated CSS usage examples   |
 | mode-*       | string  | no       | Override value for a named mode           |
+| id           | string  | no       | Stable programmatic token identity        |
+| composite    | string  | no       | Shared identity for scalar composite axes |
 
 ## Output Formats
 
