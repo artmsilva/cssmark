@@ -140,6 +140,13 @@ JSON output includes modes as a map:
 
 Mode values also support `var()` references, which are resolved the same way.
 
+Use `--mode-selector mode=selector` when a mode is not a color mode. For example, dense spacing can target both the document root and nested containers:
+
+```sh
+cssmark css tokens.css --out tokens.css \
+  --mode-selector "dense=:root[data-density='dense'], [data-density='dense']"
+```
+
 ## Commands
 
 ### Build (JSON Export)

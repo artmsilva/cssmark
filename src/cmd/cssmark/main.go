@@ -118,11 +118,20 @@ func runBuild(args []string) {
 
 func runCSS(args []string) {
 	var positional []string
+	modeSelectors := make(map[string]string)
 	outValue := "variables.css"
 	for i := 0; i < len(args); i++ {
 		if args[i] == "--out" || args[i] == "-out" || args[i] == "-o" {
 			if i+1 < len(args) {
 				outValue = args[i+1]
+				i++
+			}
+		} else if args[i] == "--mode-selector" {
+			if i+1 < len(args) {
+				parts := strings.SplitN(args[i+1], "=", 2)
+				if len(parts) == 2 && parts[0] != "" && parts[1] != "" {
+					modeSelectors[parts[0]] = parts[1]
+				}
 				i++
 			}
 		} else if strings.HasPrefix(args[i], "-o=") {
@@ -152,7 +161,7 @@ func runCSS(args []string) {
 
 	fmt.Printf("✓ %d tokens parsed\n", len(tokens))
 
-	if err := builder.WriteCSS(tokens, outValue); err != nil {
+	if err := builder.WriteCSSWithModeSelectors(tokens, outValue, modeSelectors); err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing CSS: %v\n", err)
 		os.Exit(1)
 	}

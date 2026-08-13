@@ -90,6 +90,21 @@ func TestWriteDocsIncludesReferenceTools(t *testing.T) {
 	}
 }
 
+func TestToCSSUsesConfiguredModeSelector(t *testing.T) {
+	css := ToCSSWithModeSelectors([]parser.Token{{
+		Name:         "--space-sm",
+		InitialValue: "4px",
+		Modes:        map[string]string{"dense": "2px"},
+	}}, map[string]string{"dense": ":root[data-density='dense'], [data-density='dense']"})
+
+	if !strings.Contains(css, ":root[data-density='dense'], [data-density='dense'] {") {
+		t.Fatalf("expected configured dense selector, got:\n%s", css)
+	}
+	if strings.Contains(css, ":root[data-color-mode='dense']") {
+		t.Fatalf("expected configured selector to replace the default, got:\n%s", css)
+	}
+}
+
 func TestToCSSSanitizesCategoryComments(t *testing.T) {
 	css := ToCSS([]parser.Token{{
 		Name:         "--color-primary",
