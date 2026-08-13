@@ -99,6 +99,34 @@ Typography uses `font-family`, `font-size`, `font-style`, `font-weight`, and `li
 
 The compiler rebuilds the legacy `font` shorthand automatically from a complete typography composite, using axis-variable references. So `mode-dense` on only `font-size` still changes both the axis and the compatible shorthand token. The DTCG migrator omits duplicate `typography-shorthand` source tokens because their regular typography sibling now owns the same runtime shorthand.
 
+The migration source also deduplicates typography variants against a local `regular` sibling:
+
+```css
+@token regular {
+  font-family: var(--hb-font-family-body);
+  font-size: var(--hb-space-4);
+  font-style: normal;
+  font-weight: var(--hb-font-weight-regular);
+  line-height: var(--hb-space-6);
+}
+
+@token bold {
+  extends: regular;
+  font-weight: var(--hb-font-weight-bold);
+}
+```
+
+`extends` inherits base axes and mode values; a child only declares its differences. The migration also replaces explicit generated dense overrides with policy declarations:
+
+```css
+@derive dense {
+  font-size: step-down(1, floor: var(--hb-space-3));
+  line-height: step-down(1, floor: var(--hb-space-4));
+}
+```
+
+`@token`, `extends`, and `@derive` are cssmark source syntax. The current migrator emits them; parser/lowering support is the required next cutover step before this source can replace DTCG in a build.
+
 ### var() References
 
 Tokens can reference other tokens using `var()`. References are resolved to literal values in JSON output, while CSS output preserves the original `var()` references.

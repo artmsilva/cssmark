@@ -28,7 +28,7 @@ func TestWriteFlatCSSNestsSemanticStateModifiers(t *testing.T) {
 	}
 }
 
-func TestWriteFlatCSSOmitsNoOpModeFields(t *testing.T) {
+func TestWriteFlatCSSReplacesExplicitDenseModesWithDerivation(t *testing.T) {
 	dir := t.TempDir()
 	err := WriteFlatCSS([]Token{{ID: "type.body", Type: "typography", Value: map[string]any{"fontSize": "16px", "fontFamily": "Inter"}, Modes: map[string]any{"dense": map[string]any{"fontSize": "14px", "fontFamily": "Inter"}}}}, dir)
 	if err != nil {
@@ -38,8 +38,8 @@ func TestWriteFlatCSSOmitsNoOpModeFields(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if strings.Contains(string(body), "font-family: Inter;\n        }") || !strings.Contains(string(body), "font-size: 14px;") {
-		t.Fatalf("unpruned mode:\n%s", body)
+	if strings.Contains(string(body), "@mode dense") || !strings.Contains(string(body), "@derive dense") {
+		t.Fatalf("expected derived dense mode:\n%s", body)
 	}
 }
 

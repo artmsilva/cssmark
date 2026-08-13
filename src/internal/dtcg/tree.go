@@ -36,9 +36,10 @@ func WriteFlatCSS(tokens []Token, directory string) error {
 		body.WriteString("/* cssmark token source */\n\n")
 		body.WriteString("@token " + typ + " {\n")
 		if root.token != nil {
-			writeTokenFields(&body, *root.token, 1)
+			writeTokenFields(&body, *root.token, 1, nil)
 		}
-		root.write(&body, 1)
+		root.write(&body, 1, typ)
+		writeDenseDerivation(&body, typ, root)
 		body.WriteString("}\n")
 		if err := os.WriteFile(filepath.Join(directory, name), []byte(body.String()), 0644); err != nil {
 			return err
@@ -76,30 +77,56 @@ func (group *tokenGroup) add(path []string, token Token) {
 	child.add(path[1:], token)
 }
 
-func (group *tokenGroup) write(out *strings.Builder, indent int) {
+func (group *tokenGroup) write(out *strings.Builder, indent int, typ string) {
 	keys := make([]string, 0, len(group.children))
 	for key := range group.children {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)
+	if len(keys) > 1 && keys[0] != "regular" {
+		for i, key := range keys {
+			if key == "regular" {
+				keys[0], keys[i] = keys[i], keys[0]
+				break
+			}
+		}
+	}
+	var regular *Token
+	if typ == "typography" && group.children["regular"] != nil {
+		regular = group.children["regular"].token
+	}
 	for _, key := range keys {
 		child := group.children[key]
 		pad := strings.Repeat("  ", indent)
 		out.WriteString(pad + "@token " + key + " {\n")
 		if child.token != nil {
-			writeTokenFields(out, *child.token, indent+1)
+			parent := (*Token)(nil)
+			if child.token != regular && inheritsTypography(*child.token, regular) {
+				parent = regular
+			}
+			writeTokenFields(out, *child.token, indent+1, parent)
 		}
-		child.write(out, indent+1)
+		child.write(out, indent+1, typ)
 		out.WriteString(pad + "}\n")
 	}
 }
 
-func writeTokenFields(out *strings.Builder, token Token, indent int) {
+func writeTokenFields(out *strings.Builder, token Token, indent int, parent *Token) {
 	pad := strings.Repeat("  ", indent)
+	if parent != nil {
+		out.WriteString(pad + "extends: regular;\n")
+	}
 	if value, ok := token.Value.(map[string]any); ok {
 		keys := []string{"fontFamily", "fontSize", "fontStyle", "fontWeight", "lineHeight", "duration", "delay", "timingFunction"}
+		parentValue, _ := func() (map[string]any, bool) {
+			if parent == nil {
+				return nil, false
+			}
+			value, ok := parent.Value.(map[string]any)
+			return value, ok
+		}()
 		for _, key := range keys {
-			if field, exists := value[key]; exists {
+			if field, exists := value[key]; exists && !reflect.DeepEqual(field, parentValue[key]) {
 				out.WriteString(fmt.Sprintf("%s%s: %s;\n", pad, cssField(key), cssComposite(field)))
 			}
 		}
@@ -113,6 +140,9 @@ func writeTokenFields(out *strings.Builder, token Token, indent int) {
 	sort.Strings(modes)
 	baseFields, composite := token.Value.(map[string]any)
 	for _, mode := range modes {
+		if mode == "dense" {
+			continue
+		}
 		value := token.Modes[mode]
 		if composite {
 			fields, ok := value.(map[string]any)
@@ -120,8 +150,12 @@ func writeTokenFields(out *strings.Builder, token Token, indent int) {
 				continue
 			}
 			keys := make([]string, 0, len(fields))
+			parentMode := map[string]any{}
+			if parent != nil {
+				parentMode, _ = parent.Modes[mode].(map[string]any)
+			}
 			for key, field := range fields {
-				if !reflect.DeepEqual(field, baseFields[key]) {
+				if !reflect.DeepEqual(field, baseFields[key]) && !reflect.DeepEqual(field, parentMode[key]) {
 					keys = append(keys, key)
 				}
 			}
@@ -141,6 +175,49 @@ func writeTokenFields(out *strings.Builder, token Token, indent int) {
 		}
 		out.WriteString(fmt.Sprintf("%s@mode %s {\n%s  value: %s;\n%s}\n", pad, mode, pad, cssComposite(value), pad))
 	}
+}
+
+func inheritsTypography(token Token, regular *Token) bool {
+	if regular == nil {
+		return false
+	}
+	value, ok := token.Value.(map[string]any)
+	if !ok {
+		return false
+	}
+	base, ok := regular.Value.(map[string]any)
+	if !ok {
+		return false
+	}
+	// A sibling is worthwhile to inherit when it differs only by the conventional
+	// weight/style axes; retain explicit special typography variants.
+	for _, key := range []string{"fontFamily", "fontSize", "lineHeight"} {
+		if !reflect.DeepEqual(value[key], base[key]) {
+			return false
+		}
+	}
+	return true
+}
+
+func writeDenseDerivation(out *strings.Builder, typ string, root *tokenGroup) {
+	if typ == "typography" {
+		out.WriteString("\n  @derive dense {\n    font-size: step-down(1, floor: var(--hb-space-3));\n    line-height: step-down(1, floor: var(--hb-space-4));\n  }\n")
+	}
+	if typ == "dimension" && hasSemanticSpace(root, nil) {
+		out.WriteString("\n  @derive dense decorative.space {\n    value: step-down(2, floor: var(--hb-space-1));\n    override: --hb-space-2 => var(--hb-space-1-5);\n  }\n")
+	}
+}
+
+func hasSemanticSpace(group *tokenGroup, path []string) bool {
+	if group.token != nil && strings.HasPrefix(strings.Join(path, "."), "decorative.space.") {
+		return true
+	}
+	for name, child := range group.children {
+		if hasSemanticSpace(child, append(path, name)) {
+			return true
+		}
+	}
+	return false
 }
 
 func sourceType(token Token) string {
