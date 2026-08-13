@@ -300,23 +300,48 @@ func applyDerivations(tokens []Token, source string) []Token {
 			if strings.HasSuffix(token.Name, "-line-height") {
 				token.Modes["dense"] = stepDown(token.InitialValue, byName, "--hb-space-4")
 			}
+			// Cobalt emits every typography axis in wireframe, even unchanged axes.
+			if strings.HasSuffix(token.Name, "-font-size") || strings.HasSuffix(token.Name, "-font-style") || strings.HasSuffix(token.Name, "-font-weight") || strings.HasSuffix(token.Name, "-line-height") {
+				token.Modes["wireframe"] = token.InitialValue
+			}
 		}
 		if strings.Contains(token.Name, "-decorative-space-") {
 			token.Modes["dense"] = denseSpace(token.InitialValue, byName)
 		}
 	}
-	// Generated shorthand tokens follow their axes, so they need matching dense
-	// declarations for legacy consumers that use `font: var(...)`.
+	// Rebuild a shorthand after modes are known. A direct `font` declaration is
+	// required in every mode because custom-property references resolve where
+	// assigned, not where a consuming font declaration is evaluated.
 	for i := range tokens {
 		if strings.Contains(tokens[i].Name, "-type-") && !strings.Contains(tokens[i].Name, "-font-") && !strings.HasSuffix(tokens[i].Name, "-line-height") {
 			if tokens[i].Modes == nil {
 				tokens[i].Modes = map[string]string{}
 			}
-			tokens[i].Modes["dense"] = tokens[i].InitialValue
+			base := tokens[i].Name
+			for _, mode := range []string{"dense", "wireframe"} {
+				family := modeValue(byName[base+"-font-family"], mode)
+				size := modeValue(byName[base+"-font-size"], mode)
+				style := modeValue(byName[base+"-font-style"], mode)
+				weight := modeValue(byName[base+"-font-weight"], mode)
+				height := modeValue(byName[base+"-line-height"], mode)
+				if family != "" && size != "" && style != "" && weight != "" && height != "" {
+					tokens[i].Modes[mode] = style + " " + weight + " " + size + "/" + height + " " + family
+				}
+			}
 		}
 	}
 	return tokens
 }
+func modeValue(token *Token, mode string) string {
+	if token == nil {
+		return ""
+	}
+	if value, ok := token.Modes[mode]; ok {
+		return value
+	}
+	return token.InitialValue
+}
+
 func stepDown(value string, byName map[string]*Token, floor string) string {
 	match := regexp.MustCompile(`--hb-space-([\d-]+)`).FindStringSubmatch(value)
 	if len(match) != 2 {
