@@ -83,14 +83,19 @@ func mergeComposite(base, override any) any {
 	return merged
 }
 func sourceFile(token Token) string {
-	// Authoring files follow DTCG type, not consumer-oriented semantic domains.
-	// Finding every typography token in typography.css is less surprising than
-	// knowing whether it belongs to action, decorative, or component.
-	name := token.Type
-	if name == "" {
-		name = "untyped"
+	// Group by the CSS concept authors look for, not raw DTCG wire types.
+	switch token.Type {
+	case "", "string":
+		return "mode.css"
+	case "cubicBezier":
+		return "timing-function.css"
+	case "fontFamily":
+		return "font-family.css"
+	case "fontWeight":
+		return "font-weight.css"
+	default:
+		return strings.ReplaceAll(token.Type, "/", "-") + ".css"
 	}
-	return strings.ReplaceAll(name, "/", "-") + ".css"
 }
 func modeSelector(mode string) string {
 	switch mode {
