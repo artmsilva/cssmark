@@ -99,7 +99,8 @@ func (group *tokenGroup) write(out *strings.Builder, indent int, typ, inheritedA
 		}
 	}
 	if all := commonScalarMode(group); all != "" {
-		out.WriteString(strings.Repeat("  ", indent) + "@mode wireframe { all: " + all + "; }\n")
+		pad := strings.Repeat("  ", indent)
+		out.WriteString(pad + "@mode wireframe {\n" + pad + "  all: " + all + ";\n" + pad + "}\n")
 		inheritedAll = "wireframe"
 	}
 	var regular *Token

@@ -82,7 +82,7 @@ func TestWriteFlatCSSUsesScaleAndGroupModeDefaults(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(duration), "@mode wireframe { all: 0ms; }") {
+	if !strings.Contains(string(duration), "@mode wireframe {\n    all: 0ms;") {
 		t.Fatalf("expected group mode:\n%s", duration)
 	}
 }

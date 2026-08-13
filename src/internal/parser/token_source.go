@@ -51,7 +51,32 @@ func ParseTokenSource(path string) ([]Token, error) {
 		tokens = append(tokens, parsed...)
 		source.Write(content)
 	}
-	return applyDerivations(tokens, source.String()), nil
+	tokens = applyDerivations(tokens, source.String())
+	for i := range tokens {
+		if strings.HasPrefix(tokens[i].Name, "--"+namespace+"-font-family-") {
+			tokens[i].InitialValue = quoteFontFamilies(tokens[i].InitialValue)
+			for mode, value := range tokens[i].Modes {
+				tokens[i].Modes[mode] = quoteFontFamilies(value)
+			}
+		}
+		if tokens[i].Name == "--"+namespace+"-space-0" {
+			tokens[i].InitialValue = "0"
+		}
+	}
+	resolveVarReferences(tokens)
+	// Cobalt serializes its compatibility font shorthand as a literal. Preserve
+	// that byte-level contract while normal tokens retain authored var() refs.
+	for i := range tokens {
+		if strings.Contains(tokens[i].Name, "-type-") && !strings.Contains(tokens[i].Name, "-font-") && !strings.HasSuffix(tokens[i].Name, "-line-height") {
+			tokens[i].InitialValue = compactFontShorthand(tokens[i].InitialValue)
+			for mode, value := range tokens[i].Modes {
+				tokens[i].Modes[mode] = compactFontShorthand(value)
+			}
+			tokens[i].RawInitialValue = ""
+			tokens[i].RawModes = nil
+		}
+	}
+	return tokens, nil
 }
 
 type sourceNode struct {
@@ -113,6 +138,7 @@ func parseTokenText(body, filename, namespace string) ([]Token, error) {
 
 func lowerNode(node *sourceNode, byPath map[string]*sourceNode, namespace, filename string) []Token {
 	fields, modes := resolvedFields(node, byPath, nil)
+	modes = mergeAncestorModes(node.path, byPath, modes)
 	base := sourceName(namespace, node.path)
 	if hasTypography(fields) {
 		return lowerTypography(base, fields, modes, filename)
@@ -147,6 +173,31 @@ func lowerNode(node *sourceNode, byPath map[string]*sourceNode, namespace, filen
 	var out []Token
 	for _, key := range keys {
 		out = append(out, Token{Name: base + "-" + key, InitialValue: lowerValue(fields[key], namespace), Modes: lowerModes(modes, key, namespace), Source: Source{File: filename}})
+	}
+	return out
+}
+
+func mergeAncestorModes(path []string, byPath map[string]*sourceNode, modes map[string]map[string]string) map[string]map[string]string {
+	out := map[string]map[string]string{}
+	for mode, fields := range modes {
+		out[mode] = map[string]string{}
+		for k, v := range fields {
+			out[mode][k] = v
+		}
+	}
+	for i := 1; i < len(path); i++ {
+		if parent := byPath[strings.Join(path[:i], ".")]; parent != nil {
+			for mode, fields := range parent.modes {
+				if out[mode] == nil {
+					out[mode] = map[string]string{}
+				}
+				for k, v := range fields {
+					if _, exists := out[mode][k]; !exists {
+						out[mode][k] = v
+					}
+				}
+			}
+		}
 	}
 	return out
 }
@@ -207,23 +258,30 @@ func lowerTypography(base string, fields map[string]string, modes map[string]map
 	return out
 }
 func lowerTransition(base string, fields map[string]string, modes map[string]map[string]string, file string) []Token {
-	axes := []string{"duration", "delay", "timing-function"}
-	var out []Token
-	for _, axis := range axes {
-		if value, ok := fields[axis]; ok {
-			out = append(out, Token{Name: base + "-" + axis, InitialValue: lowerValue(value, "hb"), Modes: lowerModes(modes, axis, "hb"), Source: Source{File: file}})
-		}
+	if !hasTransition(fields) {
+		return nil
 	}
-	if len(out) == 3 {
-		out = append(out, Token{Name: base, InitialValue: fmt.Sprintf("var(%s-duration) var(%s-delay) var(%s-timing-function)", base, base, base), Source: Source{File: file}})
-	}
-	return out
+	// Cobalt exposes only the composed transition token; keeping axes internal
+	// preserves the existing public CSS surface exactly.
+	return []Token{{Name: base, InitialValue: fields["duration"] + " " + fields["delay"] + " " + fields["timing-function"], Source: Source{File: file}}}
 }
 func lowerModes(modes map[string]map[string]string, field, namespace string) map[string]string {
 	out := map[string]string{}
 	for mode, fields := range modes {
-		if value, ok := fields[field]; ok {
+		// Comfortable/light is the base declaration. Cobalt does not emit it as
+		// an override, so retaining it would create a non-parity selector block.
+		if mode == "light" {
+			continue
+		}
+		value, ok := fields[field]
+		if !ok {
+			value, ok = fields["all"]
+		}
+		if ok {
 			out[mode] = lowerValue(value, namespace)
+			if field == "font-family" && mode == "wireframe" {
+				out[mode] = quoteFontFamilies(out[mode])
+			}
 		}
 	}
 	return out
@@ -252,6 +310,23 @@ func sourceName(namespace string, path []string) string {
 	}
 	return "--" + namespace + "-" + strings.Join(parts, "-")
 }
+func compactFontShorthand(value string) string {
+	return strings.ReplaceAll(strings.ReplaceAll(value, ", ", ","), "\"", "")
+}
+
+func quoteFontFamilies(value string) string {
+	parts := strings.Split(value, ",")
+	for i, part := range parts {
+		part = strings.TrimSpace(part)
+		if strings.Contains(part, " ") && !strings.HasPrefix(part, "var(") {
+			parts[i] = "\"" + part + "\""
+		} else {
+			parts[i] = part
+		}
+	}
+	return strings.Join(parts, ", ")
+}
+
 func lowerValue(value, namespace string) string {
 	return refValue.ReplaceAllStringFunc(value, func(match string) string {
 		id := strings.TrimSuffix(strings.TrimPrefix(match, "ref("), ")")
