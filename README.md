@@ -163,7 +163,7 @@ cssmark build tokens.css --out tokens.json
 cssmark dtcg context palettes --prefix hb --out token-migration.json
 ```
 
-Add `--tree-out tokens` to produce a flat, composable source tree: one searchable file per Hummingbird domain (`color.css`, `action.css`, `decorative.css`, `type.css`, etc.), mode override files, and an ordered `index.css` that composes them through cascade layers. Typography expands to its existing shorthand plus axis variables; transitions expand to CSS transition shorthand. `--css-out tokens.source.css` remains available for a lossless descriptor-oriented migration artifact.
+Add `--tree-out tokens` to produce a flat, composable **cssmark authoring** tree: every token file lives directly under `tokens/` (`color.css`, `action.css`, `decorative.css`, `type.css`, etc.) and `index.css` contains only the ordered imports. It does not emit runtime `:root` or mode override files. `--css-out tokens.source.css` remains available for a single-file authoring artifact.
 
 ### Generate JavaScript artifacts
 

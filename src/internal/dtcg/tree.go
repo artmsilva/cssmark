@@ -8,41 +8,36 @@ import (
 	"strings"
 )
 
-// WriteFlatCSS writes an easy-to-browse token source tree. It uses normal CSS
-// declarations rather than JSON descriptors: composites expand to the same
-// shorthand and axis variables consumers use at runtime.
+// WriteFlatCSS writes an easy-to-browse cssmark authoring tree. Each leaf is a
+// normal @property source file; index.css is only the flat composition order.
 func WriteFlatCSS(tokens []Token, directory string) error {
-	base := map[string][]string{}
-	modes := map[string][]string{}
+	files := map[string]*strings.Builder{}
 	for _, token := range tokens {
 		file := sourceFile(token)
-		base[file] = append(base[file], declarations(token.Name, token.Value)...)
-		for mode, value := range token.Modes {
-			modes["mode-"+mode+".css"] = append(modes["mode-"+mode+".css"], declarations(token.Name, mergeComposite(token.Value, value))...)
+		if files[file] == nil {
+			files[file] = &strings.Builder{}
+			files[file].WriteString("/* cssmark token source */\n\n")
 		}
+		block, err := PropertySource(token)
+		if err != nil {
+			return err
+		}
+		files[file].WriteString(block)
 	}
 	if err := os.MkdirAll(directory, 0755); err != nil {
 		return err
 	}
-	var files []string
-	for file, declarations := range base {
-		if err := writeLayer(filepath.Join(directory, file), "hb-tokens.base", ":root", uniqueSorted(declarations)); err != nil {
+	var names []string
+	for name, body := range files {
+		if err := os.WriteFile(filepath.Join(directory, name), []byte(body.String()), 0644); err != nil {
 			return err
 		}
-		files = append(files, file)
+		names = append(names, name)
 	}
-	for file, declarations := range modes {
-		mode := strings.TrimSuffix(strings.TrimPrefix(file, "mode-"), ".css")
-		if err := writeLayer(filepath.Join(directory, file), "hb-tokens.modes", modeSelector(mode), uniqueSorted(declarations)); err != nil {
-			return err
-		}
-		files = append(files, file)
-	}
-	sort.Strings(files)
+	sort.Strings(names)
 	var index strings.Builder
-	index.WriteString("@layer hb-tokens.base, hb-tokens.modes;\n\n")
-	for _, file := range files {
-		index.WriteString(fmt.Sprintf("@import \"./%s\" layer(%s);\n", file, layerFor(file)))
+	for _, name := range names {
+		index.WriteString(fmt.Sprintf("@import \"./%s\";\n", name))
 	}
 	return os.WriteFile(filepath.Join(directory, "index.css"), []byte(index.String()), 0644)
 }
