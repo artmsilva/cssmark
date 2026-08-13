@@ -26,6 +26,8 @@ func main() {
 		runBuild(os.Args[2:])
 	case "css":
 		runCSS(os.Args[2:])
+	case "js":
+		runJS(os.Args[2:])
 	case "docs":
 		runDocs(os.Args[2:])
 	case "validate":
@@ -52,6 +54,7 @@ Usage:
 Commands:
   build      Parse tokens and output JSON
   css        Generate clean CSS with :root variables
+  js         Generate JavaScript, metadata, and declarations
   docs       Generate static documentation site
   validate   Validate tokens for errors
   diff       Compare two token snapshots
@@ -61,6 +64,7 @@ Commands:
 Examples:
   cssmark build tokens.css --out tokens.json
   cssmark css tokens.css --out variables.css
+  cssmark js tokens.css --out tokens.js --meta-out tokens.meta.js --dts-out tokens.d.ts
   cssmark docs tokens.css --out ./docs
   cssmark validate tokens.css
   cssmark diff tokens.old.json tokens.new.json`)
@@ -167,6 +171,53 @@ func runCSS(args []string) {
 	}
 
 	fmt.Printf("→ %s\n", outValue)
+}
+
+func runJS(args []string) {
+	var positional []string
+	jsPath, metaPath, dtsPath := "tokens.js", "tokens.meta.js", "tokens.d.ts"
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--out", "-o":
+			if i+1 < len(args) {
+				jsPath = args[i+1]
+				i++
+			}
+		case "--meta-out":
+			if i+1 < len(args) {
+				metaPath = args[i+1]
+				i++
+			}
+		case "--dts-out":
+			if i+1 < len(args) {
+				dtsPath = args[i+1]
+				i++
+			}
+		default:
+			if !strings.HasPrefix(args[i], "-") {
+				positional = append(positional, args[i])
+			}
+		}
+	}
+	if len(positional) < 1 {
+		fmt.Fprintln(os.Stderr, "Error: No input files specified")
+		os.Exit(1)
+	}
+	files, err := expandGlobs(positional)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+	tokens, err := parser.ParseFiles(files)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+	if err := builder.WriteJS(tokens, jsPath, metaPath, dtsPath); err != nil {
+		fmt.Fprintf(os.Stderr, "Error writing JavaScript: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("✓ %d tokens written to %s\n", len(tokens), jsPath)
 }
 
 func runDocs(args []string) {

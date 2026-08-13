@@ -187,6 +187,8 @@ func parseDescriptors(body string, token *Token) {
 		value = strings.Trim(value, `"`)
 
 		switch key {
+		case "id":
+			token.ID = value
 		case "syntax":
 			token.Syntax = value
 		case "inherits":

@@ -2,6 +2,8 @@ package parser
 
 // Token represents a parsed CSS @property design token
 type Token struct {
+	// ID is the stable programmatic token key. When omitted, Name is used.
+	ID              string            `json:"id,omitempty"`
 	Name            string            `json:"name"`
 	Syntax          string            `json:"syntax,omitempty"`
 	Inherits        bool              `json:"inherits"`
