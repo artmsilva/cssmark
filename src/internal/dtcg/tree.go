@@ -41,7 +41,7 @@ func WriteFlatCSS(tokens []Token, directory string) error {
 		if root.token != nil {
 			writeTokenFields(&body, *root.token, 1, nil, "")
 		}
-		root.write(&body, 1, typ, "")
+		root.write(&body, 1, typ, "", nil)
 		writeDenseDerivation(&body, typ, root)
 		body.WriteString("}\n")
 		if typ == "dimension" {
@@ -83,7 +83,7 @@ func (group *tokenGroup) add(path []string, token Token) {
 	child.add(path[1:], token)
 }
 
-func (group *tokenGroup) write(out *strings.Builder, indent int, typ, inheritedAll string) {
+func (group *tokenGroup) write(out *strings.Builder, indent int, typ, inheritedAll string, path []string) {
 	keys := make([]string, 0, len(group.children))
 	for key := range group.children {
 		keys = append(keys, key)
@@ -107,8 +107,20 @@ func (group *tokenGroup) write(out *strings.Builder, indent int, typ, inheritedA
 	}
 	for _, key := range keys {
 		child := group.children[key]
+		childPath := append(append([]string{}, path...), key)
 		pad := strings.Repeat("  ", indent)
+		if isAliasGroup(typ, childPath, child) {
+			out.WriteString(pad + "@alias " + key + " {\n")
+			writeAliases(out, child, indent+1)
+			out.WriteString(pad + "}\n")
+			continue
+		}
 		out.WriteString(pad + "@token " + key + " {\n")
+		if isStateMap(child) {
+			writeStateMap(out, child, indent+1)
+			out.WriteString(pad + "}\n")
+			continue
+		}
 		if child.token != nil {
 			parent := (*Token)(nil)
 			if child.token != regular && inheritsTypography(*child.token, regular) {
@@ -116,7 +128,7 @@ func (group *tokenGroup) write(out *strings.Builder, indent int, typ, inheritedA
 			}
 			writeTokenFields(out, *child.token, indent+1, parent, inheritedAll)
 		}
-		child.write(out, indent+1, typ, inheritedAll)
+		child.write(out, indent+1, typ, inheritedAll, childPath)
 		out.WriteString(pad + "}\n")
 	}
 }
@@ -185,6 +197,103 @@ func writeTokenFields(out *strings.Builder, token Token, indent int, parent *Tok
 		}
 		out.WriteString(fmt.Sprintf("%s@mode %s {\n%s  value: %s;\n%s}\n", pad, mode, pad, cssComposite(value), pad))
 	}
+}
+
+func isAliasGroup(typ string, path []string, group *tokenGroup) bool {
+	return typ == "dimension" && strings.Join(path, ".") == "decorative.space" && allScalarLeaves(group)
+}
+
+func allScalarLeaves(group *tokenGroup) bool {
+	if group.token != nil {
+		_, composite := group.token.Value.(map[string]any)
+		return !composite
+	}
+	if len(group.children) == 0 {
+		return false
+	}
+	for _, child := range group.children {
+		if !allScalarLeaves(child) {
+			return false
+		}
+	}
+	return true
+}
+
+func writeAliases(out *strings.Builder, group *tokenGroup, indent int) {
+	keys := make([]string, 0, len(group.children))
+	for key := range group.children {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	pad := strings.Repeat("  ", indent)
+	for _, key := range keys {
+		token := group.children[key].token
+		if token == nil {
+			continue
+		}
+		out.WriteString(fmt.Sprintf("%s%s: %s;\n", pad, key, reference(token.Value)))
+	}
+}
+
+func isStateMap(group *tokenGroup) bool {
+	if group.token != nil || len(group.children) < 2 {
+		return false
+	}
+	for _, child := range group.children {
+		if child.token == nil || len(child.children) != 0 {
+			return false
+		}
+		if _, composite := child.token.Value.(map[string]any); composite {
+			return false
+		}
+	}
+	return true
+}
+
+func writeStateMap(out *strings.Builder, group *tokenGroup, indent int) {
+	keys := make([]string, 0, len(group.children))
+	for key := range group.children {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	pad := strings.Repeat("  ", indent)
+	for _, key := range keys {
+		out.WriteString(fmt.Sprintf("%s%s: %s;\n", pad, key, reference(group.children[key].token.Value)))
+	}
+	modes := map[string]bool{}
+	for _, child := range group.children {
+		for mode := range child.token.Modes {
+			modes[mode] = true
+		}
+	}
+	modeNames := make([]string, 0, len(modes))
+	for mode := range modes {
+		modeNames = append(modeNames, mode)
+	}
+	sort.Strings(modeNames)
+	for _, mode := range modeNames {
+		var overrides []string
+		for _, key := range keys {
+			child := group.children[key].token
+			value, ok := child.Modes[mode]
+			if !ok || reflect.DeepEqual(value, child.Value) {
+				continue
+			}
+			overrides = append(overrides, fmt.Sprintf("%s  %s: %s;\n", pad, key, reference(value)))
+		}
+		if len(overrides) > 0 {
+			out.WriteString(fmt.Sprintf("%s@mode %s {\n%s%s}\n", pad, mode, strings.Join(overrides, ""), pad))
+		}
+	}
+}
+
+func reference(value any) string {
+	if raw, ok := value.(string); ok {
+		if strings.HasPrefix(raw, "{") && strings.HasSuffix(raw, "}") {
+			return "ref(" + strings.TrimSuffix(strings.TrimPrefix(raw, "{"), "}") + ")"
+		}
+	}
+	return cssComposite(value)
 }
 
 func commonScalarMode(group *tokenGroup) string {

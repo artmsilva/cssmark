@@ -43,6 +43,24 @@ func TestWriteFlatCSSReplacesExplicitDenseModesWithDerivation(t *testing.T) {
 	}
 }
 
+func TestWriteFlatCSSStateMapsOmitNoOpModeValues(t *testing.T) {
+	dir := t.TempDir()
+	err := WriteFlatCSS([]Token{
+		{ID: "color.action.default", Type: "color", Value: "#fff", Modes: map[string]any{"light": "#fff", "dark": "#000"}},
+		{ID: "color.action.hover", Type: "color", Value: "#eee", Modes: map[string]any{"light": "#eee", "dark": "#111"}},
+	}, dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, err := os.ReadFile(filepath.Join(dir, "color.css"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(body), "@mode light") || !strings.Contains(string(body), "@mode dark") {
+		t.Fatalf("expected only dark mode:\n%s", body)
+	}
+}
+
 func TestWriteFlatCSSUsesScaleAndGroupModeDefaults(t *testing.T) {
 	dir := t.TempDir()
 	err := WriteFlatCSS([]Token{
