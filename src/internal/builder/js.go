@@ -20,21 +20,14 @@ func WriteJS(tokens []parser.Token, jsPath, metaPath, dtsPath string) error {
 	meta := make(map[string]map[string]any, len(ordered))
 	for _, token := range ordered {
 		id := programmaticID(token)
-		value := token.InitialValue
-		if token.RawInitialValue != "" {
-			value = token.RawInitialValue
-		}
-		values[id] = value
+		values[id] = token.InitialValue
 		if len(token.Modes) > 0 {
 			modes[id] = make(map[string]string, len(token.Modes))
 			for mode, modeValue := range token.Modes {
-				if raw := token.RawModes[mode]; raw != "" {
-					modeValue = raw
-				}
 				modes[id][mode] = modeValue
 			}
 		}
-		entry := map[string]any{"id": id, "$value": value}
+		entry := map[string]any{"id": id, "$value": token.InitialValue}
 		if token.Type != "" {
 			entry["$type"] = token.Type
 		}
