@@ -27,6 +27,14 @@ func ParseFiles(paths []string) ([]Token, error) {
 			return nil, err
 		}
 
+		if strings.Contains(string(content), "@tokens") {
+			tokens, err := ParseTokenSource(path)
+			if err != nil {
+				return nil, err
+			}
+			allTokens = append(allTokens, tokens...)
+			continue
+		}
 		tokens, err := parse(string(content), path, false)
 		if err != nil {
 			return nil, err

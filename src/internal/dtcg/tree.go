@@ -54,9 +54,8 @@ func WriteFlatCSS(tokens []Token, directory string) error {
 	}
 	sort.Strings(names)
 	var index strings.Builder
-	for _, name := range names {
-		index.WriteString(fmt.Sprintf("@import \"./%s\";\n", name))
-	}
+	index.WriteString("@tokens {\n  namespace: hb;\n}\n\n")
+	for _, name := range names { index.WriteString(fmt.Sprintf("@import \"./%s\";\n", name)) }
 	return os.WriteFile(filepath.Join(directory, "index.css"), []byte(index.String()), 0644)
 }
 
