@@ -43,6 +43,32 @@ func TestWriteFlatCSSReplacesExplicitDenseModesWithDerivation(t *testing.T) {
 	}
 }
 
+func TestWriteFlatCSSUsesScaleAndGroupModeDefaults(t *testing.T) {
+	dir := t.TempDir()
+	err := WriteFlatCSS([]Token{
+		{ID: "space.1", Type: "dimension", Value: "0.25rem"},
+		{ID: "duration.fast", Type: "duration", Value: "150ms", Modes: map[string]any{"wireframe": "0ms"}},
+		{ID: "duration.slow", Type: "duration", Value: "400ms", Modes: map[string]any{"wireframe": "0ms"}},
+	}, dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	dimension, err := os.ReadFile(filepath.Join(dir, "dimension.css"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(dimension), "@scale space {") || strings.Contains(string(dimension), "@token 1 {") {
+		t.Fatalf("expected scale source:\n%s", dimension)
+	}
+	duration, err := os.ReadFile(filepath.Join(dir, "duration.css"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(duration), "@mode wireframe { all: 0ms; }") {
+		t.Fatalf("expected group mode:\n%s", duration)
+	}
+}
+
 func TestWriteFlatCSSUsesTypographyWithoutLegacyTypeSegment(t *testing.T) {
 	dir := t.TempDir()
 	err := WriteFlatCSS([]Token{{ID: "decorative.type.body.regular", Type: "typography", Value: map[string]any{"fontSize": "{space.4}"}}}, dir)

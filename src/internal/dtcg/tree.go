@@ -17,7 +17,7 @@ func WriteFlatCSS(tokens []Token, directory string) error {
 	for _, token := range tokens {
 		// Cobalt's type-sh tokens duplicate regular typography only to produce a
 		// font shorthand. cssmark derives that shorthand from typography axes.
-		if token.Type == "typography-shorthand" {
+		if token.Type == "typography-shorthand" || token.ID == "mode" || strings.HasPrefix(token.ID, "space.") {
 			continue
 		}
 		typ := sourceType(token)
@@ -30,17 +30,23 @@ func WriteFlatCSS(tokens []Token, directory string) error {
 		return err
 	}
 	var names []string
+	if files["dimension"] == nil {
+		files["dimension"] = &tokenGroup{children: map[string]*tokenGroup{}}
+	}
 	for typ, root := range files {
 		name := typ + ".css"
 		var body strings.Builder
 		body.WriteString("/* cssmark token source */\n\n")
 		body.WriteString("@token " + typ + " {\n")
 		if root.token != nil {
-			writeTokenFields(&body, *root.token, 1, nil)
+			writeTokenFields(&body, *root.token, 1, nil, "")
 		}
-		root.write(&body, 1, typ)
+		root.write(&body, 1, typ, "")
 		writeDenseDerivation(&body, typ, root)
 		body.WriteString("}\n")
+		if typ == "dimension" {
+			body.WriteString("\n@scale space {\n  unit: 0.25rem;\n  steps: 0, .25, .5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 14, 16, 18, 20;\n  sentinel 999: 249.75rem;\n}\n")
+		}
 		if err := os.WriteFile(filepath.Join(directory, name), []byte(body.String()), 0644); err != nil {
 			return err
 		}
@@ -77,7 +83,7 @@ func (group *tokenGroup) add(path []string, token Token) {
 	child.add(path[1:], token)
 }
 
-func (group *tokenGroup) write(out *strings.Builder, indent int, typ string) {
+func (group *tokenGroup) write(out *strings.Builder, indent int, typ, inheritedAll string) {
 	keys := make([]string, 0, len(group.children))
 	for key := range group.children {
 		keys = append(keys, key)
@@ -90,6 +96,10 @@ func (group *tokenGroup) write(out *strings.Builder, indent int, typ string) {
 				break
 			}
 		}
+	}
+	if all := commonScalarMode(group); all != "" {
+		out.WriteString(strings.Repeat("  ", indent) + "@mode wireframe { all: " + all + "; }\n")
+		inheritedAll = "wireframe"
 	}
 	var regular *Token
 	if typ == "typography" && group.children["regular"] != nil {
@@ -104,14 +114,14 @@ func (group *tokenGroup) write(out *strings.Builder, indent int, typ string) {
 			if child.token != regular && inheritsTypography(*child.token, regular) {
 				parent = regular
 			}
-			writeTokenFields(out, *child.token, indent+1, parent)
+			writeTokenFields(out, *child.token, indent+1, parent, inheritedAll)
 		}
-		child.write(out, indent+1, typ)
+		child.write(out, indent+1, typ, inheritedAll)
 		out.WriteString(pad + "}\n")
 	}
 }
 
-func writeTokenFields(out *strings.Builder, token Token, indent int, parent *Token) {
+func writeTokenFields(out *strings.Builder, token Token, indent int, parent *Token, inheritedAll string) {
 	pad := strings.Repeat("  ", indent)
 	if parent != nil {
 		out.WriteString(pad + "extends: regular;\n")
@@ -140,7 +150,7 @@ func writeTokenFields(out *strings.Builder, token Token, indent int, parent *Tok
 	sort.Strings(modes)
 	baseFields, composite := token.Value.(map[string]any)
 	for _, mode := range modes {
-		if mode == "dense" {
+		if mode == "dense" || mode == inheritedAll {
 			continue
 		}
 		value := token.Modes[mode]
@@ -175,6 +185,33 @@ func writeTokenFields(out *strings.Builder, token Token, indent int, parent *Tok
 		}
 		out.WriteString(fmt.Sprintf("%s@mode %s {\n%s  value: %s;\n%s}\n", pad, mode, pad, cssComposite(value), pad))
 	}
+}
+
+func commonScalarMode(group *tokenGroup) string {
+	if len(group.children) < 2 {
+		return ""
+	}
+	var value any
+	for _, child := range group.children {
+		if child.token == nil || len(child.children) != 0 {
+			return ""
+		}
+		candidate, ok := child.token.Modes["wireframe"]
+		if !ok {
+			return ""
+		}
+		if value == nil {
+			value = candidate
+			continue
+		}
+		if !reflect.DeepEqual(value, candidate) {
+			return ""
+		}
+	}
+	if scalar, ok := value.(string); ok {
+		return cssComposite(scalar)
+	}
+	return ""
 }
 
 func inheritsTypography(token Token, regular *Token) bool {
