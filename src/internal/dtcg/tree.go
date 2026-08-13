@@ -247,6 +247,13 @@ func isStateMap(group *tokenGroup) bool {
 			return false
 		}
 	}
+	// `100: value` is not valid CSS declaration syntax, so palette/scale stops
+	// stay as nested @token blocks. This keeps editor parsing/highlighting intact.
+	for name := range group.children {
+		if name[0] >= '0' && name[0] <= '9' {
+			return false
+		}
+	}
 	return true
 }
 
