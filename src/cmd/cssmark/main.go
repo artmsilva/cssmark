@@ -228,6 +228,7 @@ func runJS(args []string) {
 func runDTCG(args []string) {
 	var positional []string
 	prefix, out := "hb", "token-migration.json"
+	cssOut := ""
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "--out", "-o":
@@ -238,6 +239,11 @@ func runDTCG(args []string) {
 		case "--prefix":
 			if i+1 < len(args) {
 				prefix = args[i+1]
+				i++
+			}
+		case "--css-out":
+			if i+1 < len(args) {
+				cssOut = args[i+1]
 				i++
 			}
 		default:
@@ -268,6 +274,16 @@ func runDTCG(args []string) {
 	if err := os.WriteFile(out, body, 0644); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
+	}
+	if cssOut != "" {
+		css, cssErr := dtcg.CSSSource(tokens)
+		if cssErr == nil {
+			cssErr = os.WriteFile(cssOut, []byte(css), 0644)
+		}
+		if cssErr != nil {
+			fmt.Fprintf(os.Stderr, "Error writing CSS migration source: %v\n", cssErr)
+			os.Exit(1)
+		}
 	}
 	fmt.Printf("✓ %d DTCG tokens written to %s\n", len(tokens), out)
 }

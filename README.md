@@ -163,7 +163,7 @@ cssmark build tokens.css --out tokens.json
 cssmark dtcg context palettes --prefix hb --out token-migration.json
 ```
 
-It deliberately does **not** write `@property` source yet: composite token serialization (typography and transitions) needs an explicit CSS representation before a source-of-truth conversion is safe.
+Add `--css-out tokens.source.css` to also emit an editable `@property` migration source. Scalars become standard `initial-value`/`mode-*` descriptors; composite typography and transition values are retained losslessly in `value-json`/`mode-json-*` descriptors. Those composite descriptors are an intermediate source format until cssmark's CSS emitter supports their runtime expansion.
 
 ### Generate JavaScript artifacts
 
