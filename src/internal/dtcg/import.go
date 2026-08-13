@@ -57,7 +57,7 @@ func walk(value node, path []string, inheritedType *string, byID map[string]Toke
 		id := strings.Join(path, ".")
 		current, exists := byID[id]
 		if !exists {
-			current = Token{ID: id, Name: cssName(prefix, id), Type: tokenType, Modes: map[string]any{}}
+			current = Token{ID: id, Name: cssName(prefix, id), Type: inferredType(tokenType, id), Modes: map[string]any{}}
 		}
 		if raw, ok := value["$value"]; ok {
 			current.Value = raw
@@ -88,6 +88,24 @@ func walk(value node, path []string, inheritedType *string, byID map[string]Toke
 }
 
 func stringPtr(value string) *string { return &value }
+
+func inferredType(tokenType, id string) string {
+	if tokenType != "" {
+		return tokenType
+	}
+	// Some legacy DTCG groups omit $type. Their IDs still carry the intended
+	// design-token category, so avoid an unhelpful "untyped" source file.
+	switch strings.Split(id, ".")[0] {
+	case "color":
+		return "color"
+	case "space", "radius":
+		return "dimension"
+	case "duration":
+		return "duration"
+	default:
+		return "unknown"
+	}
+}
 
 func cssName(prefix, id string) string {
 	id = strings.ReplaceAll(id, "type-sh", "type")
