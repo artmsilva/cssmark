@@ -229,6 +229,7 @@ func runDTCG(args []string) {
 	var positional []string
 	prefix, out := "hb", "token-migration.json"
 	cssOut := ""
+	treeOut := ""
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "--out", "-o":
@@ -244,6 +245,11 @@ func runDTCG(args []string) {
 		case "--css-out":
 			if i+1 < len(args) {
 				cssOut = args[i+1]
+				i++
+			}
+		case "--tree-out":
+			if i+1 < len(args) {
+				treeOut = args[i+1]
 				i++
 			}
 		default:
@@ -282,6 +288,12 @@ func runDTCG(args []string) {
 		}
 		if cssErr != nil {
 			fmt.Fprintf(os.Stderr, "Error writing CSS migration source: %v\n", cssErr)
+			os.Exit(1)
+		}
+	}
+	if treeOut != "" {
+		if err := dtcg.WriteFlatCSS(tokens, treeOut); err != nil {
+			fmt.Fprintf(os.Stderr, "Error writing CSS tree: %v\n", err)
 			os.Exit(1)
 		}
 	}

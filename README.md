@@ -163,7 +163,7 @@ cssmark build tokens.css --out tokens.json
 cssmark dtcg context palettes --prefix hb --out token-migration.json
 ```
 
-Add `--css-out tokens.source.css` to also emit an editable `@property` migration source. Scalars become standard `initial-value`/`mode-*` descriptors; composite typography and transition values are retained losslessly in `value-json`/`mode-json-*` descriptors. Those composite descriptors are an intermediate source format until cssmark's CSS emitter supports their runtime expansion.
+Add `--tree-out tokens` to produce a flat, composable source tree: one searchable file per Hummingbird domain (`color.css`, `action.css`, `decorative.css`, `type.css`, etc.), mode override files, and an ordered `index.css` that composes them through cascade layers. Typography expands to its existing shorthand plus axis variables; transitions expand to CSS transition shorthand. `--css-out tokens.source.css` remains available for a lossless descriptor-oriented migration artifact.
 
 ### Generate JavaScript artifacts
 
