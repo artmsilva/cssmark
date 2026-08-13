@@ -163,7 +163,11 @@ cssmark build tokens.css --out tokens.json
 cssmark dtcg context palettes --prefix hb --out token-migration.json
 ```
 
-Add `--tree-out tokens` to produce a flat, composable **cssmark authoring** tree: every token file lives directly under `tokens/` (`color.css`, `action.css`, `decorative.css`, `type.css`, etc.) and `index.css` contains only the ordered imports. It does not emit runtime `:root` or mode override files. `--css-out tokens.source.css` remains available for a single-file authoring artifact.
+Add `--tree-out tokens` to produce a flat, composable **cssmark authoring** tree. Every file lives directly under `tokens/`, grouped by DTCG type—not consumer-oriented semantic domains—such as `color.css`, `dimension.css`, `typography.css`, `typography-shorthand.css`, and `transition.css`. `index.css` contains only the ordered imports. It does not emit runtime `:root` or mode override files.
+
+Composite tokens avoid JSON authoring: typography becomes five scalar `@property` blocks (`font-family`, `font-size`, `font-style`, `font-weight`, and `line-height`) and transitions become scalar duration, delay, and timing-function blocks. A `composite` descriptor associates those axes so cssmark can later re-create existing shorthand output. Partial mode overrides stay on the affected axis only.
+
+`--css-out tokens.source.css` remains available for a single-file authoring artifact.
 
 ### Generate JavaScript artifacts
 

@@ -1,7 +1,6 @@
 package dtcg
 
 import (
-	"encoding/json"
 	"fmt"
 	"regexp"
 	"sort"
@@ -33,35 +32,90 @@ func PropertySource(token Token) (string, error) {
 	if token.Type != "" {
 		out.WriteString(fmt.Sprintf("  type: \"%s\";\n", token.Type))
 	}
-	if scalar, ok := token.Value.(string); ok {
+	if _, composite := token.Value.(map[string]any); !composite {
 		out.WriteString("  syntax: \"*\";\n  inherits: true;\n")
-		out.WriteString(fmt.Sprintf("  initial-value: %s;\n", cssValue(scalar)))
-	} else {
-		encoded, err := json.Marshal(token.Value)
-		if err != nil {
-			return "", err
-		}
-		out.WriteString(fmt.Sprintf("  value-json: '%s';\n", strings.ReplaceAll(string(encoded), "'", "\\'")))
+		out.WriteString(fmt.Sprintf("  initial-value: %s;\n", cssComposite(token.Value)))
+		writeScalarModes(&out, token.Modes)
+		out.WriteString("}\n\n")
+		return out.String(), nil
 	}
-	modes := make([]string, 0, len(token.Modes))
-	for mode := range token.Modes {
-		modes = append(modes, mode)
+
+	// Composites are authored as scalar properties. `composite` connects the
+	// axes so cssmark can recreate the legacy shorthand and JS object output.
+	out.Reset()
+	value, ok := token.Value.(map[string]any)
+	if !ok {
+		return "", fmt.Errorf("%s: unsupported composite value", token.ID)
 	}
-	sort.Strings(modes)
-	for _, mode := range modes {
-		if scalar, ok := token.Modes[mode].(string); ok {
-			out.WriteString(fmt.Sprintf("  mode-%s: %s;\n", mode, cssValue(scalar)))
-			continue
-		}
-		encoded, err := json.Marshal(token.Modes[mode])
-		if err != nil {
-			return "", err
-		}
-		out.WriteString(fmt.Sprintf("  mode-json-%s: '%s';\n", mode, strings.ReplaceAll(string(encoded), "'", "\\'")))
+	if isTypography(value) {
+		return typographySource(token, value)
 	}
-	out.WriteString("}\n\n")
+	if _, ok := value["duration"]; ok {
+		return transitionSource(token, value)
+	}
+	return "", fmt.Errorf("%s: unsupported composite type %q", token.ID, token.Type)
+}
+
+func typographySource(token Token, value map[string]any) (string, error) {
+	axes := []struct{ key, suffix, syntax string }{
+		{"fontFamily", "font-family", "*"}, {"fontSize", "font-size", "<length>"},
+		{"fontStyle", "font-style", "*"}, {"fontWeight", "font-weight", "<number>"}, {"lineHeight", "line-height", "*"},
+	}
+	var out strings.Builder
+	for _, axis := range axes {
+		name := token.Name + "-" + axis.suffix
+		out.WriteString(fmt.Sprintf("@property %s {\n  id: \"%s.%s\";\n  composite: \"%s\";\n  syntax: \"%s\";\n  inherits: true;\n  initial-value: %s;\n", name, token.ID, axis.key, token.ID, axis.syntax, cssComposite(value[axis.key])))
+		axisModes := map[string]any{}
+		for mode, raw := range token.Modes {
+			if override, ok := raw.(map[string]any); ok {
+				if modeValue, ok := override[axis.key]; ok {
+					axisModes[mode] = modeValue
+				}
+			}
+		}
+		writeScalarModes(&out, axisModes)
+		out.WriteString("}\n\n")
+	}
 	return out.String(), nil
 }
+
+func transitionSource(token Token, value map[string]any) (string, error) {
+	axes := []struct{ key, suffix, syntax string }{{"duration", "duration", "<time>"}, {"delay", "delay", "<time>"}, {"timingFunction", "timing-function", "*"}}
+	var out strings.Builder
+	for _, axis := range axes {
+		name := token.Name + "-" + axis.suffix
+		out.WriteString(fmt.Sprintf("@property %s {\n  id: \"%s.%s\";\n  composite: \"%s\";\n  syntax: \"%s\";\n  inherits: true;\n  initial-value: %s;\n", name, token.ID, axis.key, token.ID, axis.syntax, cssComposite(value[axis.key])))
+		out.WriteString("}\n\n")
+	}
+	return out.String(), nil
+}
+
+func writeScalarModes(out *strings.Builder, modes map[string]any) {
+	keys := make([]string, 0, len(modes))
+	for mode := range modes {
+		keys = append(keys, mode)
+	}
+	sort.Strings(keys)
+	for _, mode := range keys {
+		out.WriteString(fmt.Sprintf("  mode-%s: %s;\n", mode, cssComposite(modes[mode])))
+	}
+}
+
+func cssComposite(value any) string {
+	switch value := value.(type) {
+	case string:
+		return cssValue(value)
+	case []any:
+		parts := make([]string, len(value))
+		for i, item := range value {
+			parts[i] = cssComposite(item)
+		}
+		return strings.Join(parts, ", ")
+	default:
+		return fmt.Sprint(value)
+	}
+}
+func isTypography(value map[string]any) bool { _, ok := value["fontSize"]; return ok }
 
 var alias = regexp.MustCompile(`\{([^}]+)\}`)
 

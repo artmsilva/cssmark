@@ -67,21 +67,6 @@ func declarations(name string, value any) []string {
 	return nil
 }
 
-func isTypography(value map[string]any) bool { _, ok := value["fontSize"]; return ok }
-func cssComposite(value any) string {
-	switch value := value.(type) {
-	case string:
-		return cssValue(value)
-	case []any:
-		parts := make([]string, len(value))
-		for i, item := range value {
-			parts[i] = cssComposite(item)
-		}
-		return strings.Join(parts, ",")
-	default:
-		return fmt.Sprint(value)
-	}
-}
 func mergeComposite(base, override any) any {
 	baseMap, baseOK := base.(map[string]any)
 	overrideMap, overrideOK := override.(map[string]any)
@@ -98,19 +83,14 @@ func mergeComposite(base, override any) any {
 	return merged
 }
 func sourceFile(token Token) string {
-	root := strings.Split(token.ID, ".")[0]
-	switch root {
-	case "color", "action", "decorative", "component", "mode", "space", "duration", "transition":
-		return root + ".css"
-	case "type-sh", "type":
-		return "type.css"
-	case "font-family", "font-weight":
-		return root + ".css"
-	case "timingFunction":
-		return "timing-function.css"
-	default:
-		return strings.ReplaceAll(root, "_", "-") + ".css"
+	// Authoring files follow DTCG type, not consumer-oriented semantic domains.
+	// Finding every typography token in typography.css is less surprising than
+	// knowing whether it belongs to action, decorative, or component.
+	name := token.Type
+	if name == "" {
+		name = "untyped"
 	}
+	return strings.ReplaceAll(name, "/", "-") + ".css"
 }
 func modeSelector(mode string) string {
 	switch mode {
