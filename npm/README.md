@@ -23,6 +23,9 @@ npx cssmark docs tokens.css --out ./docs
 # Generate production CSS from tokens
 npx cssmark css tokens.css --out tokens.production.css
 
+# Generate ESM token values, metadata, and declarations
+npx cssmark js tokens.css --out tokens.js --meta-out tokens.meta.js --dts-out tokens.d.ts
+
 # Validate tokens
 npx cssmark validate tokens.css
 

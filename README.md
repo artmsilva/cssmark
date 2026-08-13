@@ -155,6 +155,29 @@ cssmark css tokens.css --out tokens.css \
 cssmark build tokens.css --out tokens.json
 ```
 
+### Generate JavaScript artifacts
+
+Use `id` to preserve a stable programmatic key when the CSS variable name is not enough to reconstruct it.
+
+```css
+@property --hb-color-action-primary {
+  id: "color.action.primary";
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #0055ff;
+  mode-dark: #66aaff;
+}
+```
+
+```bash
+cssmark js tokens.css \
+  --out tokens.js \
+  --meta-out tokens.meta.js \
+  --dts-out tokens.d.ts
+```
+
+This emits an ESM `tokens` map, per-token `modes`, a `token(id, mode)` helper, metadata, and a declaration file.
+
 ### Generate Documentation
 
 ```bash
